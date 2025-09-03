@@ -2,3 +2,77 @@
 @import "nhsuk-frontend/dist/nhsuk";
 
 // Add your custom CSS/Sass styles below.
+
+/* --- Simulated GOV.UK One Login visuals (kept within page content) --- */
+.govuk-sim-header {
+  background: #0b0c0c; /* GOV.UK black */
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.govuk-sim-hint {
+  background: #f3f2f1; /* GOV.UK light grey */
+  border-left: 5px solid #505a5f;
+  padding: 12px 16px;
+  margin: 16px 0 24px;
+}
+
+/* NIHR-styled search bar matching the screenshots */
+.nihr-search{
+  /* outer blue pill */
+  background:#000000;               /* NHS blue */
+  border-radius:10px;
+  padding:2px;
+  max-width:540px;
+  display:flex;
+  align-items:center;
+  gap:0;                             /* input + button touch */
+}
+
+/* Input */
+.nihr-search .nhsuk-search__input{
+  flex:1 1 auto;
+  height:44px;
+  border:0;
+  border-radius:8px 0 0 8px;
+  padding:0 14px;
+  font-size:22px;                    /* roomy like the shot */
+  line-height:1.4;
+}
+.nihr-search .nhsuk-search__input::placeholder{ color:#4c6272; }
+
+/* Button block with icon */
+.nihr-search .nhsuk-search__submit{
+  width:72px;
+  height:44px;
+  border:0;
+  border-radius:0 8px 8px 0;
+  background:#eef5fb;                /* light block (state A) */
+  color:#005eb8;                     /* icon colour via currentColor */
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:background .15s ease, color .15s ease, box-shadow .15s ease;
+}
+
+/* Icon sizing */
+.nihr-search .nhsuk-icon__search{ width:26px; height:26px; fill:currentColor; }
+
+/* Hover/focus state -> solid NHS blue block with white icon + thin white keyline (state B) */
+.nihr-search:hover .nhsuk-search__submit,
+.nihr-search:focus-within .nhsuk-search__submit{
+  background:#005eb8;
+  color:#fff;
+  box-shadow:inset 0 0 0 2px #ffffff;
+}
+
+/* Accessible focus on the input */
+.nihr-search:focus-within .nhsuk-search__input{
+  outline:3px solid #ffeb3b;         /* NHS focus yellow */
+  outline-offset:0;
+}

@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Verify your email{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <a class="nhsuk-back-link" href="/signup/email">Go back</a>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <h1 class="nhsuk-heading-xl">Verify your email</h1>
+      <p class="nhsuk-body">You’ll need to verify your email address before continuing.</p>
+
+      <div class="nhsuk-inset-text">
+        <span class="nhsuk-u-visually-hidden">Information: </span>
+        <p>We have sent an email to <strong>{{ email or 'your email address' }}</strong></p>
+      </div>
+
+      <p class="nhsuk-body">
+        Your email may take a few minutes to arrive. If you have not received your email, check your spam.
+      </p>
+
+      <h2 class="nhsuk-heading-m">Didn’t receive an email?</h2>
+      <div class="nhsuk-inset-text">
+        <span class="nhsuk-u-visually-hidden">Information: </span>
+        <p>
+          If you haven’t received an email within 30 minutes, you can
+          <a href="/signup/request-another?email={{ (email or '') | urlencode }}">request another email</a>.
+        </p>
+      </div>
+
+      {% if resent %}
+        <p class="nhsuk-tag nhsuk-u-margin-top-2">Verification email sent again</p>
+      {% endif %}
+
+      <p class="nhsuk-body nhsuk-u-margin-top-4">
+        <strong>We’ll take you to the next step automatically in
+          <span id="count">{{ timerSeconds }}</span> seconds.</strong>
+      </p>
+      <p class="nhsuk-body">
+        Or <a id="continue-now" href="/signup/profile?email={{ (email or '') | urlencode }}">continue now</a>.
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var secs = {{ timerSeconds | default(8) }};
+    var countEl = document.getElementById('count');
+    var link = document.getElementById('continue-now');
+
+    function tick () {
+      secs = secs - 1;
+      if (countEl) countEl.textContent = Math.max(0, secs);
+      if (secs <= 0) {
+        window.location.href = link.getAttribute('href');
+        return;
+      }
+      window.setTimeout(tick, 1000);
+    }
+
+    if (secs > 0) {
+      window.setTimeout(tick, 1000);
+    } else {
+      window.location.href = link.getAttribute('href');
+    }
+  })();
+</script>
+{% endblock %}

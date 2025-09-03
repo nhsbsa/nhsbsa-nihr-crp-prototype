@@ -12,39 +12,16 @@
   <link href="/css/main.css" rel="stylesheet">
 {% endblock %}
 
-<!-- Edit the header -->
-<!-- Header code examples can be found at https://service-manual.nhs.uk/design-system/components/header -->
+<!-- Updated header: use NIHR header include instead of NHS header macro -->
 {% block header %}
-  {{ header({
-    service: {
-      text: serviceName,
-      href: "/"
-    }
-  }) }}
+  {% include "includes/nihr-header.html" %}
 {% endblock %}
 
-<!-- Edit the footer -->
-<!-- Footer code examples can be found at https://service-manual.nhs.uk/design-system/components/footer -->
+<!-- Keep your existing footer -->
 {% block footer %}
-  {{ footer({
-    meta: {
-      items: [
-        {
-          href: "/",
-          text: "Home"
-        },
-        {
-          href: "/example-templates",
-          text: "Page templates"
-        },
-        {
-          href: "/prototype-admin/reset?returnPage=" + (currentPage | urlencode),
-          text: "Reset data"
-        }
-      ]
-    }
-  }) }}
+  {% include "includes/nihr-footer.html" %}
 {% endblock %}
+
 
 {% block bodyEnd %}
   <script src="/nhsuk-frontend/nhsuk-frontend.min.js" type="module"></script>

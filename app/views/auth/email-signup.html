@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Create an account{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <a class="nhsuk-back-link" href="/prototypes/admin-researcher-signup">Go back</a>
+
+  {# ===== Error summary (shown when POST fails) ===== #}
+  {% if errors and (errors.email or errors.password) %}
+  <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+    <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% if errors.email %}
+          <li><a href="#email">{{ "Email address must be in a valid format" }}</a></li>
+        {% endif %}
+        {% if errors.password %}
+          <li><a href="#password">{{ "Your password does not meet the requirements" }}</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  <h1 class="nhsuk-heading-xl">Create an account</h1>
+  <p class="nhsuk-body">You’ll need your email and password when you sign in, so make them memorable.</p>
+
+  <form action="/signup/email" method="post" novalidate>
+    {# ===== Email ===== #}
+    <div class="nhsuk-form-group {% if errors.email %}nhsuk-form-group--error{% endif %}">
+      <label class="nhsuk-label" for="email">Enter your email address</label>
+
+      {% if errors.email %}
+        <p id="email-error" class="nhsuk-error-message">
+          <span class="nhsuk-u-visually-hidden">Error:</span>
+          {{ errors.email }}
+        </p>
+      {% endif %}
+
+      <input
+        class="nhsuk-input nhsuk-input--width-30 {% if errors.email %}nhsuk-input--error{% endif %}"
+        id="email"
+        name="email"
+        type="email"
+        spellcheck="false"
+        autocomplete="email"
+        value="{{ data.email or '' }}"
+        {% if errors.email %}aria-describedby="email-error"{% endif %}
+      >
+      {% if not errors.email %}
+        <p class="nhsuk-hint">Enter an email address in the correct format, like someone@nihr.ac.uk</p>
+      {% endif %}
+    </div>
+
+    {# ===== Password ===== #}
+    <div class="nhsuk-form-group {% if errors.password %}nhsuk-form-group--error{% endif %}">
+      <label class="nhsuk-label" for="password">Create password</label>
+
+      {% if errors.password %}
+        <p id="password-error" class="nhsuk-error-message">
+          <span class="nhsuk-u-visually-hidden">Error:</span>
+          {{ errors.password }}
+        </p>
+      {% else %}
+        <p class="nhsuk-hint">
+          Your password should have 8 or more characters, at least 1 number and 1 special character.
+        </p>
+      {% endif %}
+
+      <input
+        class="nhsuk-input nhsuk-input--width-30 {% if errors.password %}nhsuk-input--error{% endif %}"
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        {% if errors.password %}aria-describedby="password-error"{% endif %}
+      >
+    </div>
+
+    <button class="nhsuk-button nhsuk-u-margin-top-2" type="submit" data-module="nhsuk-button">
+      Sign up
+    </button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Manage account requests{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+
+  <p class="nhsuk-body-s nhsuk-u-text-align-right">
+    Welcome back, <strong>{{ user.name }}</strong> &nbsp; <a href="/admin/logout">Log out</a>
+  </p>
+
+  <div class="nhsuk-grid-row">
+    <!-- LEFT NAV (1/4) -->
+    <div class="nhsuk-grid-column-one-quarter">
+      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Manage platform</h2>
+
+      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Account management</p>
+      <nav class="nhsuk-u-margin-bottom-5">
+        <ul class="nhsuk-list">
+          <li><a href="/admin/requests" aria-current="page">Approve account requests</a></li>
+          <li><a href="#">User account management</a></li>
+          <li><a href="#">Create administrator accounts</a></li>
+        </ul>
+      </nav>
+
+      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Support</p>
+      <ul class="nhsuk-list">
+        <li><a href="#">Help</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN (3/4) -->
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-2">Manage account requests</h1>
+      <p class="nhsuk-body">View and manage account requests</p>
+
+      <div class="nhsuk-inset-text">
+        <p>You have <strong>7</strong> <strong>account requests</strong> pending review.</p>
+      </div>
+
+      <h2 class="nhsuk-heading-m">Account overview</h2>
+      <p class="nhsuk-hint">Review the information provided is compatible with the [system name] rules.</p>
+
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Name:</dt>
+          <dd class="nhsuk-summary-list__value">{{ item.name }}</dd>
+          <dd class="nhsuk-summary-list__actions"><a href="#">Change</a></dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Email:</dt>
+          <dd class="nhsuk-summary-list__value">{{ item.email }}</dd>
+          <dd class="nhsuk-summary-list__actions"><a href="#">Change</a></dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Organisation:</dt>
+          <dd class="nhsuk-summary-list__value">
+            {% if showOther %}
+              Other – (insert other organisation name)
+            {% else %}
+              {{ item.org }}
+            {% endif %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"><a href="#">Change</a></dd>
+        </div>
+
+        {% if showOther %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Justification for using the platform:</dt>
+          <dd class="nhsuk-summary-list__value">
+            I've been given authority by my superior to use this platform as I am planning to conduct research studies.
+          </dd>
+          <dd class="nhsuk-summary-list__actions"><a href="#">Change</a></dd>
+        </div>
+        {% endif %}
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Type:</dt>
+          <dd class="nhsuk-summary-list__value">{{ item.type }}</dd>
+          <dd class="nhsuk-summary-list__actions"><a href="#">Change</a></dd>
+        </div>
+      </dl>
+
+      <h2 class="nhsuk-heading-m nhsuk-u-margin-top-5">Consent and compliance</h2>
+      <p class="nhsuk-hint">Check the user has accepted the Terms of the service and the data use rules.</p>
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Terms agreed:</dt>
+          <dd class="nhsuk-summary-list__value">Yes</dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Consent to use data:</dt>
+          <dd class="nhsuk-summary-list__value">Yes</dd>
+        </div>
+      </dl>
+
+      <div class="nhsuk-button-group">
+        <a class="nhsuk-button" href="/admin/requests/{{ item.id }}/approve">Approve</a>
+        <a class="nhsuk-button nhsuk-button--secondary" style="background:#d5281b;border-color:#d5281b" href="/admin/requests/{{ item.id }}">Reject</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Check your answers{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <a class="nhsuk-back-link" href="/signup/profile">Go back</a>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <h1 class="nhsuk-heading-xl">Check your answers</h1>
+
+      <h2 class="nhsuk-heading-m">Personal details</h2>
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Title</dt>
+          <dd class="nhsuk-summary-list__value">{{ profile.title }}</dd>
+          <dd class="nhsuk-summary-list__actions"><a href="/signup/profile">Change</a></dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">First name</dt>
+          <dd class="nhsuk-summary-list__value">{{ profile.firstName }}</dd>
+          <dd class="nhsuk-summary-list__actions"><a href="/signup/profile">Change</a></dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Last name</dt>
+          <dd class="nhsuk-summary-list__value">{{ profile.lastName }}</dd>
+          <dd class="nhsuk-summary-list__actions"><a href="/signup/profile">Change</a></dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Email</dt>
+          <dd class="nhsuk-summary-list__value">{{ profile.email }}</dd>
+          <dd class="nhsuk-summary-list__actions"><a href="/signup/profile">Change</a></dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Organisation</dt>
+          <dd class="nhsuk-summary-list__value">
+            {{ profile.organisation }}
+            {% if profile.organisation == 'Other' and profile.orgName %}
+              <div class="nhsuk-hint nhsuk-u-margin-top-1">Organisation name: {{ profile.orgName }}</div>
+              {% if profile.orgJustification %}
+                <div class="nhsuk-hint">Justification: {{ profile.orgJustification }}</div>
+              {% endif %}
+            {% endif %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"><a href="/signup/profile">Change</a></dd>
+        </div>
+      </dl>
+
+      <h2 class="nhsuk-heading-m">Consent</h2>
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Data consent</dt>
+          <dd class="nhsuk-summary-list__value">
+            {% if profile.consent == 'yes' %}
+              I consent to use of my data as described in the privacy notice
+            {% else %}
+              <span class="nhsuk-warning-text">
+                <span class="nhsuk-warning-text__assistive">Warning</span>
+                Consent not given
+              </span>
+            {% endif %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"><a href="/signup/profile">Change</a></dd>
+        </div>
+      </dl>
+
+      <form action="/signup/check-answers" method="post">
+        <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Submit</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

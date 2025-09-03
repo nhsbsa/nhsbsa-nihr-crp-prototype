@@ -1,0 +1,17 @@
+{# Minimal NIHR header bar with its own styles #}
+<style>
+  /* Critical styles inline so it shows immediately even before SCSS recompiles */
+  .nihr-header{background:#fff;border-bottom:1px solid #e5e7eb;}
+  .nihr-header__inner{padding:16px 0;display:flex;align-items:center}
+  .nihr-header__logo img{display:block;height:32px}
+  @media (min-width:48em){.nihr-header__inner{padding:18px 0}}
+</style>
+
+<header class="nihr-header" role="banner">
+  <div class="nhsuk-width-container nihr-header__inner">
+    <a class="nihr-header__logo" href="/">
+      <img src="/images/nihr-logo-prototype.png"
+           alt="NIHR | National Institute for Health and Care Research">
+    </a>
+  </div>
+</header>

@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Epic: Admin / Researcher sign up & login{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+
+  <nav class="nhsuk-breadcrumb">
+    <ol class="nhsuk-breadcrumb__list">
+      <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" href="/">Prototype hub</a></li>
+    </ol>
+  </nav>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <span class="nhsuk-tag">Epic in progress</span>
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-top-2">Admin / Researcher sign up &amp; login</h1>
+      <p class="nhsuk-body">Authentication and first-time onboarding for admins and researchers. Choose a journey to start testing.</p>
+      <p class="nhsuk-hint">Last updated: 02 Sep 2025</p>
+    </div>
+  </div>
+
+  <h2 class="nhsuk-heading-l nhsuk-u-margin-top-4">Journeys</h2>
+
+  <ul class="nhsuk-grid-row nhsuk-card-group">
+
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
+        <h3 class="nhsuk-card__heading nhsuk-heading-m">
+          <a class="nhsuk-card__link" href="/prototypes/admin-researcher-signup?from=epic">Researcher sign up</a>
+        </h3>
+        <p class="nhsuk-card__description">Create a researcher account via email/password or GOV.UK One Login (simulated).</p>
+      </div></div>
+    </li>
+
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
+        <h3 class="nhsuk-card__heading nhsuk-heading-m">
+          <a class="nhsuk-card__link" href="/admin/create-account?from=epic">Admin sign in &amp; create account in platform</a>
+        </h3>
+        <p class="nhsuk-card__description">Start the admin sign-in flow and create an account.</p>
+      </div></div>
+    </li>
+
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
+        <h3 class="nhsuk-card__heading nhsuk-heading-m">
+          <a class="nhsuk-card__link" href="/admin/manage-requests?from=epic">Admin sign in &amp; managing user request</a>
+        </h3>
+        <p class="nhsuk-card__description">View and action incoming researcher access requests.</p>
+      </div></div>
+    </li>
+
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
+        <h3 class="nhsuk-card__heading nhsuk-heading-m">
+          <a class="nhsuk-card__link" href="/admin/delete-admin?from=epic">Admin sign in &amp; delete admin account</a>
+        </h3>
+        <p class="nhsuk-card__description">Remove an admin account.</p>
+      </div></div>
+    </li>
+
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
+        <h3 class="nhsuk-card__heading nhsuk-heading-m">
+          <a class="nhsuk-card__link" href="/admin/delete-researcher?from=epic">Admin sign in &amp; delete researcher account</a>
+        </h3>
+        <p class="nhsuk-card__description">Delete a researcher account as an admin.</p>
+      </div></div>
+    </li>
+
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
+        <h3 class="nhsuk-card__heading nhsuk-heading-m">
+          <a class="nhsuk-card__link" href="/researcher/delete-account?from=epic">Researcher sign in &amp; delete account</a>
+        </h3>
+        <p class="nhsuk-card__description">Remove your researcher account.</p>
+      </div></div>
+    </li>
+
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
+        <h3 class="nhsuk-card__heading nhsuk-heading-m">
+          <a class="nhsuk-card__link" href="/researcher/delete-account-blocked?from=epic">Researcher sign in – cannot delete (active studies)</a>
+        </h3>
+        <p class="nhsuk-card__description">Deletion blocked because there are active studies linked to the account.</p>
+      </div></div>
+    </li>
+
+  </ul>
+
+  <div class="nhsuk-u-margin-top-5">
+    <a href="/" class="nhsuk-link">Back to Prototype hub</a>
+  </div>
+
+</div>
+{% endblock %}

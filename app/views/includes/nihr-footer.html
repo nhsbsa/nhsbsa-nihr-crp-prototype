@@ -1,0 +1,86 @@
+{# Inline critical styles so it renders immediately #}
+<style>
+  .nihr-footer{background:#0B2D4A;color:#fff;}
+  .nihr-footer a{color:#D4E2F5;text-decoration:none}
+  .nihr-footer a:hover{text-decoration:underline}
+  .nihr-footer__wrap{padding:40px 0 28px}
+  .nihr-footer__grid{display:grid;grid-template-columns:1fr auto;gap:24px}
+  .nihr-footer__cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+  .nihr-footer__heading{margin:0 0 12px;font-size:18px;line-height:1.3;color:#fff}
+  .nihr-footer__list{list-style:none;margin:0;padding:0}
+  .nihr-footer__list li{margin:6px 0}
+  .nihr-footer__aside{display:flex;align-items:flex-start;justify-content:flex-end}
+  .nihr-footer__funded{text-align:right}
+  .nihr-footer__funded span{display:block;margin-bottom:8px;opacity:.9}
+  .nihr-footer__rule{border:0;border-top:1px solid #8FA7C4;opacity:.6;margin:28px 0}
+  .nihr-footer__bottom{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .nihr-footer__social,.nihr-footer__policies{list-style:none;margin:0;padding:0;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  .nihr-footer__social a{display:inline-flex;width:28px;height:28px;border:1px solid #D4E2F5;border-radius:50%;align-items:center;justify-content:center;font-weight:700;line-height:1}
+  @media(min-width:48em){.nihr-footer__wrap{padding:44px 0 32px}}
+</style>
+
+<footer class="nihr-footer" role="contentinfo">
+  <div class="nhsuk-width-container nihr-footer__wrap">
+    <div class="nihr-footer__grid">
+      <!-- Columns -->
+      <div class="nihr-footer__cols">
+        <div>
+          <h3 class="nihr-footer__heading">Useful links</h3>
+          <ul class="nihr-footer__list">
+            <li><a href="#">Contact us</a></li>
+            <li><a href="#">Glossary</a></li>
+            <li><a href="#">Login to NIHR systems</a></li>
+            <li><a href="#">Newsletters</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="nihr-footer__heading">About</h3>
+          <ul class="nihr-footer__list">
+            <li><a href="#">News, views and stories</a></li>
+            <li><a href="#">Policies and guidelines</a></li>
+            <li><a href="#">Our people</a></li>
+            <li><a href="#">Events</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="nihr-footer__heading">Get involved</h3>
+          <ul class="nihr-footer__list">
+            <li><a href="#">Jobs</a></li>
+            <li><a href="#">Join our committees</a></li>
+            <li><a href="#">Become a reviewer</a></li>
+            <li><a href="#">Take part in a study</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Funded by lock-up -->
+      <aside class="nihr-footer__aside">
+        <div class="nihr-footer__funded">
+          <span>Funded by</span>
+          <img src="/images/dhsc-logo.png" alt="Department of Health &amp; Social Care" height="52">
+        </div>
+      </aside>
+    </div>
+
+    <hr class="nihr-footer__rule">
+
+    <!-- Bottom row -->
+    <div class="nihr-footer__bottom">
+      <ul class="nihr-footer__social" aria-label="NIHR social media">
+        <li><a href="#" aria-label="LinkedIn">in</a></li>
+        <li><a href="#" aria-label="X">X</a></li>
+        <li><a href="#" aria-label="Facebook">f</a></li>
+        <li><a href="#" aria-label="YouTube">▶</a></li>
+        <li><a href="#" aria-label="Instagram">●</a></li>
+      </ul>
+      <ul class="nihr-footer__policies">
+        <li><a href="#">Accessibility statement</a></li>
+        <li><a href="#">Cookies policy</a></li>
+        <li><a href="#">Privacy policy</a></li>
+        <li>NIHR 2024</li>
+      </ul>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Enter security code – GOV.UK One Login{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <div class="govuk-sim-header" style="background:#0b0c0c;color:#fff;padding:8px 12px;border-radius:4px;display:inline-block;font-weight:600;font-size:14px;margin-bottom:16px">
+        GOV.UK One Login (simulated)
+      </div>
+
+      <h1 class="nhsuk-heading-xl">Enter the 6 digit security code</h1>
+
+      {% if email %}
+        <p class="nhsuk-body">We’ve sent a code to <strong>{{ email }}</strong>.</p>
+      {% else %}
+        <p class="nhsuk-body">We’ve sent a code to your email address.</p>
+      {% endif %}
+
+      <div class="govuk-sim-hint" style="background:#f3f2f1;border-left:5px solid #505a5f;padding:12px 16px;margin:16px 0 24px">
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-1"><strong>Prototype notice:</strong> Use any 6 digits (e.g. <code>123456</code>). This is a simulation.</p>
+      </div>
+
+      {% if errors and errors.code %}
+        <div class="nhsuk-error-summary" role="alert" tabindex="-1">
+          <h2 class="nhsuk-error-summary__title">There is a problem</h2>
+          <div class="nhsuk-error-summary__body">
+            <ul class="nhsuk-list nhsuk-error-summary__list">
+              <li><a href="#code">{{ errors.code }}</a></li>
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+
+      <form action="/one-login/verify-code" method="post" novalidate>
+        <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="redirectUri" value="{{ redirectUri }}">
+
+        <div class="nhsuk-form-group {% if errors and errors.code %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="code">Security code</label>
+          {% if errors and errors.code %}
+            <p id="code-error" class="nhsuk-error-message">
+              <span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.code }}
+            </p>
+          {% endif %}
+          <input class="nhsuk-input nhsuk-input--width-10 {% if errors and errors.code %}nhsuk-input--error{% endif %}"
+                 id="code" name="code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6"
+                 value="{{ code or '' }}" {% if errors and errors.code %}aria-describedby="code-error"{% endif %}>
+        </div>
+
+        <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Continue</button>
+      </form>
+
+      <p class="nhsuk-body nhsuk-u-margin-top-4">
+        Didn’t get a code? <a href="/one-login/enter-code?state={{ state | urlencode }}&redirect_uri={{ redirectUri | urlencode }}">Resend the code</a> ·
+        <a href="/one-login/authorize?state={{ state | urlencode }}&redirect_uri={{ redirectUri | urlencode }}">Use a different email</a> ·
+        <a href="/prototypes/admin-researcher-signup">Cancel</a>
+      </p>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

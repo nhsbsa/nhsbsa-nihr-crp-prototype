@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Sign up to access the research platform{% endblock %}
+
+{% block content %}
+<div class="nhsuk-u-reading-width nihr-hero-pad">
+  <h1 class="nhsuk-heading-xl">Sign up to access the research platform</h1>
+
+  <div class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-2">
+    <a href="/one-login/email"
+       class="nhsuk-button btn-govuk-green"
+       draggable="false" role="button" data-module="nhsuk-button">
+      Sign up with GOV.UK One Login
+    </a>
+  </div>
+
+  <div class="nhsuk-u-margin-top-2">
+    <a href="/signup/email"
+       class="nhsuk-button nhsuk-button--secondary btn-grey"
+       draggable="false" role="button" data-module="nhsuk-button">
+      Sign up with email and password
+    </a>
+  </div>
+</div>
+{% endblock %}

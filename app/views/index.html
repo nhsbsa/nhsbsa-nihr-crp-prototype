@@ -1,76 +1,146 @@
-<!-- Use this page as the index for your project -->
+{% extends "layout.html" %}
 
-<!-- ADDING CUSTOM CSS - Add your custom CSS or Sass in /app/assets/sass/main.scss -->
+{% block pageTitle %}NIHR Prototype Hub – Current Designs{% endblock %}
 
-<!-- Extends the layout from /app/views/layout.html -->
-{% extends 'layout.html' %}
-<!--
-  In /app/views/layout.html you can:
-    - change the header and footer
-    - add custom CSS and JavaScript
--->
-
-<!--
-  Use this to set the page name which will appear at the
-  start of the <title> tag, followed by the service name.
-  This is often not needed on the homepage, where only the
-  service name is needed. You can also reuse this variable
-  within the <h1>, where they are the same.
--->
-{% set pageName = "" %}
-
-<!-- For adding a breadcrumb or back link -->
-<!-- Code examples can be found at https://service-manual.nhs.uk/design-system/components/breadcrumbs and https://service-manual.nhs.uk/design-system/components/back-link -->
-{% block beforeContent %}
-{% endblock %}
-
-<!-- For adding page content -->
-<!-- Page layout code can be found at https://service-manual.nhs.uk/design-system/styles/layout -->
 {% block content %}
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-two-thirds">
 
-      <!-- You can delete the lines below -->
-      <h2 class="nhsuk-heading-l">
-        NHS prototype kit
-        <span class="nhsuk-caption-xl nhsuk-caption--bottom">Version {{version}}</span>
+{# Featured epic id #}
+{% set featuredId = "admin-researcher-signup" %}
+
+{# Current epics on the hub #}
+{% set epics = [
+  {
+    id: "admin-researcher-signup",
+    title: "Admin / Researcher sign up & login",
+    code: "",
+    status: "In progress",
+    updated: "02 Sep 2025",
+    summary: "Authentication and first-time onboarding for admins and researchers.",
+    href: "/epic/admin-researcher-signup",
+    prototypeUrl: "/epic/admin-researcher-signup",
+    notesUrl: "/docs/admin-researcher-signup",
+    jiraUrl: ""
+  },
+  {
+    id: "study-matching",
+    title: "Study matching – initial",
+    code: "CORP-175",
+    status: "In progress",
+    updated: "30 Aug 2025",
+    summary: "Initial matching flow from research needs to potential participants.",
+    href: "/prototypes/study-matching",
+    prototypeUrl: "/prototypes/study-matching",
+    notesUrl: "/docs/study-matching",
+    jiraUrl: "https://jira/browse/CORP-175"
+  },
+  {
+    id: "submit-study",
+    title: "Researcher: Submit a new study",
+    code: "CORP-200",
+    status: "In progress",
+    updated: "29 Aug 2025",
+    summary: "Create and submit study details for review and approval.",
+    href: "/prototypes/submit-study",
+    prototypeUrl: "/prototypes/submit-study",
+    notesUrl: "/docs/submit-study",
+    jiraUrl: "https://jira/browse/CORP-200"
+  },
+  {
+    id: "manage-requests",
+    title: "Admin: Manage study requests",
+    code: "CORP-198",
+    status: "In progress",
+    updated: "28 Aug 2025",
+    summary: "Triage, view and manage incoming study submissions.",
+    href: "/prototypes/manage-requests",
+    prototypeUrl: "/prototypes/manage-requests",
+    notesUrl: "/docs/manage-requests",
+    jiraUrl: "https://jira/browse/CORP-198"
+  },
+  {
+    id: "approve-requests",
+    title: "Admin: Approval of study requests",
+    code: "CORP-184",
+    status: "In progress",
+    updated: "28 Aug 2025",
+    summary: "Decisioning, approvals and outcomes for study submissions.",
+    href: "/prototypes/approve-requests",
+    prototypeUrl: "/prototypes/approve-requests",
+    notesUrl: "/docs/approve-requests",
+    jiraUrl: "https://jira/browse/CORP-184"
+  }
+] %}
+
+{% set featured = (epics | selectattr("id", "equalto", featuredId) | list)[0] %}
+
+<div class="nhsuk-u-reading-width">
+  <h1 class="nhsuk-heading-xl">NIHR Prototype Hub</h1>
+  <p class="nhsuk-body">
+    The single place to access the <strong>most current designs in progress</strong>. Use this hub to open the latest clickable prototypes and supporting notes.
+  </p>
+</div>
+
+{% if featured %}
+<section class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-6">
+  <div class="nhsuk-promo nhsuk-promo--small nhsuk-promo--image">
+    <div class="nhsuk-promo__content">
+      <span class="nhsuk-tag">Epic in progress</span>
+      <h2 class="nhsuk-promo__heading nhsuk-heading-l nhsuk-u-margin-top-2">
+        <a class="nhsuk-promo__link" href="{{ featured.href }}">
+          {{ featured.title }}{% if featured.code %} <span class="nhsuk-u-visually-hidden"> – </span><span class="nhsuk-hint">{{ featured.code }}</span>{% endif %}
+        </a>
       </h2>
-      <hr>
-
-
-      <!-- Add your content here -->
-      <!-- Styles and components can be found at https://service-manual.nhs.uk/design-system -->
-
-      <h1 class="nhsuk-heading-xl">
-        {{ serviceName }}
-      </h1>
-
-      <p>Set the service name for your prototype by editing <strong>/app/config.js</strong>.</p>
-
-      <p>
-        This is the index page for your prototype. You can find it at <strong>/app/views/index.html</strong>.
+      <p class="nhsuk-body">{{ featured.summary }}</p>
+      <p class="nhsuk-hint nhsuk-u-margin-bottom-2">
+        Status: <strong>{{ featured.status }}</strong> · Last updated: {{ featured.updated }}
       </p>
-
-      <hr>
-
-      <h2 class="nhsuk-heading-l">
-        Get started
-      </h2>
-
-      <ul class="nhsuk-list nhsuk-list--bullet">
-        <li>
-          <a href="https://prototype-kit.service-manual.nhs.uk/how-tos">NHS prototype kit guides</a> – including a tutorial
-        </li>
-        <li>
-          <a href="https://service-manual.nhs.uk/design-system">NHS digital service manual</a> – for code snippets and guidance on using NHS styles, components and patterns
-        </li>
-      </ul>
-
-      <p>
-        There is a selection of <a href="/example-templates">example page templates</a> in <strong>/lib/example-templates/</strong>. To use these, copy and paste them into <strong>/app/views/</strong>.
-      </p>
-      <!-- End of content -->
-
+      <div class="nhsuk-button-group">
+        <a class="nhsuk-button" href="{{ featured.prototypeUrl }}">Open latest prototype</a>
+        {% if featured.notesUrl %}
+          <a class="nhsuk-link" href="{{ featured.notesUrl }}">Design notes</a>
+        {% endif %}
+        {% if featured.jiraUrl %}
+          <a class="nhsuk-link" href="{{ featured.jiraUrl }}">Jira</a>
+        {% endif %}
+      </div>
     </div>
   </div>
+</section>
+{% endif %}
+
+<section aria-labelledby="all-epics">
+  <div class="nhsuk-u-reading-width">
+    <h2 id="all-epics" class="nhsuk-heading-l">All current epics</h2>
+    <p class="nhsuk-hint">Links go to the most up-to-date prototype pages for each epic.</p>
+  </div>
+
+  <ul class="nhsuk-grid-row nhsuk-card-group">
+    {% for epic in epics %}
+      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+        <div class="nhsuk-card nhsuk-card--clickable{% if epic.id == featuredId %} nhsuk-card--feature{% endif %}">
+          <div class="nhsuk-card__content">
+            <h3 class="nhsuk-card__heading nhsuk-heading-m">
+              <a class="nhsuk-card__link" href="{{ epic.href }}">
+                {{ epic.title }}{% if epic.code %} <span class="nhsuk-hint">({{ epic.code }})</span>{% endif %}
+              </a>
+            </h3>
+            <p class="nhsuk-body-s nhsuk-u-margin-bottom-2">{{ epic.summary }}</p>
+            <p class="nhsuk-hint nhsuk-u-margin-bottom-2">
+              Status: <strong>{{ epic.status }}</strong> · Last updated: {{ epic.updated }}
+            </p>
+            <ul class="nhsuk-list nhsuk-list--inline">
+              <li><a href="{{ epic.prototypeUrl }}">Prototype</a></li>
+              {% if epic.notesUrl %}<li><a href="{{ epic.notesUrl }}">Notes</a></li>{% endif %}
+              {% if epic.jiraUrl %}<li><a href="{{ epic.jiraUrl }}">Jira</a></li>{% endif %}
+            </ul>
+            {% if epic.id == featuredId %}
+              <span class="nhsuk-tag nhsuk-u-margin-top-2">In progress</span>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+
 {% endblock %}

@@ -1,8 +1,9 @@
-// External dependencies
+// Master router: mount epic-specific routers
 const express = require('express')
-
 const router = express.Router()
 
-// Add your routes here - above the module.exports line
+router.use(require('./routes-auth'))   // Admin/Researcher sign-up epic
+router.use(require('./routes-admin'))  // Admin: manage account requests epic
+router.use(require('./routes-epics'))  // Epic landing pages
 
 module.exports = router

@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Manage account requests{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+
+  <p class="nhsuk-body-s nhsuk-u-text-align-right">
+    Welcome back, <strong>{{ user.name }}</strong> &nbsp; <a href="/admin/logout">Log out</a>
+  </p>
+
+  <div class="nhsuk-grid-row">
+    <!-- LEFT NAV (1/4) -->
+    <div class="nhsuk-grid-column-one-quarter">
+      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Manage platform</h2>
+
+      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Account management</p>
+      <nav class="nhsuk-u-margin-bottom-5">
+        <ul class="nhsuk-list">
+          <li><a href="/admin/requests" aria-current="page">Approve account requests</a></li>
+          <li><a href="#">User account management</a></li>
+          <li><a href="#">Create administrator accounts</a></li>
+        </ul>
+      </nav>
+
+      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Support</p>
+      <ul class="nhsuk-list">
+        <li><a href="#">Help</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN (3/4) -->
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-2">Welcome to [service name]</h1>
+      <p class="nhsuk-body">View and manage account requests</p>
+
+      <div class="nhsuk-inset-text">
+        <p>You have <strong>{{ total }}</strong> <strong>account requests</strong> pending review.</p>
+      </div>
+
+      <h2 class="nhsuk-heading-m nhsuk-u-margin-top-4">Manage account requests</h2>
+
+        <form role="search" method="get" action="/admin/requests"
+            class="nhsuk-search nhsuk-search--on-white nihr-search">
+        <label class="nhsuk-u-visually-hidden" for="admin-search-field">Search</label>
+        <input class="nhsuk-search__input" id="admin-search-field" name="q" type="search"
+                placeholder="Search" value="{{ query or '' }}">
+        <button class="nhsuk-search__submit" type="submit" aria-label="Search">
+            <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M19.58 21l-5.63-5.63a7.5 7.5 0 111.41-1.41L21 19.58 19.58 21zM4 10a6 6 0 1012 0A6 6 0 004 10z"/>
+            </svg>
+        </button>
+        </form>
+        <p class="nhsuk-hint nhsuk-u-margin-top-1">Showing {{ total }} of {{ total }} results</p>
+
+
+      <h3 class="nhsuk-heading-s nhsuk-u-margin-top-3">User requests pending review</h3>
+      <table class="nhsuk-table">
+        <thead class="nhsuk-table__head">
+          <tr class="nhsuk-table__row">
+            <th scope="col" class="nhsuk-table__header">Name</th>
+            <th scope="col" class="nhsuk-table__header">Organisation</th>
+            <th scope="col" class="nhsuk-table__header">Submitted</th>
+            <th scope="col" class="nhsuk-table__header">Type</th>
+            <th scope="col" class="nhsuk-table__header">Action</th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+          {% for r in items %}
+          <tr class="nhsuk-table__row">
+            <td class="nhsuk-table__cell"><a href="/admin/requests/{{ r.id }}">{{ r.name }}</a></td>
+            <td class="nhsuk-table__cell">{{ r.org }}</td>
+            <td class="nhsuk-table__cell">{{ r.submitted }}</td>
+            <td class="nhsuk-table__cell">{{ r.type }}</td>
+            <td class="nhsuk-table__cell">
+              <a href="/admin/requests/{{ r.id }}">Approve</a><br>
+              <a href="/admin/requests/{{ r.id }}">Reject</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

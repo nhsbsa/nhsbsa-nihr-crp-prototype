@@ -1,0 +1,173 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Tell us about yourself{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <a class="nhsuk-back-link" href="/signup/verify-email?email={{ (data.email or '') | urlencode }}">Go back</a>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      {# Error summary inside main column, before H1 per NHS guidance #}
+      {% if errors and (errors.title or errors.firstName or errors.lastName or errors.email or errors.organisation or errors.orgName or errors.orgJustification or errors.agree or errors.consent) %}
+      <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+        <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+        <div class="nhsuk-error-summary__body">
+          <ul class="nhsuk-list nhsuk-error-summary__list">
+            {% if errors.title %}<li><a href="#title">Select a title</a></li>{% endif %}
+            {% if errors.firstName %}<li><a href="#firstName">Enter your first name</a></li>{% endif %}
+            {% if errors.lastName %}<li><a href="#lastName">Enter your last name</a></li>{% endif %}
+            {% if errors.email %}<li><a href="#email">Enter a valid email address</a></li>{% endif %}
+            {% if errors.organisation %}<li><a href="#organisation">Select an organisation</a></li>{% endif %}
+            {% if errors.orgName %}<li><a href="#orgName">Enter your organisation name</a></li>{% endif %}
+            {% if errors.orgJustification %}<li><a href="#orgJustification">Provide justification for using the platform</a></li>{% endif %}
+            {% if errors.agree %}<li><a href="#agree">You must agree to the terms and conditions</a></li>{% endif %}
+            {% if errors.consent %}<li><a href="#consent">You must consent to use of your data</a></li>{% endif %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      <h1 class="nhsuk-heading-xl">Tell us about yourself</h1>
+
+      <form action="/signup/profile" method="post" novalidate>
+
+        {# Title #}
+        <div class="nhsuk-form-group {% if errors.title %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="title">Title</label>
+          {% if errors.title %}
+            <p id="title-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.title }}</p>
+          {% endif %}
+          <select class="nhsuk-select {% if errors.title %}nhsuk-input--error{% endif %}" id="title" name="title" {% if errors.title %}aria-describedby="title-error"{% endif %}>
+            <option value="">{{ 'Please select a title' }}</option>
+            <option value="Mr"   {% if data.title == 'Mr' %}selected{% endif %}>Mr</option>
+            <option value="Mrs"  {% if data.title == 'Mrs' %}selected{% endif %}>Mrs</option>
+            <option value="Ms"   {% if data.title == 'Ms' %}selected{% endif %}>Ms</option>
+            <option value="Dr"   {% if data.title == 'Dr' %}selected{% endif %}>Dr</option>
+            <option value="Prof" {% if data.title == 'Prof' %}selected{% endif %}>Prof</option>
+          </select>
+        </div>
+
+        {# First name #}
+        <div class="nhsuk-form-group {% if errors.firstName %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="firstName">First name</label>
+          {% if errors.firstName %}
+            <p id="firstName-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.firstName }}</p>
+          {% endif %}
+          <input class="nhsuk-input nhsuk-input--width-20 {% if errors.firstName %}nhsuk-input--error{% endif %}" id="firstName" name="firstName" type="text" value="{{ data.firstName or '' }}" {% if errors.firstName %}aria-describedby="firstName-error"{% endif %}>
+        </div>
+
+        {# Last name #}
+        <div class="nhsuk-form-group {% if errors.lastName %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="lastName">Last name</label>
+          {% if errors.lastName %}
+            <p id="lastName-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.lastName }}</p>
+          {% endif %}
+          <input class="nhsuk-input nhsuk-input--width-20 {% if errors.lastName %}nhsuk-input--error{% endif %}" id="lastName" name="lastName" type="text" value="{{ data.lastName or '' }}" {% if errors.lastName %}aria-describedby="lastName-error"{% endif %}>
+        </div>
+
+        {# Email #}
+        <div class="nhsuk-form-group {% if errors.email %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="email">Email</label>
+          {% if errors.email %}
+            <p id="email-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.email }}</p>
+          {% endif %}
+          <input class="nhsuk-input nhsuk-input--width-20 {% if errors.email %}nhsuk-input--error{% endif %}" id="email" name="email" type="email" value="{{ data.email or '' }}" autocomplete="email" {% if errors.email %}aria-describedby="email-error"{% endif %}>
+        </div>
+
+        {# Organisation #}
+        <div class="nhsuk-form-group {% if errors.organisation %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="organisation">Organisation</label>
+          {% if errors.organisation %}
+            <p id="organisation-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.organisation }}</p>
+          {% endif %}
+          <select class="nhsuk-select {% if errors.organisation %}nhsuk-input--error{% endif %}" id="organisation" name="organisation" {% if errors.organisation %}aria-describedby="organisation-error"{% endif %}>
+            <option value="">{{ 'Please select an organisation' }}</option>
+            <option value="NIHR" {% if data.organisation == 'NIHR' %}selected{% endif %}>NIHR</option>
+            <option value="NHS"  {% if data.organisation == 'NHS' %}selected{% endif %}>NHS</option>
+            <option value="University" {% if data.organisation == 'University' %}selected{% endif %}>University</option>
+            <option value="Other" {% if data.organisation == 'Other' %}selected{% endif %}>Other</option>
+          </select>
+        </div>
+
+        {# Conditional reveal when Organisation = Other #}
+        {% set showOther = (data.organisation == 'Other') %}
+        <div id="org-other-fields" {% if not showOther %}hidden{% endif %} aria-hidden="{{ not showOther }}">
+          <div class="nhsuk-form-group {% if errors.orgName %}nhsuk-form-group--error{% endif %}">
+            <label class="nhsuk-label" for="orgName">Organisation name</label>
+            {% if errors.orgName %}
+              <p id="orgName-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.orgName }}</p>
+            {% endif %}
+            <input class="nhsuk-input nhsuk-input--width-20 {% if errors.orgName %}nhsuk-input--error{% endif %}" id="orgName" name="orgName" type="text" value="{{ data.orgName or '' }}" {% if errors.orgName %}aria-describedby="orgName-error"{% endif %}>
+          </div>
+
+          <div class="nhsuk-form-group {% if errors.orgJustification %}nhsuk-form-group--error{% endif %}">
+            <label class="nhsuk-label" for="orgJustification">Provide justification for using the platform</label>
+            {% if errors.orgJustification %}
+              <p id="orgJustification-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.orgJustification }}</p>
+            {% endif %}
+            <textarea class="nhsuk-textarea {% if errors.orgJustification %}nhsuk-input--error{% endif %}"
+                      id="orgJustification" name="orgJustification" rows="5"
+                      {% if errors.orgJustification %}aria-describedby="orgJustification-error"{% endif %}>{{ (data.orgJustification or '') | trim }}</textarea>
+          </div>
+        </div>
+
+        {# Agreements (with hidden defaults to guarantee a value) #}
+        <div class="nhsuk-checkboxes {% if errors.agree %}nhsuk-form-group--error{% endif %}">
+          {% if errors.agree %}
+            <p id="agree-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.agree }}</p>
+          {% endif %}
+          <input type="hidden" name="agree" value="no">
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="agree" name="agree" type="checkbox" value="yes"
+                   {% if data.agree == 'yes' %}checked{% endif %} {% if errors.agree %}aria-describedby="agree-error"{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="agree">I agree to the terms and conditions</label>
+          </div>
+        </div>
+
+        <div class="nhsuk-checkboxes {% if errors.consent %}nhsuk-form-group--error{% endif %}">
+          {% if errors.consent %}
+            <p id="consent-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.consent }}</p>
+          {% endif %}
+          <input type="hidden" name="consent" value="no">
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="consent" name="consent" type="checkbox" value="yes"
+                   {% if data.consent == 'yes' %}checked{% endif %} {% if errors.consent %}aria-describedby="consent-error"{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="consent">I consent to use of my data as described in the privacy notice</label>
+          </div>
+        </div>
+
+        <button class="nhsuk-button nhsuk-u-margin-top-2" type="submit" data-module="nhsuk-button">Continue</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var select = document.getElementById('organisation');
+    var reveal = document.getElementById('org-other-fields');
+    var nameInput = document.getElementById('orgName');
+    var justTextarea = document.getElementById('orgJustification');
+
+    function updateReveal () {
+      var show = (select.value === 'Other');
+      if (show) {
+        reveal.hidden = false;
+        reveal.setAttribute('aria-hidden', 'false');
+        nameInput.removeAttribute('disabled');
+        justTextarea.removeAttribute('disabled');
+      } else {
+        reveal.hidden = true;
+        reveal.setAttribute('aria-hidden', 'true');
+        nameInput.setAttribute('disabled', 'disabled');
+        justTextarea.setAttribute('disabled', 'disabled');
+      }
+    }
+
+    updateReveal();
+    select.addEventListener('change', updateReveal);
+  })();
+</script>
+{% endblock %}
