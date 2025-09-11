@@ -1,0 +1,209 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Submit a study – task list{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+
+        <h1 class="nhsuk-heading-xl">Submit a study</h1>
+        {% if pageHint %}
+          <p class="nhsuk-hint">{{ pageHint }}</p>
+        {% endif %}
+
+        {# Progress #}
+        <div class="nhsuk-inset-text nhsuk-u-margin-top-2">
+          <p class="nhsuk-u-margin-bottom-1"><strong>Status overview</strong></p>
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-2">
+            {{ completedCount }} of {{ totalCount }} sections complete
+            {% if estCount %} &nbsp;•&nbsp; Estimated volunteers: <strong>{{ estCount }}</strong>{% endif %}
+            {% if invitePendingCount != null %} &nbsp;•&nbsp; Invites pending: <strong>{{ invitePendingCount }}</strong>{% endif %}
+          </p>
+          <div aria-hidden="true" style="height:8px; background:#e8edee; border-radius:4px; overflow:hidden;">
+            <div style="height:8px; width: {{ progressPct }}%; background:#007f3b;"></div>
+          </div>
+          <p class="nhsuk-hint nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-0">
+            {% if lastSaved %}Last saved: {{ lastSaved }}{% endif %}
+          </p>
+        </div>
+
+        {# Next step #}
+        <div class="nhsuk-u-margin-top-4">
+          {% if nextHref %}
+            <a class="nhsuk-button" href="{{ nextHref }}">Continue to {{ nextLabel }}</a>
+          {% else %}
+            <a class="nhsuk-button" href="/researcher/preview">Review and submit</a>
+          {% endif %}
+        </div>
+
+        <ol class="app-task-list nhsuk-u-margin-top-6" style="padding-left:0; list-style:none;">
+
+          {# TABLE: Only the sections that have Start/Not started (1–7) #}
+          <li class="app-task-list__item nhsuk-u-padding-bottom-3 nhsuk-u-border-bottom">
+            <table class="nhsuk-table nhsuk-u-margin-bottom-0">
+              <caption class="nhsuk-table__caption nhsuk-table__caption--m">Your tasks</caption>
+              <thead class="nhsuk-table__head">
+                <tr class="nhsuk-table__row">
+                  <th scope="col" class="nhsuk-table__header">Section</th>
+                  <th scope="col" class="nhsuk-table__header">Status</th>
+                  <th scope="col" class="nhsuk-table__header nhsuk-u-text-align-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="nhsuk-table__body">
+                {# 1 #}
+                <tr class="nhsuk-table__row">
+                  <th scope="row" class="nhsuk-table__header">Identify your study</th>
+                  <td class="nhsuk-table__cell">
+                    {% if st.identify %}
+                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
+                    {% else %}
+                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
+                    {% endif %}
+                  </td>
+                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+                    <a class="nhsuk-link" href="/researcher/identify">
+                      {% if st.identify %}Change{% else %}Start{% endif %}
+                    </a>
+                  </td>
+                </tr>
+
+                {# 2 #}
+                <tr class="nhsuk-table__row">
+                  <th scope="row" class="nhsuk-table__header">Study details</th>
+                  <td class="nhsuk-table__cell">
+                    {% if st.details %}
+                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
+                    {% else %}
+                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
+                    {% endif %}
+                  </td>
+                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+                    <a class="nhsuk-link" href="/researcher/study-details">
+                      {% if st.details %}Change{% else %}Start{% endif %}
+                    </a>
+                  </td>
+                </tr>
+
+                {# 3 #}
+                <tr class="nhsuk-table__row">
+                  <th scope="row" class="nhsuk-table__header">Choose platform(s)</th>
+                  <td class="nhsuk-table__cell">
+                    {% if st.scope %}
+                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
+                    {% else %}
+                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
+                    {% endif %}
+                  </td>
+                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+                    <a class="nhsuk-link" href="/researcher/scope">
+                      {% if st.scope %}Change{% else %}Start{% endif %}
+                    </a>
+                  </td>
+                </tr>
+
+                {# 4 #}
+                <tr class="nhsuk-table__row">
+                  <th scope="row" class="nhsuk-table__header">
+                    Volunteer criteria
+                    {% if estCount %}
+                      <div class="nhsuk-hint nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-0">Estimated volunteers matched: <strong>{{ estCount }}</strong></div>
+                    {% endif %}
+                  </th>
+                  <td class="nhsuk-table__cell">
+                    {% if st.criteria %}
+                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
+                    {% else %}
+                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
+                    {% endif %}
+                  </td>
+                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+                    <a class="nhsuk-link" href="/researcher/volunteer-criteria">
+                      {% if st.criteria %}Change{% else %}Start{% endif %}
+                    </a>
+                  </td>
+                </tr>
+
+                {# 5 #}
+                <tr class="nhsuk-table__row">
+                  <th scope="row" class="nhsuk-table__header">Arms / sub-studies</th>
+                  <td class="nhsuk-table__cell">
+                    {% if st.arms %}
+                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
+                    {% else %}
+                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
+                    {% endif %}
+                  </td>
+                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+                    <a class="nhsuk-link" href="/researcher/arms">
+                      {% if st.arms %}Change{% else %}Start{% endif %}
+                    </a>
+                  </td>
+                </tr>
+
+                {# 6 #}
+                <tr class="nhsuk-table__row">
+                  <th scope="row" class="nhsuk-table__header">
+                    Sites & contacts
+                    {% if invitePendingCount != null %}
+                      <div class="nhsuk-hint nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-0">Invites pending: <strong>{{ invitePendingCount }}</strong></div>
+                    {% endif %}
+                  </th>
+                  <td class="nhsuk-table__cell">
+                    {% if st.sites %}
+                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
+                    {% else %}
+                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
+                    {% endif %}
+                  </td>
+                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+                    <a class="nhsuk-link" href="/researcher/sites">
+                      {% if st.sites %}Change{% else %}Start{% endif %}
+                    </a>
+                  </td>
+                </tr>
+
+                {# 7 #}
+                <tr class="nhsuk-table__row">
+                  <th scope="row" class="nhsuk-table__header">Ethics approval</th>
+                  <td class="nhsuk-table__cell">
+                    {% if st.ethics %}
+                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
+                    {% else %}
+                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
+                    {% endif %}
+                  </td>
+                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+                    <a class="nhsuk-link" href="/researcher/ethics">
+                      {% if st.ethics %}Change{% else %}Start{% endif %}
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+
+          {# 8. Preview and submit — left UNCHANGED #}
+          <li class="app-task-list__item nhsuk-u-padding-bottom-3 nhsuk-u-border-bottom">
+            <span class="nhsuk-heading-m nhsuk-u-margin-bottom-1">Preview and submit</span>
+            <div class="nhsuk-u-display-flex nhsuk-u-flex-wrap">
+              {% if canPreview %}
+                <a class="nhsuk-link nhsuk-u-margin-right-3" href="/researcher/preview">Open preview</a>
+                <a class="nhsuk-link nhsuk-u-margin-right-3" href="/researcher/check-answers">Check your answers</a>
+              {% else %}
+                <span class="nhsuk-hint">Complete “Identify your study”, “Study details”, “Choose platform(s)” and “Volunteer criteria” to preview.</span>
+              {% endif %}
+            </div>
+          </li>
+        </ol>
+
+        <form method="post" action="/researcher/task-list/reset" class="nhsuk-u-margin-top-5">
+          <button class="nhsuk-button nhsuk-button--secondary" type="submit">Reset this prototype</button>
+        </form>
+
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

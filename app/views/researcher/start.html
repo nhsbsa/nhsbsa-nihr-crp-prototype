@@ -1,0 +1,20 @@
+<!-- app/views/researcher/start.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Sign in to access the research platform{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-xl">Sign in to access the research platform</h1>
+
+      <p class="nhsuk-body">
+        <a class="nhsuk-button" href="/researcher/sign-in" data-module="nhsuk-button">Sign in with GOV.UK One Login</a>
+      </p>
+      <p class="nhsuk-body">
+        <a class="nhsuk-button nhsuk-button--secondary" href="/researcher/sign-in">Sign in with email and password</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

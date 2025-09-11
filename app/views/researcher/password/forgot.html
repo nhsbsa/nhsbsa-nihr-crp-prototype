@@ -1,0 +1,45 @@
+<!-- app/views/researcher/password/forgot.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Forgot password{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <p class="nhsuk-back-link"><a class="nhsuk-back-link__link" href="/researcher/sign-in">Go back</a></p>
+
+      {% if errors.email %}
+      <div class="nhsuk-error-summary" role="alert" tabindex="-1" data-module="nhsuk-error-summary">
+        <h2 class="nhsuk-error-summary__title">There is a problem</h2>
+        <div class="nhsuk-error-summary__body">
+          <ul class="nhsuk-list nhsuk-error-summary__list">
+            <li><a href="#email">Enter an email address in the correct format</a></li>
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      <h1 class="nhsuk-heading-xl">Forgot password</h1>
+
+      <p class="nhsuk-body">If you’ve forgotten your password, enter your email address and we’ll send you a link to reset it.</p>
+
+      <form method="post" action="/researcher/password/forgot" novalidate>
+        <div class="nhsuk-form-group{% if errors.email %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="email">Enter your email address</label>
+          {% if errors.email %}
+          <span class="nhsuk-error-message">
+            <span class="nhsuk-u-visually-hidden">Error:</span>
+            Enter an email address in the correct format, like someone@nihr.ac.uk
+          </span>
+          {% endif %}
+          <input class="nhsuk-input" id="email" name="email" type="email" value="{{ email or '' }}">
+        </div>
+
+        <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Request new password</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Study management{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Study management</h1>
+      <p class="nhsuk-body">Welcome to your dashboard. Choose an option on the left to manage studies.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

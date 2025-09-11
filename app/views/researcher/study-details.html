@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Study details{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+    <div class="nhsuk-grid-row"><div class="nhsuk-grid-column-two-thirds">
+
+      <a class="nhsuk-back-link" href="/researcher/task-list">Back</a>
+      <h1 class="nhsuk-heading-xl">Study details</h1>
+
+      {% if errors and (errors.shortName or errors.laySummary or errors.startDate or errors.endDate) %}
+        <div class="nhsuk-error-summary" role="alert" tabindex="-1" aria-labelledby="err-title">
+          <h2 id="err-title" class="nhsuk-error-summary__title">There is a problem</h2>
+          <div class="nhsuk-error-summary__body">
+            <ul class="nhsuk-list nhsuk-error-summary__list">
+              {% if errors.shortName %}<li><a href="#shortName">{{ errors.shortName }}</a></li>{% endif %}
+              {% if errors.laySummary %}<li><a href="#laySummary">{{ errors.laySummary }}</a></li>{% endif %}
+              {% if errors.startDate %}<li><a href="#recruitmentStartDate">{{ errors.startDate }}</a></li>{% endif %}
+              {% if errors.endDate %}<li><a href="#recruitmentEndDate">{{ errors.endDate }}</a></li>{% endif %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+
+      <form method="post" action="/researcher/study-details" novalidate>
+
+        <div class="nhsuk-form-group {% if errors.shortName %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="shortName">Short name</label>
+          <div class="nhsuk-hint">A concise name used across listings and emails.</div>
+          {% if errors.shortName %}<p class="nhsuk-error-message" id="shortName-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.shortName }}</p>{% endif %}
+          <input class="nhsuk-input nhsuk-input--width-20 {% if errors.shortName %}nhsuk-input--error{% endif %}" id="shortName" name="shortName" type="text" value="{{ data.shortName or '' }}" {% if errors.shortName %}aria-describedby="shortName-error"{% endif %}>
+        </div>
+
+        <div class="nhsuk-form-group {% if errors.laySummary %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="laySummary">Lay summary</label>
+          <div class="nhsuk-hint">Explain your study in plain English for the public.</div>
+          {% if errors.laySummary %}<p class="nhsuk-error-message" id="laySummary-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.laySummary }}</p>{% endif %}
+          <textarea class="nhsuk-textarea {% if errors.laySummary %}nhsuk-input--error{% endif %}" id="laySummary" name="laySummary" rows="8" aria-describedby="lay-hint lay-count">{% if data.laySummary %}{{ data.laySummary }}{% endif %}</textarea>
+          <p id="lay-count" class="nhsuk-hint nhsuk-u-margin-top-1">Suggested length: 600–800 characters. <span id="charCount">0</span> characters.</p>
+
+          {# Replaced accordion with NHS.UK Details toggle #}
+          <details class="nhsuk-details nhsuk-u-margin-top-2" data-module="nhsuk-details">
+            <summary class="nhsuk-details__summary">
+              <span class="nhsuk-details__summary-text">What to include (example)</span>
+            </summary>
+            <div class="nhsuk-details__text">
+              <p><strong>Good:</strong> “This study will find out whether a short home-based physiotherapy programme can help people recover after day-surgery. We’ll ask you to complete short weekly questionnaires for 6 weeks.”</p>
+              <p><strong>Avoid:</strong> jargon and acronyms without explanation.</p>
+            </div>
+          </details>
+        </div>
+
+        <fieldset class="nhsuk-fieldset" role="group" aria-describedby="date-hint">
+          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m"><h2 class="nhsuk-fieldset__heading">Recruitment dates</h2></legend>
+          <div id="date-hint" class="nhsuk-hint">You can change these later.</div>
+
+          <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-one-half">
+              <div class="nhsuk-form-group {% if errors.startDate %}nhsuk-form-group--error{% endif %}">
+                <label class="nhsuk-label" for="recruitmentStartDate">Start date</label>
+                {% if errors.startDate %}<p class="nhsuk-error-message" id="start-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.startDate }}</p>{% endif %}
+                <input class="nhsuk-input {% if errors.startDate %}nhsuk-input--error{% endif %}" id="recruitmentStartDate" name="recruitmentStartDate" type="date" value="{{ data.recruitmentStartDate or (data.startYear and data.startMonth and data.startDay) and (data.startYear ~ '-' ~ (data.startMonth|int)|string|padStart(2,'0') ~ '-' ~ (data.startDay|int)|string|padStart(2,'0')) }}">
+              </div>
+            </div>
+            <div class="nhsuk-grid-column-one-half">
+              <div class="nhsuk-form-group {% if errors.endDate %}nhsuk-form-group--error{% endif %}">
+                <label class="nhsuk-label" for="recruitmentEndDate">End date</label>
+                {% if errors.endDate %}<p class="nhsuk-error-message" id="end-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.endDate }}</p>{% endif %}
+                <input class="nhsuk-input {% if errors.endDate %}nhsuk-input--error{% endif %}" id="recruitmentEndDate" name="recruitmentEndDate" type="date" value="{{ data.recruitmentEndDate or (data.endYear and data.endMonth and data.endDay) and (data.endYear ~ '-' ~ (data.endMonth|int)|string|padStart(2,'0') ~ '-' ~ (data.endDay|int)|string|padStart(2,'0')) }}">
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="conditions">Conditions / keywords</label>
+          <div class="nhsuk-hint">Enter terms separated by commas (for example: “knee surgery, recovery, physiotherapy”).</div>
+          <input class="nhsuk-input" id="conditions" name="conditions" type="text" value="{{ data.conditions or (meta.conditions and meta.conditions | join(', ')) or '' }}">
+        </div>
+
+        <div class="nhsuk-button-group">
+          <button class="nhsuk-button" type="submit">Save and return</button>
+          <a class="nhsuk-button nhsuk-button--secondary" href="/researcher/task-list">Back to task list</a>
+        </div>
+      </form>
+
+    </div></div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    var el = document.getElementById('laySummary');
+    var out = document.getElementById('charCount');
+    function update(){ if(!el||!out) return; out.textContent = (el.value||'').length; }
+    if (el) { el.addEventListener('input', update); update(); }
+  })();
+</script>
+{% endblock %}

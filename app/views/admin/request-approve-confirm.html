@@ -1,43 +1,14 @@
+<!-- app/views/admin/request-approve-confirm.html -->
 {% extends "layout.html" %}
 {% block pageTitle %}Are you sure you want to approve this account?{% endblock %}
-
 {% block content %}
 <div class="nhsuk-width-container">
-
-  <p class="nhsuk-body-s nhsuk-u-text-align-right">
-    Welcome back, <strong>{{ user.name }}</strong> &nbsp; <a href="/admin/logout">Log out</a>
-  </p>
-
+  {% include "admin/_signed-in-header.html" %}
   <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-one-quarter">
-      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Manage platform</h2>
-
-      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Account management</p>
-      <nav class="nhsuk-u-margin-bottom-5">
-        <ul class="nhsuk-list">
-          <li><a href="/admin/requests" aria-current="page">Approve account requests</a></li>
-          <li><a href="#">User account management</a></li>
-          <li><a href="#">Create administrator accounts</a></li>
-        </ul>
-      </nav>
-
-      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Support</p>
-      <ul class="nhsuk-list">
-        <li><a href="#">Help</a></li>
-      </ul>
-    </div>
-
+    {% include "admin/_side-nav.html" %}
     <div class="nhsuk-grid-column-three-quarters">
-      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-2">Manage account requests</h1>
-      <p class="nhsuk-body">View and manage account requests</p>
-
-      <div class="nhsuk-inset-text">
-        <p>You have <strong>7</strong> <strong>account requests</strong> pending review.</p>
-      </div>
-
-      <h2 class="nhsuk-heading-m">Are you sure you want to approve this account?</h2>
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-2">Are you sure you want to approve this account?</h1>
       <p class="nhsuk-body">The researcher will be approved and they’ll receive a confirmation email.</p>
-
       <form action="/admin/requests/{{ item.id }}/approve" method="post">
         <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Confirm</button>
         <a class="nhsuk-button nhsuk-button--secondary" href="/admin/requests/{{ item.id }}">Cancel</a>

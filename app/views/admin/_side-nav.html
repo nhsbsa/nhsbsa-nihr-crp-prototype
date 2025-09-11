@@ -1,0 +1,31 @@
+<!-- app/views/admin/_side-nav.html -->
+<div class="nhsuk-grid-column-one-quarter">
+  <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Manage platform</h2>
+
+  <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Account management</p>
+  <ul class="nhsuk-list nhsuk-u-margin-bottom-5">
+    <li>
+      <a href="/admin/requests" class="nhsuk-link{% if activeNav=='requests' %} nhsuk-u-font-weight-bold{% endif %}" {% if activeNav=='requests' %}style="text-decoration: underline;"{% endif %}>Approve account requests</a>
+    </li>
+    <li>
+      <a href="/admin/users" class="nhsuk-link{% if activeNav=='users' %} nhsuk-u-font-weight-bold{% endif %}" {% if activeNav=='users' %}style="text-decoration: underline;"{% endif %}>User account management</a>
+    </li>
+    <li>
+      <a href="/admin/accounts/new" class="nhsuk-link{% if activeNav=='create-admin' %} nhsuk-u-font-weight-bold{% endif %}" {% if activeNav=='create-admin' %}style="text-decoration: underline;"{% endif %}>Create administrator accounts</a>
+    </li>
+  </ul>
+
+  <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Study management</p>
+  <ul class="nhsuk-list nhsuk-u-margin-bottom-5">
+    <li>
+      <a href="#" class="nhsuk-link{% if activeNav=='studies' %} nhsuk-u-font-weight-bold{% endif %}" {% if activeNav=='studies' %}style="text-decoration: underline;"{% endif %}>Approve pre-screener requests</a>
+    </li>
+  </ul>
+
+  <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Support</p>
+  <ul class="nhsuk-list">
+    <li>
+      <a href="/admin/help" class="nhsuk-link{% if activeNav=='help' %} nhsuk-u-font-weight-bold{% endif %}" {% if activeNav=='help' %}style="text-decoration: underline;"{% endif %}>Help</a>
+    </li>
+  </ul>
+</div>

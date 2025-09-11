@@ -1,45 +1,15 @@
+<!-- app/views/admin/request-approved.html -->
 {% extends "layout.html" %}
 {% block pageTitle %}This account has been approved{% endblock %}
-
 {% block content %}
 <div class="nhsuk-width-container">
-
-  <p class="nhsuk-body-s nhsuk-u-text-align-right">
-    Welcome back, <strong>{{ user.name }}</strong> &nbsp; <a href="/admin/logout">Log out</a>
-  </p>
-
+  {% include "admin/_signed-in-header.html" %}
   <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-one-quarter">
-      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Manage platform</h2>
-
-      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Account management</p>
-      <nav class="nhsuk-u-margin-bottom-5">
-        <ul class="nhsuk-list">
-          <li><a href="/admin/requests" aria-current="page">Approve account requests</a></li>
-          <li><a href="#">User account management</a></li>
-          <li><a href="#">Create administrator accounts</a></li>
-        </ul>
-      </nav>
-
-      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Support</p>
-      <ul class="nhsuk-list">
-        <li><a href="#">Help</a></li>
-      </ul>
-    </div>
-
+    {% include "admin/_side-nav.html" %}
     <div class="nhsuk-grid-column-three-quarters">
-      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-2">Manage account requests</h1>
-      <p class="nhsuk-body">View and manage account requests</p>
-
-      <div class="nhsuk-inset-text">
-        <p>You have <strong>7</strong> <strong>account requests</strong> pending review.</p>
-      </div>
-
-      <h2 class="nhsuk-heading-m">This account has been approved</h2>
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-2">This account has been approved</h1>
       <p class="nhsuk-body">The researcher will receive a confirmation email and will have to set their own password.</p>
-
       <p class="nhsuk-body nhsuk-u-margin-top-4"><a href="/admin/requests">Back to dashboard</a></p>
-      <p class="nhsuk-body"><a href="/admin/logout">Log out</a></p>
     </div>
   </div>
 </div>

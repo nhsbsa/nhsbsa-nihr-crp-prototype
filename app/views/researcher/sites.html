@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Sites and contacts{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+    <div class="nhsuk-grid-row"><div class="nhsuk-grid-column-two-thirds">
+
+      <a class="nhsuk-back-link" href="/researcher/task-list">Back</a>
+      <h1 class="nhsuk-heading-xl">Sites and contacts</h1>
+      <p class="nhsuk-body">Add the NHS site(s) and a contact email for each site.</p>
+
+      {% if errors and (errors.sites or errors | length > 0) %}
+        <div class="nhsuk-error-summary" role="alert" tabindex="-1" aria-labelledby="error-summary-title">
+          <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+          <div class="nhsuk-error-summary__body">
+            <ul class="nhsuk-list nhsuk-error-summary__list">
+              {% if errors.sites %}<li><a href="#siteName-0">{{ errors.sites }}</a></li>{% endif %}
+              {% for key, msg in errors %}
+                {% if key != 'sites' %}<li>{{ msg }}</li>{% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+
+      {% set sites = (data.sites or []) %}
+      <form method="post" action="/researcher/sites" novalidate>
+        {% for s in sites %}
+        <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-6">
+          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m"><h2 class="nhsuk-fieldset__heading">Site {{ loop.index }}</h2></legend>
+
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="siteName-{{ loop.index0 }}">NHS site</label>
+            <span class="nhsuk-hint">Start typing the site name.</span>
+            <input class="nhsuk-input" id="siteName-{{ loop.index0 }}" name="siteName" type="text" value="{{ s.site or '' }}">
+          </div>
+
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="siteOds-{{ loop.index0 }}">ODS code (optional)</label>
+            <input class="nhsuk-input" id="siteOds-{{ loop.index0 }}" name="siteOds" type="text" value="{{ s.ods or '' }}">
+          </div>
+
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="siteEmail-{{ loop.index0 }}">Site contact email</label>
+            <input class="nhsuk-input" id="siteEmail-{{ loop.index0 }}" name="siteEmail" type="email" value="{{ s.email or '' }}">
+            {% set eKey = 'email_' ~ loop.index0 %}
+            {% if errors and errors[eKey] %}
+              <p class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors[eKey] }}</p>
+            {% endif %}
+          </div>
+
+          {% if s.email %}
+            <p class="nhsuk-body-s nhsuk-u-margin-top-1">
+              {% if s.needsInvite %}
+                <strong class="nhsuk-tag">Invite pending</strong>
+                {% if s.inviteSentAt %}<span class="nhsuk-hint nhsuk-u-margin-left-2">Invite sent {{ s.inviteSentAt }}</span>{% endif %}
+                <button class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-2" type="submit" name="action" value="resend" formaction="/researcher/sites">
+                  Resend invite
+                </button>
+                <input type="hidden" name="index" value="{{ loop.index0 }}">
+              {% else %}
+                <strong class="nhsuk-tag">Active contact</strong>
+                <span class="nhsuk-hint nhsuk-u-margin-left-2">This user already has an account.</span>
+              {% endif %}
+            </p>
+          {% endif %}
+        </fieldset>
+        {% endfor %}
+
+        <button class="nhsuk-button nhsuk-button--secondary" type="submit" name="action" value="add">Add another site</button>
+
+        <div class="nhsuk-button-group nhsuk-u-margin-top-4">
+          <button class="nhsuk-button" type="submit">Save and return</button>
+          <a class="nhsuk-button nhsuk-button--secondary" href="/researcher/task-list">Back to task list</a>
+        </div>
+      </form>
+
+    </div></div>
+  </main>
+</div>
+{% endblock %}

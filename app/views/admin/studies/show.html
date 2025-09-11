@@ -1,0 +1,321 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Review study{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+
+    <a class="nhsuk-back-link" href="/admin/studies">Back to queue</a>
+
+    <!-- Header summary -->
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-2">
+      {{ s.meta.title or s.details.shortName or 'Untitled study' }}
+    </h1>
+    <p class="nhsuk-body-s nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-4">
+      <strong>Status:</strong> <span class="nhsuk-tag">{{ status }}</span>
+      {% if owner %}<span class="nhsuk-u-margin-left-2"><strong>Owner:</strong> {{ owner }}</span>{% endif %}
+      <span class="nhsuk-u-margin-left-2"><strong>ID:</strong> {{ s.id }}</span>
+      {% if s.submittedAt %}<span class="nhsuk-u-margin-left-2"><strong>Submitted:</strong> {{ s.submittedAt }}</span>{% endif %}
+    </p>
+
+    <!-- Readiness checklist (compact summary list with tags) -->
+    <section aria-labelledby="ready-h" class="nhsuk-u-margin-bottom-5">
+      <h2 id="ready-h" class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Readiness checklist</h2>
+      <p class="nhsuk-hint nhsuk-u-margin-bottom-3">These items must be in place before you can mark the study live.</p>
+      <dl class="nhsuk-summary-list">
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Platforms selected</dt>
+          <dd class="nhsuk-summary-list__value">
+            {% if readiness.platformsSelected %}
+              <span class="nhsuk-tag nhsuk-tag--green">Met</span>
+            {% else %}
+              <span class="nhsuk-tag nhsuk-tag--red">Action needed</span><br>
+              <span class="nhsuk-hint">Choose where the study will appear (e.g. JDR, Be Part of Research).</span>
+            {% endif %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">At least one site added</dt>
+          <dd class="nhsuk-summary-list__value">
+            {% if readiness.sitesAdded %}
+              <span class="nhsuk-tag nhsuk-tag--green">Met</span>
+            {% else %}
+              <span class="nhsuk-tag nhsuk-tag--red">Action needed</span><br>
+              <span class="nhsuk-hint">Add an NHS site and contact to manage volunteers locally.</span>
+            {% endif %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Active site contact present</dt>
+          <dd class="nhsuk-summary-list__value">
+            {% if readiness.activeContactPresent %}
+              <span class="nhsuk-tag nhsuk-tag--green">Met</span>
+            {% else %}
+              <span class="nhsuk-tag nhsuk-tag--red">Action needed</span><br>
+              <span class="nhsuk-hint">Site contact must have accepted their invite.</span>
+            {% endif %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Ethics approval uploaded</dt>
+          <dd class="nhsuk-summary-list__value">
+            {% if readiness.ethicsProvided %}
+              <span class="nhsuk-tag nhsuk-tag--green">Met</span>
+            {% else %}
+              <span class="nhsuk-tag nhsuk-tag--red">Action needed</span><br>
+              <span class="nhsuk-hint">Upload the REC approval letter before going live.</span>
+            {% endif %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+
+      </dl>
+    </section>
+
+    <!-- Overview -->
+    <section aria-labelledby="ov-h">
+      <h2 id="ov-h" class="nhsuk-heading-l">Overview</h2>
+      <dl class="nhsuk-summary-list">
+        {% if s.meta.title or s.details.shortName %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Title</dt>
+          <dd class="nhsuk-summary-list__value">{{ s.meta.title or s.details.shortName }}</dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+
+        {% if s.meta.sponsor %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Sponsor</dt>
+          <dd class="nhsuk-summary-list__value">{{ s.meta.sponsor }}</dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+
+        {% if s.details.laySummary %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Lay summary</dt>
+          <dd class="nhsuk-summary-list__value">
+            <pre class="nhsuk-body" style="white-space:pre-wrap; margin:0;">{{ s.details.laySummary }}</pre>
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+
+        {% if s.details.recruitmentStartISO or s.details.recruitmentEndISO %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Recruitment</dt>
+          <dd class="nhsuk-summary-list__value">
+            {{ s.details.recruitmentStartISO or 'TBC' }}{% if s.details.recruitmentEndISO %} to {{ s.details.recruitmentEndISO }}{% endif %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+
+        {% if s.details.conditions and s.details.conditions.length %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Keywords</dt>
+          <dd class="nhsuk-summary-list__value">
+            {% for k in s.details.conditions %}{{ k }}{% if not loop.last %}, {% endif %}{% endfor %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+
+        {% if s.scope and s.scope.length %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Platforms</dt>
+          <dd class="nhsuk-summary-list__value">
+            {% for p in s.scope %}<span class="nhsuk-tag nhsuk-u-margin-right-1">{{ p }}</span>{% endfor %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+      </dl>
+    </section>
+
+    {% if s.criteria %}
+    <section class="nhsuk-u-margin-top-6" aria-labelledby="cr-h">
+      <h2 id="cr-h" class="nhsuk-heading-l">Volunteer criteria</h2>
+      <dl class="nhsuk-summary-list">
+        {% if s.criteria.ageMin or s.criteria.ageMax %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Age range</dt>
+          <dd class="nhsuk-summary-list__value">
+            {% if s.criteria.ageMin %}{{ s.criteria.ageMin }}{% endif %}{% if s.criteria.ageMin and s.criteria.ageMax %}–{% endif %}{% if s.criteria.ageMax %}{{ s.criteria.ageMax }}{% endif %}
+            {% if s.criteria._estCount %}<br><span class="nhsuk-hint">Estimated volunteers: {{ s.criteria._estCount }}</span>{% endif %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+
+        {% if s.criteria.geoMethod %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Geography</dt>
+          <dd class="nhsuk-summary-list__value">{{ s.criteria.geoMethod }}</dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+
+        {% if s.criteria.inclusion and s.criteria.inclusion.length %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Inclusion flags</dt>
+          <dd class="nhsuk-summary-list__value">
+            {% for inc in s.criteria.inclusion %}{{ inc }}{% if not loop.last %}, {% endif %}{% endfor %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+
+        {% if (s.scope and 'JDR' in s.scope) and s.criteria.jdrHealth %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">JDR health criteria</dt>
+          <dd class="nhsuk-summary-list__value">{{ s.criteria.jdrHealth | capitalize }}</dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+      </dl>
+    </section>
+    {% endif %}
+
+    {% if s.sites and s.sites.sites and s.sites.sites.length %}
+    <section class="nhsuk-u-margin-top-6" aria-labelledby="st-h">
+      <h2 id="st-h" class="nhsuk-heading-l">Sites &amp; contacts</h2>
+      <dl class="nhsuk-summary-list">
+        {% for site in s.sites.sites %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Site {{ loop.index }}</dt>
+          <dd class="nhsuk-summary-list__value">
+            {{ site.site or site.ods }}<br>
+            {% if site.email %}<span class="nhsuk-hint">{{ site.email }}</span><br>{% endif %}
+            {% if site.needsInvite is defined %}
+              {% if site.needsInvite %}<strong class="nhsuk-tag">Invite pending</strong>{% else %}<strong class="nhsuk-tag">Active contact</strong>{% endif %}
+            {% endif %}
+            {% if site.inviteSentAt and site.needsInvite %}<br><span class="nhsuk-hint">Invite sent {{ site.inviteSentAt }}</span>{% endif %}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endfor %}
+      </dl>
+    </section>
+    {% endif %}
+
+    <section class="nhsuk-u-margin-top-6" aria-labelledby="eth-h">
+      <h2 id="eth-h" class="nhsuk-heading-l">Ethics approval</h2>
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Has ethics approval</dt>
+          <dd class="nhsuk-summary-list__value">{% if s.ethics.hasEthics == 'yes' %}Yes{% else %}No{% endif %}</dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% if s.ethics.hasEthics == 'yes' and s.ethics.approvalFile %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Approval letter</dt>
+          <dd class="nhsuk-summary-list__value">{{ s.ethics.approvalFile }}</dd>
+          <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        {% endif %}
+      </dl>
+    </section>
+
+    <section class="nhsuk-u-margin-top-6" aria-labelledby="act-h">
+      <h2 id="act-h" class="nhsuk-heading-l">Activity</h2>
+      {% if s.admin and s.admin.timeline and s.admin.timeline.length %}
+        <ul class="nhsuk-list">
+          {% for e in s.admin.timeline %}
+            <li><strong>{{ e.action }}</strong> — {{ e.by }} on {{ e.at }}{% if e.note %}: <span class="nhsuk-hint">{{ e.note }}</span>{% endif %}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No activity recorded yet.</p>
+      {% endif %}
+
+      {% if s.admin and s.admin.notes and s.admin.notes.length %}
+        <h3 class="nhsuk-heading-m nhsuk-u-margin-top-4">Latest email to researcher (preview)</h3>
+        <div class="nhsuk-panel" style="border:1px solid #d8dde0; border-radius:6px; padding:16px;">
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-color"><strong>To:</strong> {{ s.admin.notes[0].to }}</p>
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-color"><strong>Subject:</strong> {{ s.admin.notes[0].subject }}</p>
+          <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--m">
+          <pre class="nhsuk-body" style="white-space:pre-wrap; margin:0;">{{ s.admin.notes[0].body }}</pre>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- Decision panel (white card, spaced buttons) -->
+    <section class="nhsuk-u-margin-top-6" aria-labelledby="decide-h">
+      <div class="nhsuk-card" style="background:#fff;">
+        <div class="nhsuk-card__content">
+          <h2 id="decide-h" class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Make a decision</h2>
+          <p class="nhsuk-hint">Review the information above, then choose an action. “Mark live” is available when all checklist items are met.</p>
+
+          <div class="nhsuk-button-group" style="gap:12px; display:flex; flex-wrap:wrap;">
+            {% if status == 'submitted' %}
+              <form method="post" action="/admin/studies/{{ s.id }}/start">
+                <button class="nhsuk-button" type="submit">Start review</button>
+              </form>
+            {% endif %}
+
+            <form method="post" action="/admin/studies/{{ s.id }}/approve">
+              <input type="hidden" name="note" value="">
+              <button class="nhsuk-button" type="submit">Approve</button>
+            </form>
+
+            <form method="post" action="/admin/studies/{{ s.id }}/mark-live">
+              <button class="nhsuk-button" type="submit" {% if not canMarkLive %}disabled aria-disabled="true"{% endif %}>Mark live</button>
+            </form>
+          </div>
+
+          <details class="nhsuk-details nhsuk-u-margin-top-4">
+            <summary class="nhsuk-details__summary">
+              <span class="nhsuk-details__summary-text">Request changes</span>
+            </summary>
+            <div class="nhsuk-details__text">
+              <form method="post" action="/admin/studies/{{ s.id }}/request-changes">
+                <div class="nhsuk-form-group">
+                  <label class="nhsuk-label" for="reason">Reason</label>
+                  <select class="nhsuk-select" id="reason" name="reason" required>
+                    <option value="">Select a reason</option>
+                    <option>Lay summary not plain English</option>
+                    <option>Missing ethics approval</option>
+                    <option>Site contact invite pending</option>
+                    <option>Eligibility criteria unclear</option>
+                  </select>
+                </div>
+                <div class="nhsuk-form-group">
+                  <label class="nhsuk-label" for="detail">Details (optional)</label>
+                  <textarea class="nhsuk-textarea" id="detail" name="detail" rows="4"></textarea>
+                </div>
+                <button class="nhsuk-button nhsuk-button--secondary" type="submit">Send request</button>
+              </form>
+            </div>
+          </details>
+
+          <details class="nhsuk-details nhsuk-u-margin-top-3">
+            <summary class="nhsuk-details__summary">
+              <span class="nhsuk-details__summary-text">Reject</span>
+            </summary>
+            <div class="nhsuk-details__text">
+              <form method="post" action="/admin/studies/{{ s.id }}/reject">
+                <div class="nhsuk-form-group">
+                  <label class="nhsuk-label" for="reject-note">Reason (optional)</label>
+                  <textarea class="nhsuk-textarea" id="reject-note" name="note" rows="3"></textarea>
+                </div>
+                <button class="nhsuk-button nhsuk-button--secondary" type="submit">Reject</button>
+              </form>
+            </div>
+          </details>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+{% endblock %}

@@ -76,3 +76,9 @@
   outline:3px solid #ffeb3b;         /* NHS focus yellow */
   outline-offset:0;
 }
+
+
+/* Safety: colours if tag modifiers aren't present */
+.nhsuk-tag--blue { background:#1d70b8; color:#fff; }
+.nhsuk-tag--yellow { background:#ffbf47; color:#212b32; }
+.nhsuk-tag--red { background:#d5281b; color:#fff; }

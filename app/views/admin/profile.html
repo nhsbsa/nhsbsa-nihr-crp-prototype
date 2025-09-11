@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block pageTitle %}{{ user.name }}{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+
+  {% include "admin/_signed-in-header.html" %}
+
+  <div class="nhsuk-grid-row">
+    {% include "admin/_side-nav.html" %}
+
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">{{ user.name }}</h1>
+
+      <table class="nhsuk-table">
+        <tbody class="nhsuk-table__body">
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">Title:</th>
+            <td class="nhsuk-table__cell">{{ user.title or 'Mrs' }}</td>
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+              <a href="#">Change</a>
+            </td>
+          </tr>
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">First name:</th>
+            <td class="nhsuk-table__cell">{{ user.firstName or user.name }}</td>
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+              <a href="#">Change</a>
+            </td>
+          </tr>
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">Last name:</th>
+            <td class="nhsuk-table__cell">{{ user.lastName or '' }}</td>
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+              <a href="#">Change</a>
+            </td>
+          </tr>
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">Email address:</th>
+            <td class="nhsuk-table__cell">{{ user.email }}</td>
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+              {# Intentionally no "Change" to match your pattern #}
+            </td>
+          </tr>
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">Organisation:</th>
+            <td class="nhsuk-table__cell">{{ user.org or 'NIHR RDN' }}</td>
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+              <a href="#">Change</a>
+            </td>
+          </tr>
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">Role:</th>
+            <td class="nhsuk-table__cell">{{ user.role or 'System administrator' }}</td>
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+              <a href="#">Change</a>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+      <div class="nhsuk-u-margin-top-4">
+        <a href="/admin/profile/delete"
+           class="nhsuk-button nhsuk-button--warning"
+           role="button" draggable="false" data-module="nhsuk-button">
+          Delete account
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

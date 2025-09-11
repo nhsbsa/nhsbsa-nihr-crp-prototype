@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Identify your study{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+
+        <a class="nhsuk-back-link" href="/researcher/task-list">Back</a>
+        <h1 class="nhsuk-heading-xl">Identify your study</h1>
+        <p class="nhsuk-body">Do you have a CPMS ID?</p>
+
+        {% if errors and (errors.hasCpms or errors.cpmsId or errors.title or errors.sponsor) %}
+          <div class="nhsuk-error-summary" role="alert" tabindex="-1" aria-labelledby="error-summary-title">
+            <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+            <div class="nhsuk-error-summary__body">
+              <ul class="nhsuk-list nhsuk-error-summary__list">
+                {% if errors.hasCpms %}<li><a href="#hasCpms">Select if you have a CPMS ID</a></li>{% endif %}
+                {% if errors.cpmsId %}<li><a href="#cpmsId">{{ errors.cpmsId }}</a></li>{% endif %}
+                {% if errors.title %}<li><a href="#title">{{ errors.title }}</a></li>{% endif %}
+                {% if errors.sponsor %}<li><a href="#sponsor">{{ errors.sponsor }}</a></li>{% endif %}
+              </ul>
+            </div>
+          </div>
+        {% endif %}
+
+        <form method="post" action="/researcher/identify" novalidate>
+          <div class="nhsuk-form-group {% if errors.hasCpms %}nhsuk-form-group--error{% endif %}">
+            {% if errors.hasCpms %}
+              <p class="nhsuk-error-message" id="hasCpms-error">
+                <span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.hasCpms }}
+              </p>
+            {% endif %}
+
+            <div class="nhsuk-radios" data-module="nhsuk-radios" id="hasCpms">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input"
+                       id="hasCpms-yes"
+                       name="hasCpms"
+                       type="radio"
+                       value="yes"
+                       data-aria-controls="conditional-hasCpms-yes"
+                       {% if data.hasCpms == 'yes' %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="hasCpms-yes">Yes</label>
+              </div>
+
+              <div class="nhsuk-radios__conditional {% if data.hasCpms != 'yes' %}nhsuk-radios__conditional--hidden{% endif %}"
+                   id="conditional-hasCpms-yes">
+                <div class="nhsuk-form-group {% if errors.cpmsId %}nhsuk-form-group--error{% endif %}">
+                  <label class="nhsuk-label" for="cpmsId">CPMS ID</label>
+                  {% if errors.cpmsId %}
+                    <p class="nhsuk-error-message" id="cpmsId-error">
+                      <span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.cpmsId }}
+                    </p>
+                  {% endif %}
+                  <input class="nhsuk-input {% if errors.cpmsId %}nhsuk-input--error{% endif %}"
+                         id="cpmsId" name="cpmsId" type="text" value="{{ data.cpmsId or '' }}"
+                         {% if errors.cpmsId %}aria-describedby="cpmsId-error"{% endif %}>
+                </div>
+              </div>
+
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input"
+                       id="hasCpms-no"
+                       name="hasCpms"
+                       type="radio"
+                       value="no"
+                       data-aria-controls="conditional-hasCpms-no"
+                       {% if data.hasCpms == 'no' %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="hasCpms-no">No</label>
+              </div>
+
+              <div class="nhsuk-radios__conditional {% if data.hasCpms != 'no' %}nhsuk-radios__conditional--hidden{% endif %}"
+                   id="conditional-hasCpms-no">
+                <div class="nhsuk-form-group {% if errors.title %}nhsuk-form-group--error{% endif %}">
+                  <label class="nhsuk-label" for="title">Study title</label>
+                  {% if errors.title %}
+                    <p class="nhsuk-error-message" id="title-error">
+                      <span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.title }}
+                    </p>
+                  {% endif %}
+                  <input class="nhsuk-input {% if errors.title %}nhsuk-input--error{% endif %}"
+                         id="title" name="title" type="text" value="{{ data.title or '' }}"
+                         {% if errors.title %}aria-describedby="title-error"{% endif %}>
+                </div>
+
+                <div class="nhsuk-form-group {% if errors.sponsor %}nhsuk-form-group--error{% endif %}">
+                  <label class="nhsuk-label" for="sponsor">Sponsor</label>
+                  {% if errors.sponsor %}
+                    <p class="nhsuk-error-message" id="sponsor-error">
+                      <span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.sponsor }}
+                    </p>
+                  {% endif %}
+                  <input class="nhsuk-input {% if errors.sponsor %}nhsuk-input--error{% endif %}"
+                         id="sponsor" name="sponsor" type="text" value="{{ data.sponsor or '' }}"
+                         {% if errors.sponsor %}aria-describedby="sponsor-error"{% endif %}>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Continue</button>
+        </form>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Fallback in case nhsuk-frontend JS hasn't initialised yet
+  (function () {
+    var yes = document.getElementById('hasCpms-yes');
+    var no  = document.getElementById('hasCpms-no');
+    var yesPanel = document.getElementById('conditional-hasCpms-yes');
+    var noPanel  = document.getElementById('conditional-hasCpms-no');
+    if (!yes || !no || !yesPanel || !noPanel) return;
+
+    function update() {
+      var y = yes.checked;
+      var n = no.checked;
+      yesPanel.classList.toggle('nhsuk-radios__conditional--hidden', !y);
+      noPanel.classList.toggle('nhsuk-radios__conditional--hidden', !n);
+    }
+    yes.addEventListener('change', update);
+    no.addEventListener('change', update);
+    update();
+  })();
+</script>
+{% endblock %}

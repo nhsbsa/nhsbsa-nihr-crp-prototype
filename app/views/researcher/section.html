@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block pageTitle %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">{{ title }}</h1>
+      <p class="nhsuk-body">Prototype page for “{{ title }}”.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

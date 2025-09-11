@@ -1,0 +1,72 @@
+<!-- app/views/researcher/profile.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}{{ me.firstName }} {{ me.lastName }}{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">{{ me.firstName }} {{ me.lastName }}</h1>
+
+      <table class="nhsuk-table">
+        <tbody class="nhsuk-table__body">
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">Title:</th>
+            <td class="nhsuk-table__cell">{{ me.title }}</td>
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+              <a href="/researcher/profile/change/title">Change</a>
+            </td>
+          </tr>
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">First name:</th>
+            <td class="nhsuk-table__cell">{{ me.firstName }}</td>
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+              <a href="/researcher/profile/change/first-name">Change</a>
+            </td>
+          </tr>
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">Last name:</th>
+            <td class="nhsuk-table__cell">{{ me.lastName }}</td>
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+              <a href="/researcher/profile/change/last-name">Change</a>
+            </td>
+          </tr>
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">Email address:</th>
+            <td class="nhsuk-table__cell">{{ me.email }}</td>
+            <!-- Researchers cannot change email → no Change link -->
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right"></td>
+          </tr>
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">Organisation:</th>
+            <td class="nhsuk-table__cell">{{ me.org }}</td>
+            <!-- No Change link per screenshot -->
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right"></td>
+          </tr>
+
+          <tr class="nhsuk-table__row">
+            <th scope="row" class="nhsuk-table__header">Role:</th>
+            <td class="nhsuk-table__cell">{{ me.role }}</td>
+            <!-- No Change link per screenshot -->
+            <td class="nhsuk-table__cell nhsuk-u-text-align-right"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <form method="get" action="/researcher/profile/delete" class="nhsuk-u-margin-top-4">
+        <button class="nhsuk-button nhsuk-button--warning" type="submit" data-module="nhsuk-button">
+          Delete account
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

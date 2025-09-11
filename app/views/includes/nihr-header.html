@@ -1,17 +1,37 @@
-{# Minimal NIHR header bar with its own styles #}
-<style>
-  /* Critical styles inline so it shows immediately even before SCSS recompiles */
-  .nihr-header{background:#fff;border-bottom:1px solid #e5e7eb;}
-  .nihr-header__inner{padding:16px 0;display:flex;align-items:center}
-  .nihr-header__logo img{display:block;height:32px}
-  @media (min-width:48em){.nihr-header__inner{padding:18px 0}}
-</style>
+{# app/views/includes/nihr-header.html — WHITE HEADER (full drop-in) #}
 
-<header class="nihr-header" role="banner">
-  <div class="nhsuk-width-container nihr-header__inner">
-    <a class="nihr-header__logo" href="/">
-      <img src="/images/nihr-logo-prototype.png"
-           alt="NIHR | National Institute for Health and Care Research">
-    </a>
+{% set profileHref = '' %}
+{% if isAdminSignedIn %}
+  {% set profileHref = '/admin/profile' %}
+{% elif isResearcherSignedIn %}
+  {% set profileHref = '/researcher/profile' %}
+{% endif %}
+
+{% set logoutHref = '' %}
+{% if isAdminSignedIn %}
+  {% set logoutHref = '/admin/logout' %}
+{% elif isResearcherSignedIn %}
+  {% set logoutHref = '/researcher/logout' %}
+{% endif %}
+
+<header role="banner" style="background:#fff; border-bottom:1px solid #E5E7EB;">
+  <div class="nhsuk-width-container nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-2">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-half">
+        <a href="/" class="nhsuk-link">
+          <img src="/images/nihr-logo-prototype.png"
+               alt="NIHR | National Institute for Health and Care Research"
+               style="height:32px">
+        </a>
+      </div>
+      <div class="nhsuk-grid-column-one-half nhsuk-u-text-align-right">
+        {% if isAdminSignedIn or isResearcherSignedIn %}
+          <span class="nhsuk-u-secondary-text-color">Welcome back,</span>
+          <a class="nhsuk-link" href="{{ profileHref }}">{{ currentUserName }}</a>
+          <span aria-hidden="true" class="nhsuk-u-secondary-text-color">·</span>
+          <a class="nhsuk-link" href="{{ logoutHref }}">Log out</a>
+        {% endif %}
+      </div>
+    </div>
   </div>
 </header>

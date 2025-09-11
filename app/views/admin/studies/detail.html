@@ -1,0 +1,199 @@
+{% extends "layout.html" %}
+{% block pageTitle %}{{ study.title }} — Study approval{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+    <div class="nhsuk-grid-row">
+
+      <div class="nhsuk-grid-column-two-thirds">
+        <h1 class="nhsuk-heading-xl">{{ study.title }}</h1>
+
+        <dl class="nhsuk-summary-list">
+          {% if study.cpmsId %}
+          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">CPMS ID</dt><dd class="nhsuk-summary-list__value">{{ study.cpmsId }}</dd></div>
+          {% endif %}
+          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Sponsor</dt><dd class="nhsuk-summary-list__value">{{ study.sponsor or '-' }}</dd></div>
+          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Submitted</dt><dd class="nhsuk-summary-list__value">{{ fmtDate(study.submittedAt) }}</dd></div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Status</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% set st = (study.status or '') | lower %}
+              {% if st == 'submitted' %}
+                <strong class="nhsuk-tag">Submitted</strong>
+              {% elseif st == 'in_review' %}
+                <strong class="nhsuk-tag nhsuk-tag--blue">In review</strong>
+              {% elseif st == 'info_requested' %}
+                <strong class="nhsuk-tag nhsuk-tag--yellow">Info requested</strong>
+              {% elseif st == 'approved' %}
+                <strong class="nhsuk-tag nhsuk-tag--green">Approved</strong>
+              {% elseif st == 'rejected' %}
+                <strong class="nhsuk-tag nhsuk-tag--red">Rejected</strong>
+              {% elseif st == 'live' %}
+                <strong class="nhsuk-tag nhsuk-tag--green">Live</strong>
+              {% else %}
+                <strong class="nhsuk-tag">-</strong>
+              {% endif %}
+            </dd>
+          </div>
+          {% if study.assignedTo %}
+          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Assigned to</dt><dd class="nhsuk-summary-list__value">{{ study.assignedTo }}</dd></div>
+          {% endif %}
+        </dl>
+
+        <h2 class="nhsuk-heading-l">Study content</h2>
+
+        <h3 class="nhsuk-heading-m">Overview</h3>
+        <p class="nhsuk-body"><strong>Short name:</strong> {{ study.data.details.shortName or '-' }}</p>
+        <p>{{ study.data.details.laySummary or 'No lay summary provided.' }}</p>
+
+        <p class="nhsuk-body-s nhsuk-u-secondary-text-color">
+          <strong>Recruitment:</strong> {{ study.data.details.recruitmentStartISO }} to {{ study.data.details.recruitmentEndISO }}
+        </p>
+
+        {% if study.data.details.conditions and study.data.details.conditions.length %}
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-color"><strong>Keywords:</strong>
+            {% for k in study.data.details.conditions %}{{ k }}{% if not loop.last %}, {% endif %}{% endfor %}
+          </p>
+        {% endif %}
+
+        <h3 class="nhsuk-heading-m">Scope</h3>
+        <p>{{ (study.data.scope or []) | join(', ') or '-' }}</p>
+
+        <h3 class="nhsuk-heading-m">Volunteer criteria</h3>
+        <ul class="nhsuk-list nhsuk-list--bullet">
+          <li>Age {{ study.data.criteria.ageMin }}–{{ study.data.criteria.ageMax }}</li>
+          <li>Geography: {{ study.data.criteria.geoMethod }}</li>
+          {% if study.data.criteria.inclusion and study.data.criteria.inclusion.length %}
+            <li>Inclusion flags: {% for k in study.data.criteria.inclusion %}{{ k }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
+          {% endif %}
+          {% if study.data.criteria.jdrHealth %}
+            <li>JDR health criteria: {{ study.data.criteria.jdrHealth | capitalize }}</li>
+          {% endif %}
+        </ul>
+
+        <h3 class="nhsuk-heading-m">Arms</h3>
+        {% if study.data.arms.arms and study.data.arms.arms.length %}
+          <ul class="nhsuk-list nhsuk-list--bullet">
+          {% for a in study.data.arms.arms %}
+            <li><strong>{{ a.name }}</strong>{% if a.desc %} — {{ a.desc }}{% endif %}</li>
+          {% endfor %}
+          </ul>
+        {% else %}
+          <p class="nhsuk-body">Single arm</p>
+        {% endif %}
+
+        <h3 class="nhsuk-heading-m">Sites and contacts</h3>
+        {% if study.data.sites and study.data.sites.length %}
+          <ul class="nhsuk-list">
+            {% for s in study.data.sites %}
+              <li>{{ s.site or s.ods or 'Site' }} — {{ s.email }}{% if s.needsInvite %} <span class="nhsuk-hint">(invite pending)</span>{% endif %}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="nhsuk-body">No sites listed.</p>
+        {% endif %}
+
+        <h3 class="nhsuk-heading-m">Ethics approval</h3>
+        {% if study.data.ethics.hasEthics == 'yes' %}
+          <p class="nhsuk-body">Yes{% if study.data.ethics.approvalFile %}, file: {{ study.data.ethics.approvalFile }}{% endif %}</p>
+        {% else %}
+          <div class="nhsuk-warning-callout">
+            <h3 class="nhsuk-warning-callout__label"><span role="text"><span class="nhsuk-u-visually-hidden">Important: </span>No ethics approval</span></h3>
+            <p>This study cannot go live until ethics is confirmed.</p>
+          </div>
+        {% endif %}
+
+        <h2 class="nhsuk-heading-l">History</h2>
+        {% if study.history and study.history.length %}
+          <ul class="nhsuk-list">
+            {% for h in study.history %}
+              <li><strong>{{ h.action | replace('_',' ') | capitalize }}</strong> — {{ fmtDate(h.ts) }} <span class="nhsuk-hint">({{ h.actor }})</span></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="nhsuk-body">No history recorded.</p>
+        {% endif %}
+
+        <h2 class="nhsuk-heading-l">Notifications</h2>
+        {% if study.notifications and study.notifications.length %}
+          {% for n in study.notifications %}
+          <div class="nhsuk-panel nhsuk-u-margin-bottom-3" style="border:1px solid #d8dde0;">
+            <p class="nhsuk-body-s nhsuk-u-secondary-text-color"><strong>To:</strong> {{ n.to }} — {{ fmtDate(n.ts) }}</p>
+            <p class="nhsuk-body-s"><strong>Subject:</strong> {{ n.subject }}</p>
+            <pre class="nhsuk-body" style="white-space:pre-wrap">{{ n.body }}</pre>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="nhsuk-body">No notifications sent yet.</p>
+        {% endif %}
+      </div>
+
+      <div class="nhsuk-grid-column-one-third">
+        <div class="nhsuk-card" style="position:sticky; top:1rem;">
+          <div class="nhsuk-card__content">
+            <h2 class="nhsuk-heading-m">Actions</h2>
+            <p>
+              {% set st2 = (study.status or '') | lower %}
+              Status:
+              {% if st2 == 'submitted' %}
+                <strong class="nhsuk-tag">Submitted</strong>
+              {% elseif st2 == 'in_review' %}
+                <strong class="nhsuk-tag nhsuk-tag--blue">In review</strong>
+              {% elseif st2 == 'info_requested' %}
+                <strong class="nhsuk-tag nhsuk-tag--yellow">Info requested</strong>
+              {% elseif st2 == 'approved' %}
+                <strong class="nhsuk-tag nhsuk-tag--green">Approved</strong>
+              {% elseif st2 == 'rejected' %}
+                <strong class="nhsuk-tag nhsuk-tag--red">Rejected</strong>
+              {% elseif st2 == 'live' %}
+                <strong class="nhsuk-tag nhsuk-tag--green">Live</strong>
+              {% else %}
+                <strong class="nhsuk-tag">-</strong>
+              {% endif %}
+            </p>
+
+            <form action="/admin/studies/{{ study.id }}/assign" method="post" class="nhsuk-u-margin-bottom-2">
+              <button class="nhsuk-button nhsuk-button--secondary" type="submit">Assign to me</button>
+            </form>
+
+            <form action="/admin/studies/{{ study.id }}/approve" method="post" class="nhsuk-u-margin-bottom-2">
+              <button class="nhsuk-button" type="submit">Approve</button>
+            </form>
+
+            <form id="request-info" action="/admin/studies/{{ study.id }}/request-info" method="post" class="nhsuk-u-margin-bottom-2">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="message">Request more info</label>
+                <textarea class="nhsuk-textarea" id="message" name="message" rows="4" placeholder="Tell the researcher what you need"></textarea>
+              </div>
+              <button class="nhsuk-button nhsuk-button--secondary" type="submit">Send request</button>
+            </form>
+
+            <form id="reject" action="/admin/studies/{{ study.id }}/reject" method="post" class="nhsuk-u-margin-bottom-2">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="reason">Reject</label>
+                <select class="nhsuk-select" id="reason" name="reason">
+                  <option value="">Select a reason</option>
+                  <option value="Not eligible for programme">Not eligible for programme</option>
+                  <option value="Insufficient information">Insufficient information</option>
+                  <option value="Ethics approval missing">Ethics approval missing</option>
+                </select>
+                <label class="nhsuk-label nhsuk-u-margin-top-2" for="note">Optional note</label>
+                <textarea class="nhsuk-textarea" id="note" name="note" rows="3" placeholder="Add context that will be emailed to the researcher"></textarea>
+              </div>
+              <button class="nhsuk-button nhsuk-button--danger" type="submit">Reject study</button>
+            </form>
+
+            {% if study.status == 'approved' %}
+            <form action="/admin/studies/{{ study.id }}/publish" method="post">
+              <button class="nhsuk-button" type="submit">Publish (make live)</button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+{% endblock %}

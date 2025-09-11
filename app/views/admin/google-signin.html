@@ -1,41 +1,24 @@
+<!-- app/views/admin/google-signin.html -->
 {% extends "layout.html" %}
-{% block pageTitle %}Sign in with NIHR Google ID{% endblock %}
-
+{% block pageTitle %}Enter your NIHR email{% endblock %}
 {% block content %}
 <div class="nhsuk-width-container">
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-
-      <h1 class="nhsuk-heading-xl">Sign in with NIHR Google ID</h1>
-      <p class="nhsuk-body">Enter your NIHR Google email address to continue.</p>
-
-      {% if errors and errors.email %}
-        <div class="nhsuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1">
-          <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
-          <div class="nhsuk-error-summary__body">
-            <ul class="nhsuk-list nhsuk-error-summary__list">
-              <li><a href="#email">Enter your NIHR Google email address</a></li>
-            </ul>
-          </div>
-        </div>
-      {% endif %}
-
-      <form action="/admin/google/verify" method="post" novalidate>
-        <div class="nhsuk-form-group {% if errors and errors.email %}nhsuk-form-group--error{% endif %}">
-          <label class="nhsuk-label" for="email">NIHR email address</label>
-          {% if errors and errors.email %}
-            <p class="nhsuk-error-message" id="email-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.email }}</p>
+      <h1 class="nhsuk-heading-xl">Enter your NIHR Google email address</h1>
+      <form method="post" action="/admin/google/verify" novalidate>
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <div class="nhsuk-form-group{% if errors.email %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="email">Email address</label>
+          {% if errors.email %}
+            <span class="nhsuk-error-message" id="email-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.email }}</span>
+          {% else %}
+            <span class="nhsuk-hint">Use your NIHR Google email.</span>
           {% endif %}
-          <input class="nhsuk-input nhsuk-input--width-20 {% if errors and errors.email %}nhsuk-input--error{% endif %}"
-                 id="email" name="email" type="email" value="{{ email or '' }}"
-                 {% if errors and errors.email %}aria-describedby="email-error"{% endif %}>
+          <input class="nhsuk-input" id="email" type="email" name="email" value="{{ email or '' }}" {% if errors.email %}aria-describedby="email-error"{% endif %}>
         </div>
-
         <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Continue</button>
       </form>
-
-      <p class="nhsuk-hint nhsuk-u-margin-top-4">You’ll be returned to the NIHR dashboard after signing in.</p>
-
     </div>
   </div>
 </div>

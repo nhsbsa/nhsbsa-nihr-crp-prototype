@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Confirm study details{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+
+        <a class="nhsuk-back-link" href="/researcher/identify">Back</a>
+        <h1 class="nhsuk-heading-xl">Confirm study details</h1>
+        <p class="nhsuk-body">We found this study in CPMS.</p>
+
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">CPMS ID</dt>
+            <dd class="nhsuk-summary-list__value">{{ result.cpmsId }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Title</dt>
+            <dd class="nhsuk-summary-list__value">{{ result.title }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Sponsor</dt>
+            <dd class="nhsuk-summary-list__value">{{ result.sponsor }}</dd>
+          </div>
+          {% if result.dates %}
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Dates</dt>
+            <dd class="nhsuk-summary-list__value">{{ result.dates.start }} to {{ result.dates.end }}</dd>
+          </div>
+          {% endif %}
+        </dl>
+
+        <form method="post" action="/researcher/cpms-confirm">
+          <div class="nhsuk-button-group">
+            <button class="nhsuk-button" type="submit">Use these details</button>
+            <a class="nhsuk-button nhsuk-button--secondary" href="/researcher/identify">Change CPMS ID</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Studies – review queue{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+
+    <h1 class="nhsuk-heading-xl">Studies</h1>
+
+    <!-- Search -->
+    <form method="get" class="nhsuk-u-margin-bottom-3">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-two-thirds">
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="q">Search</label>
+            <input class="nhsuk-input" id="q" name="q" type="search" value="{{ q or '' }}" placeholder="Search by title, sponsor or ID">
+          </div>
+        </div>
+        <div class="nhsuk-grid-column-one-third nhsuk-u-padding-top-6">
+          <button class="nhsuk-button" type="submit">Search</button>
+          <a class="nhsuk-button nhsuk-button--secondary" href="/admin/studies">Clear</a>
+        </div>
+      </div>
+    </form>
+
+<!-- Quick status filters -->
+<nav aria-label="Status filters" class="nhsuk-u-margin-bottom-4">
+  <ul class="nhsuk-list" style="display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; padding-left:0;">
+
+    {% set filters = [
+      { value:'', label:'All', count: totalCount },
+      { value:'submitted', label:'Submitted', count:counters.submitted },
+      { value:'in_review', label:'In review', count:counters.in_review },
+      { value:'changes_requested', label:'Changes requested', count:counters.changes_requested },
+      { value:'approved', label:'Approved', count:counters.approved },
+      { value:'rejected', label:'Rejected', count:counters.rejected },
+      { value:'live', label:'Live', count:counters.live }
+    ] %}
+
+    {% for f in filters %}
+      <li>
+        <a href="/admin/studies{% if f.value %}?status={{ f.value }}{% endif %}"
+           class="nhsuk-link"
+           style="
+             display:inline-block;
+             padding:.35rem .75rem;
+             border-radius:999px;
+             font-size:16px;
+             line-height:1.4;
+             text-decoration:none;
+             border:1px solid #d8dde0;
+             background:{% if status==f.value or (not status and not f.value) %}#212b32{% else %}#f0f4f5{% endif %};
+             color:{% if status==f.value or (not status and not f.value) %}#fff{% else %}#212b32{% endif %};
+           ">
+          {{ f.label }}{% if f.count is defined %} ({{ f.count }}){% endif %}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>
+
+
+    {% if rows and rows.length %}
+      <div class="nhsuk-table-responsive">
+        <table class="nhsuk-table">
+          <caption class="nhsuk-table__caption nhsuk-u-visually-hidden">Study queue</caption>
+          <thead class="nhsuk-table__head">
+            <tr class="nhsuk-table__row">
+              <th scope="col" class="nhsuk-table__header">Title</th>
+              <th scope="col" class="nhsuk-table__header">Platforms</th>
+              <th scope="col" class="nhsuk-table__header">Submitted</th>
+              <th scope="col" class="nhsuk-table__header">Status</th>
+            </tr>
+          </thead>
+          <tbody class="nhsuk-table__body">
+          {% for r in rows %}
+            <tr class="nhsuk-table__row">
+
+              <!-- Title -->
+              <td class="nhsuk-table__cell">
+                <span class="nhsuk-u-font-weight-bold">
+                  <a class="nhsuk-link" href="/admin/studies/{{ r.id }}">{{ r.title }}</a>
+                </span>
+                <div class="nhsuk-hint nhsuk-u-margin-top-1">
+                  {{ r.sponsor or '—' }} • ID: {{ r.id }}
+                </div>
+              </td>
+
+              <!-- Platforms -->
+              <td class="nhsuk-table__cell">
+                {% if r.scope and r.scope.length %}
+                  {% for p in r.scope %}
+                    <span class="nhsuk-tag nhsuk-u-margin-right-1">{{ p }}</span>
+                  {% endfor %}
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+
+              <!-- Submitted -->
+              <td class="nhsuk-table__cell">{{ r.submittedDate or r.submittedAt or '—' }}</td>
+
+              <!-- Status -->
+              <td class="nhsuk-table__cell"><strong class="nhsuk-tag">{{ r.status }}</strong></td>
+
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p>No studies match your filters.</p>
+    {% endif %}
+
+  </main>
+</div>
+{% endblock %}

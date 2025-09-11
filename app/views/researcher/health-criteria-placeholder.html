@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Health criteria{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-xl">Health criteria</h1>
+      <p class="nhsuk-body">You selected <strong>Join Dementia Research (JDR)</strong>. Next, we’ll capture health criteria for this study.</p>
+      <p class="nhsuk-body">This is a placeholder page. Add your criteria questions here (for example: condition, age range, exclusion criteria).</p>
+
+      <form action="/researcher/health-criteria" method="post">
+        <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Continue</button>
+        <a class="nhsuk-button nhsuk-button--secondary" href="/researcher/scope">Back</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

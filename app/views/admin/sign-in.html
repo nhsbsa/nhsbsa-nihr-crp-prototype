@@ -1,3 +1,4 @@
+<!-- app/views/admin/sign-in.html -->
 {% extends "layout.html" %}
 {% block pageTitle %}NIHR administrator sign in{% endblock %}
 
@@ -5,11 +6,14 @@
 <div class="nhsuk-width-container">
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-
       <h1 class="nhsuk-heading-xl">NIHR administrator sign in</h1>
       <p class="nhsuk-body">Sign in with your NIHR Google ID to access the researcher management dashboard.</p>
 
-      <a class="nhsuk-button" href="/admin/google/start">Sign in</a>
+      <p class="nhsuk-u-margin-top-4">
+        <a class="nhsuk-button" href="/admin/google/start?next={{ next | urlencode }}" role="button" draggable="false" data-module="nhsuk-button">
+          Sign in
+        </a>
+      </p>
 
       <p class="nhsuk-hint nhsuk-u-margin-top-4">Only authorised NIHR staff can access this area.</p>
     </div>

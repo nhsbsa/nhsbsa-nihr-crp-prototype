@@ -1,0 +1,58 @@
+<!-- app/views/researcher/sign-in.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Log in to {{ serviceName }}{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <p class="nhsuk-back-link"><a class="nhsuk-back-link__link" href="/researcher/start">Go back</a></p>
+
+      {% set hasErrors = errors and (errors.email or errors.password) %}
+      {% if hasErrors %}
+      <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="nhsuk-error-summary">
+        <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+        <div class="nhsuk-error-summary__body">
+          <ul class="nhsuk-list nhsuk-error-summary__list">
+            {% if errors.email %}<li><a href="#email">Email address must be in a valid format</a></li>{% endif %}
+            {% if errors.password %}<li><a href="#password">Your password is incorrect</a></li>{% endif %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      <h1 class="nhsuk-heading-xl">Log in to {{ serviceName }}</h1>
+
+      <form method="post" action="/researcher/sign-in" novalidate>
+        <div class="nhsuk-form-group{% if errors.email %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="email">Enter your email address</label>
+          {% if errors.email %}
+            <span class="nhsuk-error-message">
+              <span class="nhsuk-u-visually-hidden">Error:</span>
+              Enter an email address in the correct format, like someone@nihr.ac.uk
+            </span>
+          {% endif %}
+          <input class="nhsuk-input" id="email" name="email" type="email" value="{{ values.email or '' }}">
+        </div>
+
+        <div class="nhsuk-form-group{% if errors.password %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="password">Create password</label>
+          {% if errors.password %}
+            <span class="nhsuk-error-message">
+              <span class="nhsuk-u-visually-hidden">Error:</span>
+              Your password is incorrect. Please check your entry and try again
+            </span>
+          {% endif %}
+          <input class="nhsuk-input" id="password" name="password" type="password" value="">
+        </div>
+
+        <p class="nhsuk-body"><a href="/researcher/password/forgot">Forgot your password?</a></p>
+
+        <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Sign in</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

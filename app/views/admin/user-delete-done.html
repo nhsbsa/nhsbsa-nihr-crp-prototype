@@ -1,0 +1,42 @@
+<!-- app/views/admin/user-delete-done.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Delete an account{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+
+  <div class="nhsuk-grid-row">
+    <!-- LEFT NAV (unchanged) -->
+    <div class="nhsuk-grid-column-one-quarter">
+      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Manage platform</h2>
+
+      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Account management</p>
+      <nav class="nhsuk-u-margin-bottom-5">
+        <ul class="nhsuk-list">
+          <li><a href="/admin/requests">Approve account requests</a></li>
+          <li><a href="/admin/users" aria-current="page">User account management</a></li>
+          <li><a href="/admin/accounts/new">Create administrator accounts</a></li>
+        </ul>
+      </nav>
+
+      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Study management</p>
+      <ul class="nhsuk-list">
+        <li><a href="/admin/studies">Approve pre-screener requests</a></li>
+      </ul>
+
+      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Support</p>
+      <ul class="nhsuk-list"><li><a href="#">Help</a></li></ul>
+    </div>
+
+    <!-- MAIN -->
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">This account has been deleted</h1>
+      <p class="nhsuk-body">The user will be notified by email.</p>
+      <p class="nhsuk-body">Any data related to this account will not be accessible.</p>
+
+      <p class="nhsuk-body nhsuk-u-margin-top-4"><a href="/admin/users">Back to dashboard</a></p>
+      <p class="nhsuk-body"><a href="/admin/logout">Log out</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

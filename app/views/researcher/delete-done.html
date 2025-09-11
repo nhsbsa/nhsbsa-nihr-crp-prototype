@@ -1,0 +1,16 @@
+<!-- app/views/researcher/delete-done.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Account deleted{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-one-quarter"><!-- spacer for layout --></div>
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Your account has been deleted</h1>
+      <p class="nhsuk-body">You will no longer be able to access the research platform. Time of deletion: {{ deletedAt }}.</p>
+      <!-- No sign-in link required after deletion -->
+    </div>
+  </div>
+</div>
+{% endblock %}

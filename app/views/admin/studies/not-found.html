@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Study not found{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <h1 class="nhsuk-heading-xl">Study not found</h1>
+        <p class="nhsuk-body">We can’t find a study with ID “{{ id }}”.</p>
+        <p><a href="/admin/studies">Back to studies</a></p>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

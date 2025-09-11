@@ -1,0 +1,26 @@
+<!-- app/views/researcher/password/changed.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Your password has been changed{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <p class="nhsuk-back-link"><a class="nhsuk-back-link__link" href="/researcher/sign-in">Go back</a></p>
+
+      <h1 class="nhsuk-heading-xl">Your password has been changed</h1>
+      <p class="nhsuk-body">Your password has been updated, you can now log in.</p>
+
+      <p class="nhsuk-body nhsuk-u-margin-top-6">
+        If you have any problems with the email you registered with, <a href="mailto:support@example.com">email us</a>
+      </p>
+
+      <p class="nhsuk-body nhsuk-u-margin-top-6">
+        <a class="nhsuk-link" href="/researcher/sign-in">Back to login</a>
+      </p>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

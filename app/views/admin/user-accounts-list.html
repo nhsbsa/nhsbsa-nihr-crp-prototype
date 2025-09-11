@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
-{% block pageTitle %}Manage account requests{% endblock %}
+{% block pageTitle %}User accounts{% endblock %}
+
 {% block content %}
 <div class="nhsuk-width-container">
 
@@ -9,18 +10,18 @@
     {% include "admin/_side-nav.html" %}
 
     <div class="nhsuk-grid-column-three-quarters">
-      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-2">{{ pageH1 or 'Manage account requests' }}</h1>
-      <p class="nhsuk-body">View and manage account requests.</p>
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-2">{{ pageH1 or 'User accounts' }}</h1>
+      <p class="nhsuk-body">You can view the full list of user accounts or use search to find specific accounts.</p>
 
       <div class="nhsuk-inset-text">
-        <p>You have <strong>{{ totalAll or 0 }}</strong> account requests to review.</p>
+        <p>You have <strong>{{ pendingCount }}</strong> <strong>account requests</strong> to review.</p>
       </div>
 
       <!-- Keep original search styling -->
-      <form role="search" method="get" action="/admin/requests" class="nhsuk-search nhsuk-search--on-white nihr-search">
-        <label class="nhsuk-u-visually-hidden" for="admin-requests-search">Search</label>
-        <input class="nhsuk-search__input" id="admin-requests-search" name="q" type="search"
-               placeholder="Search by name, organisation, email, type or ID"
+      <form role="search" method="get" action="/admin/users" class="nhsuk-search nhsuk-search--on-white nihr-search">
+        <label class="nhsuk-u-visually-hidden" for="user-search">Search</label>
+        <input class="nhsuk-search__input" id="user-search" name="q" type="search"
+               placeholder="Search by name, organisation, email or role"
                value="{{ query or '' }}">
         <button class="nhsuk-search__submit" type="submit" aria-label="Search">
           <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg"
@@ -40,26 +41,21 @@
             <th scope="col" class="nhsuk-table__header">Organisation</th>
             <th scope="col" class="nhsuk-table__header">Submitted</th>
             <th scope="col" class="nhsuk-table__header">Type</th>
-            <th scope="col" class="nhsuk-table__header">Action</th>
           </tr>
         </thead>
         <tbody class="nhsuk-table__body">
-          {% for r in items %}
+          {% for u in items %}
           <tr class="nhsuk-table__row">
-            <td class="nhsuk-table__cell"><a href="/admin/requests/{{ r.id }}">{{ r.name }}</a></td>
-            <td class="nhsuk-table__cell">{{ r.org }}</td>
-            <td class="nhsuk-table__cell">{{ r.submitted }}</td>
-            <td class="nhsuk-table__cell">{{ r.type }}</td>
-            <td class="nhsuk-table__cell">
-              <a href="/admin/requests/{{ r.id }}">Approve</a><br>
-              <a href="/admin/requests/{{ r.id }}">Reject</a>
-            </td>
+            <td class="nhsuk-table__cell"><a href="/admin/users/{{ u.id }}">{{ u.title }} {{ u.firstName }} {{ u.lastName }}</a></td>
+            <td class="nhsuk-table__cell">{{ u.org }}</td>
+            <td class="nhsuk-table__cell">6 August 2025</td>
+            <td class="nhsuk-table__cell">{{ u.role }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       {% else %}
-        <p class="nhsuk-body">No account requests match your search.</p>
+        <p class="nhsuk-body">No users match your search.</p>
       {% endif %}
     </div>
   </div>

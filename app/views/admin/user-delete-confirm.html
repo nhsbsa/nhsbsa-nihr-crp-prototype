@@ -1,0 +1,24 @@
+<!-- app/views/admin/user-delete-confirm.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Delete an account{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "admin/_signed-in-header.html" %}
+  {% if item.role == 'System administrator' %}{% set roleLabel = 'administrator' %}{% else %}{% set roleLabel = item.role | lower %}{% endif %}
+  <div class="nhsuk-grid-row">
+    {% include "admin/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Confirm request to delete account</h1>
+
+      <p class="nhsuk-body">You're about to request deletion of this {{ roleLabel }} account.</p>
+      <p class="nhsuk-body">Once the account is deleted, they won't be able to access the admin portal or manage any studies. The user will be notified by email that this account has been deleted.</p>
+      <p class="nhsuk-body">If you're sure you want to delete this account, select ‘Delete account’.</p>
+
+      <form method="post" action="/admin/users/{{ item.id }}/delete">
+        <button class="nhsuk-button nhsuk-button--warning" type="submit" data-module="nhsuk-button">Delete account</button>
+        <a class="nhsuk-link" href="/admin/users/{{ item.id }}">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

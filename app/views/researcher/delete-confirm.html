@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Delete your account{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Delete your account</h1>
+
+      {% if hasActiveStudies %}
+        <div class="nhsuk-warning-callout">
+          <h3 class="nhsuk-warning-callout__label">
+            <span role="text"><span class="nhsuk-u-visually-hidden">Important: </span>Delete account</span>
+          </h3>
+          <p><strong>Are you sure you want to delete your account?</strong></p>
+          <p>You’re currently assigned to active studies.</p>
+          <p>If you delete your account, you should make sure there’s another researcher connected to these studies. If not, you may lose any data that’s connected to the studies or your account.</p>
+          <p>If you are the only researcher on a study, you should nominate a replacement or ask an administrator to assign one before you continue.</p>
+        </div>
+
+        {% if activeStudies and activeStudies.length %}
+        <table class="nhsuk-table">
+          <thead class="nhsuk-table__head">
+            <tr class="nhsuk-table__row">
+              <th scope="col" class="nhsuk-table__header">Study</th>
+              <th scope="col" class="nhsuk-table__header">Your role</th>
+              <th scope="col" class="nhsuk-table__header">Status</th>
+            </tr>
+          </thead>
+          <tbody class="nhsuk-table__body">
+            {% for st in activeStudies %}
+            <tr class="nhsuk-table__row">
+              <td class="nhsuk-table__cell"><a href="{{ st.url or '#' }}">{{ st.title }}</a></td>
+              <td class="nhsuk-table__cell">{{ st.role }}</td>
+              <td class="nhsuk-table__cell">{{ st.status }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+
+        {% if blocked %}
+          <div class="nhsuk-inset-text nhsuk-u-margin-top-4">
+            <span class="nhsuk-u-visually-hidden">Information: </span>
+            You cannot delete your account while you are assigned to active studies. Please remove yourself or ask an administrator to reassign a researcher, then try again.
+          </div>
+        {% endif %}
+      {% else %}
+        <h2 class="nhsuk-heading-m">Confirm request to delete account</h2>
+        <p class="nhsuk-body">You're about to request deletion of your account.</p>
+      {% endif %}
+
+      <form method="post" action="/researcher/profile/delete" novalidate class="nhsuk-u-margin-top-4">
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="reason">Enter the reason for deleting your account (Optional)</label>
+          <input class="nhsuk-input" id="reason" name="reason" type="text" value="{{ reason or '' }}" {% if hasActiveStudies %}disabled aria-disabled="true"{% endif %}>
+        </div>
+
+        <div class="nhsuk-button-group">
+          <button class="nhsuk-button nhsuk-button--warning" type="submit" data-module="nhsuk-button" {% if hasActiveStudies %}disabled aria-disabled="true"{% endif %}>Delete account</button>
+          <a class="nhsuk-link" href="/researcher">Cancel</a>
+        </div>
+
+        {% if hasActiveStudies %}
+          <p class="nhsuk-body-s nhsuk-u-margin-top-4">
+            (Prototype tip: <a href="/researcher/dev/clear-studies">clear active studies</a> to enable deletion.)
+          </p>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

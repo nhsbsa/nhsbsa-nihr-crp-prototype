@@ -1,0 +1,53 @@
+<!-- app/views/researcher/password/reset.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Reset your password{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <p class="nhsuk-back-link"><a class="nhsuk-back-link__link" href="/researcher/sign-in">Go back</a></p>
+
+      {% if errors.password or errors.confirm %}
+      <div class="nhsuk-error-summary" role="alert" tabindex="-1" data-module="nhsuk-error-summary">
+        <h2 class="nhsuk-error-summary__title">There is a problem</h2>
+        <div class="nhsuk-error-summary__body">
+          <ul class="nhsuk-list nhsuk-error-summary__list">
+            {% if errors.password %}<li><a href="#password">Password must be at least 8 characters</a></li>{% endif %}
+            {% if errors.confirm %}<li><a href="#confirm">Passwords must match</a></li>{% endif %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      <h1 class="nhsuk-heading-xl">Reset your password</h1>
+      <p class="nhsuk-body">Changing your password will log you out of other devices.</p>
+
+      <form method="post" action="/researcher/password/reset" novalidate>
+        <div class="nhsuk-form-group{% if errors.password %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="password">Enter your password</label>
+          {% if errors.password %}
+          <span class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> Password must be at least 8 characters</span>
+          {% endif %}
+          <input class="nhsuk-input" id="password" name="password" type="password" value="">
+        </div>
+
+        <div class="nhsuk-form-group{% if errors.confirm %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="confirm">Confirm your password</label>
+          {% if errors.confirm %}
+          <span class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> Passwords must match</span>
+          {% endif %}
+          <input class="nhsuk-input" id="confirm" name="confirm" type="password" value="">
+        </div>
+
+        <div class="nhsuk-button-group">
+          <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Reset your password</button>
+          <a class="nhsuk-link" href="/researcher/sign-in">Back to login</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

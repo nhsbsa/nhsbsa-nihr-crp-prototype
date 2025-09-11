@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Submit a study{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <h1 class="nhsuk-heading-xl">Submit a study</h1>
+
+  <p class="nhsuk-body">Where do you want your study to be available for volunteers?</p>
+
+  {% if errors and errors.platform %}
+    <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+      <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+      <div class="nhsuk-error-summary__body">
+        <ul class="nhsuk-list nhsuk-error-summary__list">
+          <li><a href="#platform">{{ errors.platform }}</a></li>
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+
+  <form method="post" action="/researcher/select-platform">
+    <div class="nhsuk-form-group {% if errors.platform %}nhsuk-form-group--error{% endif %}">
+      <fieldset class="nhsuk-fieldset" aria-describedby="platform-hint">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+          <h2 class="nhsuk-fieldset__heading">Choose platform(s)</h2>
+        </legend>
+        <span id="platform-hint" class="nhsuk-hint">
+          You can select more than one option if your study is suitable.
+        </span>
+        {% if errors.platform %}
+          <p id="platform-error" class="nhsuk-error-message">
+            <span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.platform }}
+          </p>
+        {% endif %}
+        <div class="nhsuk-checkboxes">
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="bpor" name="platform" type="checkbox" value="BPOR"
+              {% if data.platform and 'BPOR' in data.platform %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="bpor">
+              Be Part of Research (BPOR)
+            </label>
+          </div>
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="jdr" name="platform" type="checkbox" value="JDR"
+              {% if data.platform and 'JDR' in data.platform %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="jdr">
+              Join Dementia Research (JDR)
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <button class="nhsuk-button" type="submit">Continue</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+<!-- app/views/admin/create-admin-account.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Create an administrator account{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "admin/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "admin/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-2">Create an administrator account</h1>
+      <p class="nhsuk-body">Review the information provided is compatible with the [system name] rules.</p>
+
+      {% if errorList and errorList.length %}
+      <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="nhsuk-error-summary">
+        <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+        <div class="nhsuk-error-summary__body">
+          <ul class="nhsuk-list nhsuk-error-summary__list">
+            {% for e in errorList %}<li><a href="{{ e.href }}">{{ e.text }}</a></li>{% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+
+      <form method="post" action="/admin/accounts/new" novalidate>
+        <div class="nhsuk-form-group{% if errors.title %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="title">Title</label>
+          {% if errors.title %}<span class="nhsuk-error-message" id="title-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.title }}</span>{% endif %}
+          <select class="nhsuk-select" id="title" name="title" {% if errors.title %}aria-describedby="title-error"{% endif %}>
+            <option value="">Select a title</option>
+            {% set titles = ["Mr","Mrs","Ms","Mx","Dr","Prof","Other"] %}
+            {% for t in titles %}<option value="{{ t }}" {% if form.title == t %}selected{% endif %}>{{ t }}</option>{% endfor %}
+          </select>
+        </div>
+
+        <div class="nhsuk-form-group{% if errors.firstName %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="first-name">First name</label>
+          {% if errors.firstName %}<span class="nhsuk-error-message" id="first-name-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.firstName }}</span>{% endif %}
+          <input class="nhsuk-input" id="first-name" name="firstName" type="text" value="{{ form.firstName | default('') }}" {% if errors.firstName %}aria-describedby="first-name-error"{% endif %}>
+        </div>
+
+        <div class="nhsuk-form-group{% if errors.lastName %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="last-name">Last name</label>
+          {% if errors.lastName %}<span class="nhsuk-error-message" id="last-name-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.lastName }}</span>{% endif %}
+          <input class="nhsuk-input" id="last-name" name="lastName" type="text" value="{{ form.lastName | default('') }}" {% if errors.lastName %}aria-describedby="last-name-error"{% endif %}>
+        </div>
+
+        <div class="nhsuk-form-group{% if errors.email %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="email">Email address</label>
+          {% if errors.email %}
+            <span class="nhsuk-error-message" id="email-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.email }}</span>
+          {% else %}
+            <span class="nhsuk-hint">Enter an email address in the correct format, like someone@nihr.ac.uk</span>
+          {% endif %}
+          <input class="nhsuk-input" id="email" name="email" type="email" value="{{ form.email | default('') }}" {% if errors.email %}aria-describedby="email-error"{% endif %}>
+        </div>
+
+        <div class="nhsuk-form-group{% if errors.accessType %} nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="access-type">Type of access</label>
+          {% if errors.accessType %}<span class="nhsuk-error-message" id="access-type-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.accessType }}</span>{% endif %}
+          <select class="nhsuk-select" id="access-type" name="accessType" {% if errors.accessType %}aria-describedby="access-type-error"{% endif %}>
+            <option value="">Select</option>
+            <option value="full" {% if form.accessType == 'full' %}selected{% endif %}>Full access</option>
+            <option value="limited" {% if form.accessType == 'limited' %}selected{% endif %}>Limited (read-only)</option>
+            <option value="support" {% if form.accessType == 'support' %}selected{% endif %}>Support (case management)</option>
+          </select>
+        </div>
+
+        <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Create account</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{# Usage: {% include "admin/studies/partials/status-tag.html" with { status: 'submitted' } %} #}
+{% set s = (status or '') | lower %}
+{% if s == 'submitted' %}
+  <strong class="nhsuk-tag">Submitted</strong>
+{% elseif s == 'in_review' %}
+  <strong class="nhsuk-tag nhsuk-tag--blue">In review</strong>
+{% elseif s == 'info_requested' %}
+  <strong class="nhsuk-tag nhsuk-tag--yellow">Info requested</strong>
+{% elseif s == 'approved' %}
+  <strong class="nhsuk-tag nhsuk-tag--green">Approved</strong>
+{% elseif s == 'rejected' %}
+  <strong class="nhsuk-tag nhsuk-tag--red">Rejected</strong>
+{% elseif s == 'live' %}
+  <strong class="nhsuk-tag nhsuk-tag--green">Live</strong>
+{% else %}
+  <strong class="nhsuk-tag">-</strong>
+{% endif %}
