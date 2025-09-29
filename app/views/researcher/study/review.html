@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Review and submit{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Review and submit</h1>
+
+      <div class="nhsuk-inset-text">
+        <p>Check the details below before you submit your study request.</p>
+      </div>
+
+      <h2 class="nhsuk-heading-m">Study information <a class="nhsuk-link nhsuk-u-font-size-16" href="/researcher/study/info">Change</a></h2>
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Title</dt>
+          <dd class="nhsuk-summary-list__value">{{ draft.info.title }}</dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Short name</dt>
+          <dd class="nhsuk-summary-list__value">{{ draft.info.shortName }}</dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Overview</dt>
+          <dd class="nhsuk-summary-list__value">{{ draft.info.overview }}</dd>
+        </div>
+      </dl>
+
+      <h2 class="nhsuk-heading-m">Study type <a class="nhsuk-link nhsuk-u-font-size-16" href="/researcher/study/type">Change</a></h2>
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Portfolio</dt>
+          <dd class="nhsuk-summary-list__value">{{ draft.type.portfolio | capitalize }}</dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Type</dt>
+          <dd class="nhsuk-summary-list__value">{{ draft.type.studyType }}</dd>
+        </div>
+      </dl>
+
+      <h2 class="nhsuk-heading-m">Demographics <a class="nhsuk-link nhsuk-u-font-size-16" href="/researcher/study/demographics">Change</a></h2>
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Age range</dt>
+          <dd class="nhsuk-summary-list__value">{{ draft.demographics.ageMin }} – {{ draft.demographics.ageMax }}</dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Sex</dt>
+          <dd class="nhsuk-summary-list__value">{{ draft.demographics.sex | capitalize }}</dd>
+        </div>
+      </dl>
+
+      <h2 class="nhsuk-heading-m">Medical requirements <a class="nhsuk-link nhsuk-u-font-size-16" href="/researcher/study/medical">Change</a></h2>
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Conditions / interests</dt>
+          <dd class="nhsuk-summary-list__value">{{ draft.medical.conditions }}</dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Require confirmed (JDR)</dt>
+          <dd class="nhsuk-summary-list__value">{{ draft.medical.confirmed ? 'Yes' : 'No' }}</dd>
+        </div>
+      </dl>
+
+      <h2 class="nhsuk-heading-m">Sites <a class="nhsuk-link nhsuk-u-font-size-16" href="/researcher/study/sites">Change</a></h2>
+      <pre class="nhsuk-u-font-size-16 nhsuk-u-padding-2 nhsuk-u-bg-color-grey-4">{{ draft.sites.csv }}</pre>
+
+      <form method="post" action="/researcher/study/submit" class="nhsuk-u-margin-top-5">
+        <button class="nhsuk-button" data-module="nhsuk-button">Submit study</button>
+      </form>
+
+      <p class="nhsuk-u-margin-top-4"><a class="nhsuk-link" href="/researcher/start-study">Back to tasklist</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

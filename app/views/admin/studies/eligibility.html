@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Eligibility checks{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "admin/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "admin/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Eligibility checks</h1>
+      <p class="nhsuk-body">Study: <strong>{{ s.meta.title }}</strong> ({{ s.id }})</p>
+
+      <form method="post" action="/admin/studies/{{ s.id }}/eligibility" novalidate>
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">NIHR funded/supported?</legend>
+            <div class="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="e1y" name="nihrSupported" type="radio" value="yes"
+                  {% if values.nihrSupported %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="e1y">Yes</label>
+              </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="e1n" name="nihrSupported" type="radio" value="no"
+                  {% if values.nihrSupported is defined and (not values.nihrSupported) %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="e1n">No</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Recruitment population supported in registry?</legend>
+            <div class="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="e2y" name="populationSupported" type="radio" value="yes"
+                  {% if values.populationSupported %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="e2y">Yes</label>
+              </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="e2n" name="populationSupported" type="radio" value="no"
+                  {% if values.populationSupported is defined and (not values.populationSupported) %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="e2n">No</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Recruitment end date more than 3 months away?</legend>
+            <div class="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="e3y" name="endDateOK" type="radio" value="yes"
+                  {% if values.endDateOK %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="e3y">Yes</label>
+              </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="e3n" name="endDateOK" type="radio" value="no"
+                  {% if values.endDateOK is defined and (not values.endDateOK) %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="e3n">No</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Condition available in volunteer registry?</legend>
+            <div class="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="e4y" name="conditionInRegistry" type="radio" value="yes"
+                  {% if values.conditionInRegistry %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="e4y">Yes</label>
+              </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="e4n" name="conditionInRegistry" type="radio" value="no"
+                  {% if values.conditionInRegistry is defined and (not values.conditionInRegistry) %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="e4n">No</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <button class="nhsuk-button" data-module="nhsuk-button">Save checks</button>
+      </form>
+
+      <p class="nhsuk-u-margin-top-4"><a href="/admin/studies/{{ s.id }}" class="nhsuk-link">Back to study</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

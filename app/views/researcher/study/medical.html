@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Medical requirements{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Medical requirements</h1>
+
+      <form method="post" action="/researcher/study/medical" novalidate>
+        <div class="nhsuk-form-group {% if errors.conditions %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="conditions">Conditions / areas of interest (comma separated)</label>
+          {% if errors.conditions %}<span class="nhsuk-error-message">{{ errors.conditions }}</span>{% endif %}
+          <input class="nhsuk-input" id="conditions" name="conditions" type="text" value="{{ values.conditions }}">
+          <span class="nhsuk-hint">For JDR, tick confirmed to require a confirmed diagnosis/interest.</span>
+        </div>
+
+        <div class="nhsuk-checkboxes">
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="confirmed" name="confirmed" type="checkbox" value="yes" {% if values.confirmed %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="confirmed">Require confirmed (JDR)</label>
+          </div>
+        </div>
+
+        <button class="nhsuk-button" name="submitAction" value="continue" data-module="nhsuk-button">Save and continue</button>
+        <button class="nhsuk-button nhsuk-button--secondary" name="submitAction" value="save" data-module="nhsuk-button">Save and return to tasklist</button>
+      </form>
+
+      <p class="nhsuk-u-margin-top-4"><a class="nhsuk-link" href="/researcher/start-study">Back to tasklist</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

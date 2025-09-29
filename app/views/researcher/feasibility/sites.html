@@ -1,0 +1,11 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Feasibility: sites{% endblock %}
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/researcher/feasibility/medical">Back</a>
+<h1 class="nhsuk-heading-l">Sites</h1>
+
+{% set partialAction = "/researcher/feasibility/sites" %}
+{% set partialModel = data.feasibility and data.feasibility.sites %}
+
+{% include "researcher/partials/sites-form.html" %}
+{% endblock %}

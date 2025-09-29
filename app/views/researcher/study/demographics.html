@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Demographic requirements{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Demographic requirements</h1>
+
+      <form method="post" action="/researcher/study/demographics" novalidate>
+        <div class="nhsuk-form-group {% if errors.age %}nhsuk-form-group--error{% endif %}">
+          {% if errors.age %}<span class="nhsuk-error-message">{{ errors.age }}</span>{% endif %}
+          <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-one-half">
+              <label class="nhsuk-label" for="ageMin">Minimum age</label>
+              <input class="nhsuk-input" id="ageMin" name="ageMin" type="number" value="{{ values.ageMin }}">
+            </div>
+            <div class="nhsuk-grid-column-one-half">
+              <label class="nhsuk-label" for="ageMax">Maximum age</label>
+              <input class="nhsuk-input" id="ageMax" name="ageMax" type="number" value="{{ values.ageMax }}">
+            </div>
+          </div>
+        </div>
+
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">Sex</legend>
+            <div class="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="sex-any" type="radio" name="sex" value="any" {% if values.sex == 'any' %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="sex-any">Any</label>
+              </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="sex-f" type="radio" name="sex" value="female" {% if values.sex == 'female' %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="sex-f">Female</label>
+              </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="sex-m" type="radio" name="sex" value="male" {% if values.sex == 'male' %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="sex-m">Male</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <button class="nhsuk-button" name="submitAction" value="continue" data-module="nhsuk-button">Save and continue</button>
+        <button class="nhsuk-button nhsuk-button--secondary" name="submitAction" value="save" data-module="nhsuk-button">Save and return to tasklist</button>
+      </form>
+
+      <p class="nhsuk-u-margin-top-4"><a class="nhsuk-link" href="/researcher/start-study">Back to tasklist</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

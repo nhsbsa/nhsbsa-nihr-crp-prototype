@@ -1,0 +1,33 @@
+<!-- app/views/admin/studies/publish-reminder.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Publish reminder preview{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "admin/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "admin/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Scheduled publish – reminder preview</h1>
+      {% if not s.scheduledAt %}
+        <p class="nhsuk-body">This study is not scheduled.</p>
+      {% else %}
+        {% set dt = new Date(s.scheduledAt) %}
+        {% set reminder = new Date(dt.getTime() - 7*24*60*60*1000) %}
+        <div class="nhsuk-inset-text">
+          <p><strong>To:</strong> Admin team</p>
+          <p><strong>Subject:</strong> Reminder — scheduled publish next week</p>
+          <pre class="nhsuk-u-font-size-16">Hello,
+
+This is a reminder that the study "{{ s.meta.title }}" ({{ s.id }}) is scheduled to go live on {{ s.scheduledAt }}.
+
+Please confirm with the researcher that the agreed go-live date still stands.
+
+Thanks,
+CRP</pre>
+        </div>
+      {% endif %}
+      <p class="nhsuk-u-margin-top-4"><a href="/admin/studies/{{ s.id }}" class="nhsuk-link">Back to study</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

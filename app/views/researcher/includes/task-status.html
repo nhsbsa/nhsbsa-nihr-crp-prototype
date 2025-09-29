@@ -1,0 +1,26 @@
+{% macro statusTag(state) %}
+  {% set s = (state or 'not-started') | lower %}
+  {% if s in ['done','complete','completed'] %}{% set s = 'completed' %}{% endif %}
+  {% if s == 'started' %}{% set s = 'in-progress' %}{% endif %}
+  {% set label = {
+    'not-started':'Not started',
+    'in-progress':'In progress',
+    'completed':'Completed',
+    'cannot-start-yet':'Cannot start yet'
+  }[s] or 'Not started' %}
+
+  {% set cls = {
+    'not-started':'app-status--not-started',
+    'in-progress':'app-status--in-progress',
+    'completed':'app-status--completed',
+    'cannot-start-yet':'app-status--cannot-start'
+  }[s] or 'app-status--not-started' %}
+
+  <strong class="app-status-tag {{ cls }}">{{ label }}</strong>
+{% endmacro %}
+
+{% macro sectionCount(completed, total) %}
+  {% set c = completed or 0 %}
+  {% set t = total or 0 %}
+  {{ c }} of {{ t }} sections completed
+{% endmacro %}

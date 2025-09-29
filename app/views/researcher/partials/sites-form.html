@@ -1,0 +1,200 @@
+{# expects: partialAction, partialModel (array of { siteCode, siteName?, radiusMiles, mode }) #}
+<form method="post" action="{{ partialAction }}" novalidate>
+  <div class="nhsuk-inset-text">
+    <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">Why we ask for site codes</h2>
+    <p class="nhsuk-body-s nhsuk-u-margin-bottom-0">
+      Site codes are <strong>ODS</strong> identifiers for NHS organisations and locations.
+      We use them to estimate local coverage and target recruitment where your study can actually run.
+    </p>
+  </div>
+
+  <div class="nhsuk-form-group">
+    <span class="nhsuk-hint">Add one or more sites. For each site, pick the ODS code and set a travel radius.</span>
+  </div>
+
+  <div id="sitesRepeater" class="nhsuk-u-margin-bottom-4">
+
+    {# Render existing rows if any #}
+    {% if partialModel and partialModel.length %}
+      {% for row in partialModel %}
+        <div class="nhsuk-card nhsuk-u-margin-bottom-3 site-row" data-row>
+          <div class="nhsuk-card__content">
+
+            <div class="nhsuk-grid-row">
+              <div class="nhsuk-grid-column-one-half">
+                <div class="nhsuk-form-group">
+                  <label class="nhsuk-label" for="siteCode-{{ loop.index }}">ODS site code</label>
+                  <input class="nhsuk-input nhsuk-input--width-20" id="siteCode-{{ loop.index }}" name="siteCode"
+                         value="{{ row.siteCode or '' }}" list="odsList" autocomplete="off">
+                  <datalist id="odsList">
+                    <option value="R0A01">Newcastle upon Tyne Hospitals</option>
+                    <option value="R1H">Leeds Teaching Hospitals</option>
+                    <option value="RKE">Guy's and St Thomas'</option>
+                    <option value="RJZ">King's College Hospital</option>
+                    <option value="RRK">North Bristol NHS Trust</option>
+                    <option value="RTE">University Hospitals Birmingham</option>
+                  </datalist>
+                  <span class="nhsuk-hint nhsuk-u-margin-top-1">Start typing to search. Use a known ODS code if you have it.</span>
+                </div>
+              </div>
+              <div class="nhsuk-grid-column-one-half">
+                <div class="nhsuk-form-group">
+                  <label class="nhsuk-label" for="siteName-{{ loop.index }}">Site name (optional)</label>
+                  <input class="nhsuk-input nhsuk-input--width-20" id="siteName-{{ loop.index }}" name="siteName" value="{{ row.siteName or '' }}">
+                  <span class="nhsuk-hint">Helpful for reviewers. We still use the ODS code for matching.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="nhsuk-grid-row">
+              <div class="nhsuk-grid-column-one-half">
+                <div class="nhsuk-form-group">
+                  <label class="nhsuk-label" for="radius-{{ loop.index }}">Catchment radius (miles)</label>
+                  <input class="nhsuk-input nhsuk-input--width-5" id="radius-{{ loop.index }}" name="radiusMiles" type="number"
+                         min="0" max="200" value="{{ row.radiusMiles or 10 }}">
+                </div>
+              </div>
+              <div class="nhsuk-grid-column-one-half">
+                <div class="nhsuk-form-group">
+                  <label class="nhsuk-label" for="mode-{{ loop.index }}">Participation mode</label>
+                  {% set mode = row.mode or 'onsite' %}
+                  <select class="nhsuk-select nhsuk-select--width-10" id="mode-{{ loop.index }}" name="mode">
+                    <option value="onsite" {% if mode == 'onsite' %}selected{% endif %}>On site</option>
+                    <option value="hybrid" {% if mode == 'hybrid' %}selected{% endif %}>Hybrid</option>
+                    <option value="remote" {% if mode == 'remote' %}selected{% endif %}>Remote only</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="nhsuk-button-group">
+              {% if partialModel.length > 1 %}
+                <button class="nhsuk-button nhsuk-button--secondary" type="button" data-remove>Remove site</button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+    {# Otherwise render a single empty row with sensible defaults #}
+    {% else %}
+      <div class="nhsuk-card nhsuk-u-margin-bottom-3 site-row" data-row>
+        <div class="nhsuk-card__content">
+
+          <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-one-half">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="siteCode-1">ODS site code</label>
+                <input class="nhsuk-input nhsuk-input--width-20" id="siteCode-1" name="siteCode" value="" list="odsList" autocomplete="off">
+                <datalist id="odsList">
+                  <option value="R0A01">Newcastle upon Tyne Hospitals</option>
+                  <option value="R1H">Leeds Teaching Hospitals</option>
+                  <option value="RKE">Guy's and St Thomas'</option>
+                  <option value="RJZ">King's College Hospital</option>
+                  <option value="RRK">North Bristol NHS Trust</option>
+                  <option value="RTE">University Hospitals Birmingham</option>
+                </datalist>
+                <span class="nhsuk-hint nhsuk-u-margin-top-1">Start typing to search. Use a known ODS code if you have it.</span>
+              </div>
+            </div>
+            <div class="nhsuk-grid-column-one-half">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="siteName-1">Site name (optional)</label>
+                <input class="nhsuk-input nhsuk-input--width-20" id="siteName-1" name="siteName" value="">
+                <span class="nhsuk-hint">Helpful for reviewers. We still use the ODS code for matching.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-one-half">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="radius-1">Catchment radius (miles)</label>
+                <input class="nhsuk-input nhsuk-input--width-5" id="radius-1" name="radiusMiles" type="number" min="0" max="200" value="10">
+              </div>
+            </div>
+            <div class="nhsuk-grid-column-one-half">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="mode-1">Participation mode</label>
+                <select class="nhsuk-select nhsuk-select--width-10" id="mode-1" name="mode">
+                  <option value="onsite" selected>On site</option>
+                  <option value="hybrid">Hybrid</option>
+                  <option value="remote">Remote only</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <p><button class="nhsuk-button nhsuk-button--secondary" type="button" id="addSite">Add another site</button></p>
+
+  <details class="nhsuk-details nhsuk-u-margin-top-3">
+    <summary class="nhsuk-details__summary"><span class="nhsuk-details__summary-text">What’s an ODS code?</span></summary>
+    <div class="nhsuk-details__text">
+      <p>ODS (Organisation Data Service) codes uniquely identify NHS organisations and sites. Use them to ensure recruitment can be matched to your study locations.</p>
+    </div>
+  </details>
+
+  <div class="nhsuk-button-group nhsuk-u-margin-top-4">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+  </div>
+</form>
+
+<script>
+(function(){
+  var repeater = document.getElementById('sitesRepeater');
+  var addBtn = document.getElementById('addSite');
+
+  function bindRow(row){
+    var remove = row.querySelector('[data-remove]');
+    if (remove) {
+      remove.addEventListener('click', function(){
+        row.remove();
+      });
+    }
+  }
+
+  // Bind existing rows
+  repeater.querySelectorAll('[data-row]').forEach(bindRow);
+
+  // Add row
+  if (addBtn) addBtn.addEventListener('click', function(){
+    var template = document.createElement('div');
+    template.innerHTML = `
+      <div class="nhsuk-card nhsuk-u-margin-bottom-3 site-row" data-row>
+        <div class="nhsuk-card__content">
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label">ODS site code</label>
+            <input class="nhsuk-input nhsuk-input--width-20" name="siteCode" list="odsList" autocomplete="off">
+          </div>
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label">Site name (optional)</label>
+            <input class="nhsuk-input nhsuk-input--width-20" name="siteName">
+          </div>
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label">Catchment radius (miles)</label>
+            <input class="nhsuk-input nhsuk-input--width-5" name="radiusMiles" type="number" min="0" max="200" value="10">
+          </div>
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label">Participation mode</label>
+            <select class="nhsuk-select nhsuk-select--width-10" name="mode">
+              <option value="onsite" selected>On site</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="remote">Remote only</option>
+            </select>
+          </div>
+          <div class="nhsuk-button-group">
+            <button class="nhsuk-button nhsuk-button--secondary" type="button" data-remove>Remove site</button>
+          </div>
+        </div>
+      </div>`;
+    var row = template.firstElementChild;
+    repeater.appendChild(row);
+    bindRow(row);
+  });
+})();
+</script>

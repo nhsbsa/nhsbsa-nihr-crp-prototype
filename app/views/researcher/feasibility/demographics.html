@@ -1,0 +1,12 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Feasibility: demographics{% endblock %}
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/researcher/feasibility/intro">Back</a>
+<h1 class="nhsuk-heading-l">Demographic criteria</h1>
+
+{# Set variables for the partial instead of using "include ... with" #}
+{% set partialAction = "/researcher/feasibility/demographics" %}
+{% set partialModel = data.feasibility and data.feasibility.demographics %}
+
+{% include "researcher/partials/demographics-form.html" %}
+{% endblock %}

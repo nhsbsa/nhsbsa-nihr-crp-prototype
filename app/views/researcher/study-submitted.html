@@ -1,0 +1,20 @@
+<!-- app/views/researcher/study-submitted.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Study submitted{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Study submitted</h1>
+      <p class="nhsuk-body">Your study <strong>{{ s.meta.title }}</strong> has been submitted for eligibility checks.</p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li><a href="/researcher/studies/{{ s.id }}/pre-screener">Create an optional pre-screener</a></li>
+        <li><a href="/researcher/studies/{{ s.id }}/email-template">Prepare recruitment email/letter template</a></li>
+      </ul>
+      <p><a href="/researcher" class="nhsuk-link">Back to dashboard</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

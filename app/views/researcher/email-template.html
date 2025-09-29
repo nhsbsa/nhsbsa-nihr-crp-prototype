@@ -1,0 +1,35 @@
+<!-- app/views/researcher/email-template.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Volunteer recruitment email/letter template{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Volunteer recruitment email/letter template</h1>
+
+      <p class="nhsuk-body">
+        1) <a href="/files/recruitment-email-template.docx" download>Download the Word template</a><br>
+        2) Complete with your study content<br>
+        3) Upload for admin review
+      </p>
+
+      <form method="post" action="/researcher/studies/{{ s.id }}/email-template" novalidate>
+        <div class="nhsuk-form-group {{ errors.fileName ? 'nhsuk-form-group--error' : '' }}">
+          <label class="nhsuk-label" for="fileName">Uploaded file name (simulate)</label>
+          {% if errors.fileName %}<span class="nhsuk-error-message">{{ errors.fileName }}</span>{% endif %}
+          <input class="nhsuk-input" id="fileName" name="fileName" type="text" value="{{ values.fileName or '' }}" placeholder="recruitment-email-v1.docx">
+        </div>
+        <button class="nhsuk-button" data-module="nhsuk-button">Upload for review</button>
+      </form>
+
+      {% if s.emailTemplate %}
+        <div class="nhsuk-inset-text nhsuk-u-margin-top-4">
+          <p>Uploaded: <strong>{{ s.emailTemplate.fileName }}</strong> — Status: <strong>{{ s.emailTemplate.status }}</strong></p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

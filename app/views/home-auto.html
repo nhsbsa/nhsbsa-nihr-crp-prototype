@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block pageTitle %}NIHR Prototype Hub — Auto home{% endblock %}
+
+{% block content %}
+<div class="nhsuk-u-reading-width">
+  <h1 class="nhsuk-heading-xl">NIHR Prototype Hub</h1>
+  <p class="nhsuk-body">
+    This homepage is generated from your prototype files. It shows what actually exists and keeps all paths reachable.
+  </p>
+</div>
+
+{% if featured %}
+<section class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-6">
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <span class="nhsuk-tag">Currently in progress</span>
+      <h2 class="nhsuk-heading-m nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2">{{ featured.url }}</h2>
+      <div class="nhsuk-button-group">
+        <a class="nhsuk-button" href="{{ featured.url }}">Continue</a>
+        {% if featured.url.startswith('/researcher') %}
+          <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Task list</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% for key, list in buckets %}
+<section class="nhsuk-u-margin-bottom-6">
+  <h2 class="nhsuk-heading-l">
+    {% if key == 'researcher' %}Researcher
+    {% elif key == 'admin' %}Admin
+    {% elif key == 'epics' %}Epics
+    {% elif key == 'prototypes' %}Prototypes
+    {% elif key == 'docs' %}Docs
+    {% elif key == 'auth' %}Auth
+    {% elif key == 'one-login' %}One-Login
+    {% else %}Other
+    {% endif %}
+  </h2>
+  <ul class="nhsuk-list">
+    {% for p in list %}
+      <li><a class="nhsuk-link" href="{{ p.url }}">{{ p.url }}</a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endfor %}
+
+<p class="nhsuk-hint nhsuk-u-margin-top-4 nhsuk-u-secondary-text-color">
+  Generated {{ updatedAt }}
+</p>
+{% endblock %}

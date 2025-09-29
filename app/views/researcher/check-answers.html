@@ -1,157 +1,22 @@
-{% extends "layout.html" %}
+{% extends "researcher/layout-researcher.html" %}
 {% block pageTitle %}Check your answers{% endblock %}
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/researcher/task-list">Back to task list</a>
+<h1 class="nhsuk-heading-l">Check your answers</h1>
 
-{% block content %}
-<div class="nhsuk-width-container">
-  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
-    <div class="nhsuk-grid-row"><div class="nhsuk-grid-column-two-thirds">
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Estimated volunteers</dt>
+    <dd class="nhsuk-summary-list__value">
+      {{ data.derived and data.derived.matchedEstimate or '—' }}
+      {% if data.feasibility and data.feasibility.totalEstimate %} of {{ data.feasibility.totalEstimate }}{% endif %}
+    </dd>
+  </div>
+</dl>
 
-      <a class="nhsuk-back-link" href="/researcher/task-list">Back</a>
-      <h1 class="nhsuk-heading-xl">Check your answers before you submit</h1>
-
-      <div class="nhsuk-inset-text nhsuk-u-margin-top-2">
-        <p class="nhsuk-u-margin-bottom-1"><strong>Readiness checklist</strong></p>
-        <ul class="nhsuk-list nhsuk-list--bullet nhsuk-u-margin-bottom-0">
-          <li>{% if readiness.platformsSelected %}Platforms selected{% else %}<span class="nhsuk-u-text-color-red">Choose at least one platform</span>{% endif %}</li>
-          <li>{% if readiness.sitesAdded %}At least one site added{% else %}<span class="nhsuk-u-text-color-red">Add at least one site</span>{% endif %}</li>
-          <li>{% if readiness.activeContactPresent %}At least one active site contact{% else %}<span class="nhsuk-u-text-color-red">All contacts pending invitation</span>{% endif %}</li>
-          <li>{% if readiness.ethicsProvided %}Ethics approval uploaded{% else %}No ethics approval yet (you can submit, but your study won’t go live until approved){% endif %}</li>
-        </ul>
-      </div>
-
-      <h2 class="nhsuk-heading-l">Study overview</h2>
-      <dl class="nhsuk-summary-list">
-        {% if meta.title or details.shortName %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Title</dt>
-          <dd class="nhsuk-summary-list__value">{{ meta.title or details.shortName }}</dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/identify">Change<span class="nhsuk-u-visually-hidden"> title</span></a></dd>
-        </div>
-        {% endif %}
-
-        {% if details.shortName and not meta.title %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Short name</dt>
-          <dd class="nhsuk-summary-list__value">{{ details.shortName }}</dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/study-details">Change<span class="nhsuk-u-visually-hidden"> short name</span></a></dd>
-        </div>
-        {% endif %}
-
-        {% if details.laySummary %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Lay summary</dt>
-          <dd class="nhsuk-summary-list__value"><pre class="nhsuk-body" style="white-space:pre-wrap; margin:0;">{{ details.laySummary }}</pre></dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/study-details">Change<span class="nhsuk-u-visually-hidden"> lay summary</span></a></dd>
-        </div>
-        {% endif %}
-
-        {% if details.recruitmentStartISO or details.recruitmentEndISO %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Recruitment dates</dt>
-          <dd class="nhsuk-summary-list__value">
-            {% if details.recruitmentStartISO %}{{ details.recruitmentStartISO }}{% endif %}
-            {% if details.recruitmentStartISO and details.recruitmentEndISO %} to {% endif %}
-            {% if details.recruitmentEndISO %}{{ details.recruitmentEndISO }}{% endif %}
-          </dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/study-details">Change<span class="nhsuk-u-visually-hidden"> recruitment dates</span></a></dd>
-        </div>
-        {% endif %}
-
-        {% if details.conditions and details.conditions.length %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Conditions / keywords</dt>
-          <dd class="nhsuk-summary-list__value">{% for k in details.conditions %}{{ k }}{% if not loop.last %}, {% endif %}{% endfor %}</dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/study-details">Change<span class="nhsuk-u-visually-hidden"> conditions</span></a></dd>
-        </div>
-        {% endif %}
-      </dl>
-
-      {% if scope and scope.length or criteria.ageMin or criteria.ageMax or criteria.geoMethod or (criteria.inclusion and criteria.inclusion.length) or criteria.jdrHealth %}
-      <h2 class="nhsuk-heading-l">Platforms & criteria</h2>
-      <dl class="nhsuk-summary-list">
-        {% if scope and scope.length %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Platforms selected</dt>
-          <dd class="nhsuk-summary-list__value">{% for p in scope %}<span class="nhsuk-tag nhsuk-u-margin-right-1">{{ p }}</span>{% endfor %}</dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/scope">Change<span class="nhsuk-u-visually-hidden"> platforms</span></a></dd>
-        </div>
-        {% endif %}
-
-        {% if criteria.ageMin or criteria.ageMax %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Age range</dt>
-          <dd class="nhsuk-summary-list__value">{% if criteria.ageMin %}{{ criteria.ageMin }}{% endif %}{% if criteria.ageMin and criteria.ageMax %}–{% endif %}{% if criteria.ageMax %}{{ criteria.ageMax }}{% endif %}</dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/volunteer-criteria">Change<span class="nhsuk-u-visually-hidden"> criteria</span></a></dd>
-        </div>
-        {% endif %}
-
-        {% if criteria.geoMethod %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Geography</dt>
-          <dd class="nhsuk-summary-list__value">{{ criteria.geoMethod }}</dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/volunteer-criteria">Change<span class="nhsuk-u-visually-hidden"> geography</span></a></dd>
-        </div>
-        {% endif %}
-
-        {% if criteria.inclusion and criteria.inclusion.length %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Inclusion flags</dt>
-          <dd class="nhsuk-summary-list__value">{% for inc in criteria.inclusion %}{{ inc }}{% if not loop.last %}, {% endif %}{% endfor %}</dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/volunteer-criteria">Change<span class="nhsuk-u-visually-hidden"> inclusion flags</span></a></dd>
-        </div>
-        {% endif %}
-
-        {% if ('JDR' in scope) and criteria.jdrHealth %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">JDR health criteria</dt>
-          <dd class="nhsuk-summary-list__value">{{ criteria.jdrHealth | capitalize }}</dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/volunteer-criteria">Change<span class="nhsuk-u-visually-hidden"> JDR criteria</span></a></dd>
-        </div>
-        {% endif %}
-      </dl>
-      {% endif %}
-
-      {% if sites and sites.length %}
-      <h2 class="nhsuk-heading-l">Sites & contacts</h2>
-      <dl class="nhsuk-summary-list">
-        {% for s in sites %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Site {{ loop.index }}</dt>
-          <dd class="nhsuk-summary-list__value">
-            {{ s.site or s.ods }}{% if s.email %}<br><span class="nhsuk-hint">{{ s.email }}</span>{% endif %}
-            {% if s.needsInvite is defined %}<br>{% if s.needsInvite %}<strong class="nhsuk-tag">Invite pending</strong>{% else %}<strong class="nhsuk-tag">Active contact</strong>{% endif %}{% endif %}
-            {% if s.inviteSentAt and s.needsInvite %}<br><span class="nhsuk-hint">Invite sent {{ s.inviteSentAt }}</span>{% endif %}
-          </dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/sites">Change<span class="nhsuk-u-visually-hidden"> site {{ loop.index }}</span></a></dd>
-        </div>
-        {% endfor %}
-      </dl>
-      {% endif %}
-
-      {% if ethics %}
-      <h2 class="nhsuk-heading-l">Ethics approval</h2>
-      <dl class="nhsuk-summary-list">
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Has ethics approval</dt>
-          <dd class="nhsuk-summary-list__value">{% if ethics.hasEthics == 'yes' %}Yes{% else %}No{% endif %}</dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/ethics">Change<span class="nhsuk-u-visually-hidden"> ethics</span></a></dd>
-        </div>
-        {% if ethics.hasEthics == 'yes' and ethics.approvalFile %}
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">Approval letter</dt>
-          <dd class="nhsuk-summary-list__value">{{ ethics.approvalFile }}</dd>
-          <dd class="nhsuk-summary-list__actions"><a href="/researcher/ethics">Change<span class="nhsuk-u-visually-hidden"> ethics file</span></a></dd>
-        </div>
-        {% endif %}
-      </dl>
-      {% endif %}
-
-      <form action="/researcher/check-answers" method="post" class="nhsuk-button-group nhsuk-u-margin-top-4">
-        <button class="nhsuk-button" type="submit">Submit study</button>
-        <a class="nhsuk-button nhsuk-button--secondary" href="/researcher/task-list">Back to task list</a>
-      </form>
-
-    </div></div>
-  </main>
-</div>
+<form method="post" action="/researcher/check-answers">
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Submit study request</button>
+  </div>
+</form>
 {% endblock %}

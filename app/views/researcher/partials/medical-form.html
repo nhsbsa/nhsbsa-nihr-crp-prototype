@@ -1,0 +1,43 @@
+{# expects: partialAction, partialModel, isJDR #}
+<form method="post" action="{{ partialAction }}">
+  {% set sel = partialModel and partialModel.conditions or [] %}
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label">Conditions / areas of interest</label>
+    {% set opts = ['Dementia','Diabetes','Hypertension','COPD','Long COVID','Depression'] %}
+    <div class="nhsuk-checkboxes">
+      {% for c in opts %}
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input" id="cond-{{ c }}" name="conditions" type="checkbox" value="{{ c }}" {{ 'checked' if c in sel }}>
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="cond-{{ c }}">{{ c }}</label>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="nhsuk-form-group">
+    {% if isJDR %}
+      <p class="nhsuk-hint">Join Dementia Research requires confirmed diagnoses.</p>
+      <input type="hidden" name="confirmedOnly" value="yes">
+      <strong class="nhsuk-tag nhsuk-tag--blue">Confirmed diagnoses only</strong>
+    {% else %}
+      {% set confirmed = partialModel and partialModel.confirmedOnly or false %}
+      <fieldset class="nhsuk-fieldset">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Require confirmed diagnosis?</legend>
+        <div class="nhsuk-radios">
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input" id="conf-yes" name="confirmedOnly" type="radio" value="yes" {{ 'checked' if confirmed }}>
+            <label class="nhsuk-label nhsuk-radios__label" for="conf-yes">Yes</label>
+          </div>
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input" id="conf-no" name="confirmedOnly" type="radio" value="no" {{ 'checked' if not confirmed }}>
+            <label class="nhsuk-label nhsuk-radios__label" for="conf-no">No</label>
+          </div>
+        </div>
+      </fieldset>
+    {% endif %}
+  </div>
+
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+  </div>
+</form>

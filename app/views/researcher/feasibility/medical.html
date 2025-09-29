@@ -1,0 +1,12 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Feasibility: medical{% endblock %}
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/researcher/feasibility/demographics">Back</a>
+<h1 class="nhsuk-heading-l">Medical criteria</h1>
+
+{% set partialAction = "/researcher/feasibility/medical" %}
+{% set partialModel = data.feasibility and data.feasibility.medical %}
+{% set isJDR = (data.feasibility and data.feasibility.platform or 'BPOR') == 'JDR' %}
+
+{% include "researcher/partials/medical-form.html" %}
+{% endblock %}

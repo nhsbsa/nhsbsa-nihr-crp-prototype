@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Submit a study{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Submit a study</h1>
+      <p class="nhsuk-body">Complete the sections below. You can save and return at any time.</p>
+
+      <ol class="nhsuk-task-list">
+        <li class="nhsuk-task-list__item">
+          <div class="nhsuk-task-list__name-and-hint">
+            <a class="nhsuk-link" href="/researcher/study/info">Provide study information</a>
+          </div>
+          <div class="nhsuk-task-list__status">
+            {% if draft.progress.info %}<strong class="nhsuk-tag">Completed</strong>{% else %}<span>Not started</span>{% endif %}
+          </div>
+        </li>
+        <li class="nhsuk-task-list__item">
+          <div class="nhsuk-task-list__name-and-hint">
+            <a class="nhsuk-link" href="/researcher/study/type">Provide study type</a>
+            <div class="nhsuk-hint nhsuk-u-margin-top-1">Portfolio / non-portfolio, etc.</div>
+          </div>
+          <div class="nhsuk-task-list__status">
+            {% if draft.progress.type %}<strong class="nhsuk-tag">Completed</strong>{% else %}<span>Not started</span>{% endif %}
+          </div>
+        </li>
+        <li class="nhsuk-task-list__item">
+          <div class="nhsuk-task-list__name-and-hint">
+            <a class="nhsuk-link" href="/researcher/study/demographics">Provide demographic requirements</a>
+          </div>
+          <div class="nhsuk-task-list__status">
+            {% if draft.progress.demographics %}<strong class="nhsuk-tag">Completed</strong>{% else %}<span>Not started</span>{% endif %}
+          </div>
+        </li>
+        <li class="nhsuk-task-list__item">
+          <div class="nhsuk-task-list__name-and-hint">
+            <a class="nhsuk-link" href="/researcher/study/medical">Provide medical requirements</a>
+            <div class="nhsuk-hint nhsuk-u-margin-top-1">Conditions/areas of interest (Confirmed for JDR).</div>
+          </div>
+          <div class="nhsuk-task-list__status">
+            {% if draft.progress.medical %}<strong class="nhsuk-tag">Completed</strong>{% else %}<span>Not started</span>{% endif %}
+          </div>
+        </li>
+        <li class="nhsuk-task-list__item">
+          <div class="nhsuk-task-list__name-and-hint">
+            <a class="nhsuk-link" href="/researcher/study/sites">Provide site information</a>
+            <div class="nhsuk-hint nhsuk-u-margin-top-1">One per line: Site, ODS, Email</div>
+          </div>
+          <div class="nhsuk-task-list__status">
+            {% if draft.progress.sites %}<strong class="nhsuk-tag">Completed</strong>{% else %}<span>Not started</span>{% endif %}
+          </div>
+        </li>
+      </ol>
+
+      <p class="nhsuk-u-margin-top-5">
+        <a class="nhsuk-button" data-module="nhsuk-button" href="/researcher/study/review">Review and submit</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

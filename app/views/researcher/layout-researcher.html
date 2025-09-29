@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-one-quarter">
+      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Manage platform</h2>
+
+      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Study management</p>
+      <ul class="nhsuk-list nhsuk-u-margin-bottom-5">
+        <li><a href="/researcher"
+               class="nhsuk-link{% if activeNav=='study-mgmt' %} nhsuk-u-font-weight-bold{% endif %}"
+               {% if activeNav=='study-mgmt' %}style="text-decoration: underline;"{% endif %}>Study management</a></li>
+        <li><a href="/researcher/request/new"
+               class="nhsuk-link{% if activeNav=='create-request' %} nhsuk-u-font-weight-bold{% endif %}"
+               {% if activeNav=='create-request' %}style="text-decoration: underline;"{% endif %}>Create study request</a></li>
+        <li><a href="/researcher/search"
+               class="nhsuk-link{% if activeNav=='search' %} nhsuk-u-font-weight-bold{% endif %}"
+               {% if activeNav=='search' %}style="text-decoration: underline;"{% endif %}>Study search</a></li>
+        <li><a href="/researcher/pre-screener"
+               class="nhsuk-link{% if activeNav=='pre-screener' %} nhsuk-u-font-weight-bold{% endif %}"
+               {% if activeNav=='pre-screener' %}style="text-decoration: underline;"{% endif %}>Create pre-screener</a></li>
+      </ul>
+
+      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Communication</p>
+      <ul class="nhsuk-list nhsuk-u-margin-bottom-5">
+        <li><a href="/researcher/mailing-lists"
+               class="nhsuk-link{% if activeNav=='mailing' %} nhsuk-u-font-weight-bold{% endif %}"
+               {% if activeNav=='mailing' %}style="text-decoration: underline;"{% endif %}>View mailing lists</a></li>
+        <li><a href="/researcher/reporting"
+               class="nhsuk-link{% if activeNav=='reporting' %} nhsuk-u-font-weight-bold{% endif %}"
+               {% if activeNav=='reporting' %}style="text-decoration: underline;"{% endif %}>Reporting</a></li>
+      </ul>
+
+      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Support</p>
+      <ul class="nhsuk-list">
+        <li><a href="/researcher/help"
+               class="nhsuk-link{% if activeNav=='help' %} nhsuk-u-font-weight-bold{% endif %}"
+               {% if activeNav=='help' %}style="text-decoration: underline;"{% endif %}>Help</a></li>
+      </ul>
+    </div>
+
+    <div class="nhsuk-grid-column-three-quarters">
+      {% block researcherContent %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

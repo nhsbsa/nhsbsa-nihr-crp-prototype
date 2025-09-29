@@ -1,131 +1,131 @@
-{% extends "layout.html" %}
-{% block pageTitle %}Identify your study{% endblock %}
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Identify the study (CPMS/IRAS){% endblock %}
 
-{% block content %}
-<div class="nhsuk-width-container">
-  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds">
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Identify the study</h1>
+<p class="nhsuk-body">Provide a CPMS ID to pull details now, or enter the study title and lay summary if you don’t have CPMS to hand.</p>
 
-        <a class="nhsuk-back-link" href="/researcher/task-list">Back</a>
-        <h1 class="nhsuk-heading-xl">Identify your study</h1>
-        <p class="nhsuk-body">Do you have a CPMS ID?</p>
-
-        {% if errors and (errors.hasCpms or errors.cpmsId or errors.title or errors.sponsor) %}
-          <div class="nhsuk-error-summary" role="alert" tabindex="-1" aria-labelledby="error-summary-title">
-            <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
-            <div class="nhsuk-error-summary__body">
-              <ul class="nhsuk-list nhsuk-error-summary__list">
-                {% if errors.hasCpms %}<li><a href="#hasCpms">Select if you have a CPMS ID</a></li>{% endif %}
-                {% if errors.cpmsId %}<li><a href="#cpmsId">{{ errors.cpmsId }}</a></li>{% endif %}
-                {% if errors.title %}<li><a href="#title">{{ errors.title }}</a></li>{% endif %}
-                {% if errors.sponsor %}<li><a href="#sponsor">{{ errors.sponsor }}</a></li>{% endif %}
-              </ul>
-            </div>
-          </div>
-        {% endif %}
-
-        <form method="post" action="/researcher/identify" novalidate>
-          <div class="nhsuk-form-group {% if errors.hasCpms %}nhsuk-form-group--error{% endif %}">
-            {% if errors.hasCpms %}
-              <p class="nhsuk-error-message" id="hasCpms-error">
-                <span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.hasCpms }}
-              </p>
-            {% endif %}
-
-            <div class="nhsuk-radios" data-module="nhsuk-radios" id="hasCpms">
-              <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input"
-                       id="hasCpms-yes"
-                       name="hasCpms"
-                       type="radio"
-                       value="yes"
-                       data-aria-controls="conditional-hasCpms-yes"
-                       {% if data.hasCpms == 'yes' %}checked{% endif %}>
-                <label class="nhsuk-label nhsuk-radios__label" for="hasCpms-yes">Yes</label>
-              </div>
-
-              <div class="nhsuk-radios__conditional {% if data.hasCpms != 'yes' %}nhsuk-radios__conditional--hidden{% endif %}"
-                   id="conditional-hasCpms-yes">
-                <div class="nhsuk-form-group {% if errors.cpmsId %}nhsuk-form-group--error{% endif %}">
-                  <label class="nhsuk-label" for="cpmsId">CPMS ID</label>
-                  {% if errors.cpmsId %}
-                    <p class="nhsuk-error-message" id="cpmsId-error">
-                      <span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.cpmsId }}
-                    </p>
-                  {% endif %}
-                  <input class="nhsuk-input {% if errors.cpmsId %}nhsuk-input--error{% endif %}"
-                         id="cpmsId" name="cpmsId" type="text" value="{{ data.cpmsId or '' }}"
-                         {% if errors.cpmsId %}aria-describedby="cpmsId-error"{% endif %}>
-                </div>
-              </div>
-
-              <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input"
-                       id="hasCpms-no"
-                       name="hasCpms"
-                       type="radio"
-                       value="no"
-                       data-aria-controls="conditional-hasCpms-no"
-                       {% if data.hasCpms == 'no' %}checked{% endif %}>
-                <label class="nhsuk-label nhsuk-radios__label" for="hasCpms-no">No</label>
-              </div>
-
-              <div class="nhsuk-radios__conditional {% if data.hasCpms != 'no' %}nhsuk-radios__conditional--hidden{% endif %}"
-                   id="conditional-hasCpms-no">
-                <div class="nhsuk-form-group {% if errors.title %}nhsuk-form-group--error{% endif %}">
-                  <label class="nhsuk-label" for="title">Study title</label>
-                  {% if errors.title %}
-                    <p class="nhsuk-error-message" id="title-error">
-                      <span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.title }}
-                    </p>
-                  {% endif %}
-                  <input class="nhsuk-input {% if errors.title %}nhsuk-input--error{% endif %}"
-                         id="title" name="title" type="text" value="{{ data.title or '' }}"
-                         {% if errors.title %}aria-describedby="title-error"{% endif %}>
-                </div>
-
-                <div class="nhsuk-form-group {% if errors.sponsor %}nhsuk-form-group--error{% endif %}">
-                  <label class="nhsuk-label" for="sponsor">Sponsor</label>
-                  {% if errors.sponsor %}
-                    <p class="nhsuk-error-message" id="sponsor-error">
-                      <span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.sponsor }}
-                    </p>
-                  {% endif %}
-                  <input class="nhsuk-input {% if errors.sponsor %}nhsuk-input--error{% endif %}"
-                         id="sponsor" name="sponsor" type="text" value="{{ data.sponsor or '' }}"
-                         {% if errors.sponsor %}aria-describedby="sponsor-error"{% endif %}>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Continue</button>
-        </form>
-
-      </div>
+{% if errors and errors.length %}
+  <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+    <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% for e in errors %}
+          <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+        {% endfor %}
+      </ul>
     </div>
-  </main>
+  </div>
+{% endif %}
+
+{% if saved and (saved.title or saved.cpmsId) %}
+  <div class="nhsuk-card nhsuk-u-margin-bottom-4">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Current selection</h2>
+      <dl class="nhsuk-summary-list">
+        {% if saved.cpmsId %}
+          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">CPMS ID</dt><dd class="nhsuk-summary-list__value">{{ saved.cpmsId }}</dd></div>
+        {% endif %}
+        {% if saved.irasId %}
+          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">IRAS ID</dt><dd class="nhsuk-summary-list__value">{{ saved.irasId }}</dd></div>
+        {% endif %}
+        {% if saved.title %}
+          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Study title</dt><dd class="nhsuk-summary-list__value">{{ saved.title }}</dd></div>
+        {% endif %}
+        {% if saved.laySummary %}
+          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Lay summary</dt><dd class="nhsuk-summary-list__value">{{ saved.laySummary }}</dd></div>
+        {% endif %}
+      </dl>
+      <form method="post" action="/researcher/identify-study">
+        <input type="hidden" name="_action" value="clear">
+        <button class="nhsuk-button nhsuk-button--secondary" type="submit">Change selection</button>
+      </form>
+    </div>
+  </div>
+{% endif %}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-half">
+
+    {% set hasCpmsErr = false %}
+    {% if errors %}{% for e in errors %}{% if e.href == '#cpmsId' %}{% set hasCpmsErr = true %}{% endif %}{% endfor %}{% endif %}
+    <form method="post" action="/researcher/identify-study" class="nhsuk-u-margin-bottom-5" novalidate>
+      <input type="hidden" name="_action" value="lookup">
+      <div class="nhsuk-form-group{% if hasCpmsErr %} nhsuk-form-group--error{% endif %}">
+        <label class="nhsuk-label" for="cpmsId">CPMS ID</label>
+        <span class="nhsuk-hint">Example: CPMS123456 or just 123456</span>
+        {% if hasCpmsErr %}
+          {% for e in errors %}{% if e.href == '#cpmsId' %}
+            <span class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ e.text }}</span>
+          {% endif %}{% endfor %}
+        {% endif %}
+        <input class="nhsuk-input nhsuk-input--width-20" id="cpmsId" name="cpmsId" value="{{ cpmsQuery or '' }}" autocomplete="off">
+      </div>
+      <button class="nhsuk-button" type="submit">Find study</button>
+    </form>
+
+    {% set hasTitleErr = false %}{% set hasLayErr = false %}
+    {% if errors %}{% for e in errors %}
+      {% if e.href == '#title' %}{% set hasTitleErr = true %}{% endif %}
+      {% if e.href == '#laySummary' %}{% set hasLayErr = true %}{% endif %}
+    {% endfor %}{% endif %}
+
+    <form method="post" action="/researcher/identify-study" novalidate>
+      <div class="nhsuk-form-group{% if hasTitleErr %} nhsuk-form-group--error{% endif %}">
+        <label class="nhsuk-label" for="title">Study title</label>
+        {% if hasTitleErr %}
+          {% for e in errors %}{% if e.href == '#title' %}
+            <span class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ e.text }}</span>
+          {% endif %}{% endfor %}
+        {% endif %}
+        <input class="nhsuk-input" id="title" name="title" value="{{ saved.title or '' }}">
+      </div>
+      <div class="nhsuk-form-group{% if hasLayErr %} nhsuk-form-group--error{% endif %}">
+        <label class="nhsuk-label" for="laySummary">Lay summary</label>
+        {% if hasLayErr %}
+          {% for e in errors %}{% if e.href == '#laySummary' %}
+            <span class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ e.text }}</span>
+          {% endif %}{% endfor %}
+        {% endif %}
+        <textarea class="nhsuk-textarea" id="laySummary" name="laySummary" rows="6">{{ saved.laySummary or '' }}</textarea>
+      </div>
+      <div class="nhsuk-button-group">
+        <button class="nhsuk-button" type="submit">Save and continue</button>
+        <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
+      </div>
+    </form>
+
+  </div>
+
+  <div class="nhsuk-grid-column-one-half">
+    {% if found and lookup %}
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">CPMS match</h2>
+          <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">CPMS ID</dt><dd class="nhsuk-summary-list__value">{{ lookup.cpmsId }}</dd></div>
+            {% if lookup.irasId %}
+              <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">IRAS ID</dt><dd class="nhsuk-summary-list__value">{{ lookup.irasId }}</dd></div>
+            {% endif %}
+            <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Study title</dt><dd class="nhsuk-summary-list__value">{{ lookup.title }}</dd></div>
+            <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Lay summary</dt><dd class="nhsuk-summary-list__value">{{ lookup.laySummary }}</dd></div>
+          </dl>
+          <form method="post" action="/researcher/identify-study" class="nhsuk-u-margin-top-3">
+            <input type="hidden" name="_action" value="use-found">
+            <input type="hidden" name="cpmsId" value="{{ lookup.cpmsId }}">
+            <button class="nhsuk-button" type="submit">Use these details</button>
+          </form>
+        </div>
+      </div>
+    {% elif cpmsQuery %}
+      <div class="nhsuk-warning-text nhsuk-u-margin-top-3">
+        <span class="nhsuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="nhsuk-warning-text__text">
+          <span class="nhsuk-warning-text__assistive">Warning</span>
+          No study found for <strong>{{ cpmsQuery }}</strong>. Check the ID or enter details manually.
+        </strong>
+      </div>
+    {% endif %}
+  </div>
 </div>
-
-<script>
-  // Fallback in case nhsuk-frontend JS hasn't initialised yet
-  (function () {
-    var yes = document.getElementById('hasCpms-yes');
-    var no  = document.getElementById('hasCpms-no');
-    var yesPanel = document.getElementById('conditional-hasCpms-yes');
-    var noPanel  = document.getElementById('conditional-hasCpms-no');
-    if (!yes || !no || !yesPanel || !noPanel) return;
-
-    function update() {
-      var y = yes.checked;
-      var n = no.checked;
-      yesPanel.classList.toggle('nhsuk-radios__conditional--hidden', !y);
-      noPanel.classList.toggle('nhsuk-radios__conditional--hidden', !n);
-    }
-    yes.addEventListener('change', update);
-    no.addEventListener('change', update);
-    update();
-  })();
-</script>
 {% endblock %}

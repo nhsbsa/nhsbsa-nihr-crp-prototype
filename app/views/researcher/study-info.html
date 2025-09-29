@@ -1,0 +1,45 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Study information{% endblock %}
+
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Study information</h1>
+<p class="nhsuk-body">We’ve prefilled this from your CPMS/IRAS selection if available. You can edit it.</p>
+
+{% if errors and errors.length %}
+<div class="nhsuk-error-summary" role="alert" tabindex="-1">
+  <h2 class="nhsuk-error-summary__title">There is a problem</h2>
+  <div class="nhsuk-error-summary__body">
+    <ul class="nhsuk-list nhsuk-error-summary__list">
+      {% for e in errors %}<li><a href="{{ e.href }}">{{ e.text }}</a></li>{% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+<form method="post" action="/researcher/study-info" novalidate>
+  <div class="nhsuk-form-group{% for e in errors %}{% if e.href=='#title' %} nhsuk-form-group--error{% endif %}{% endfor %}">
+    <label class="nhsuk-label" for="title">Study title</label>
+    <input class="nhsuk-input" id="title" name="title" value="{{ model.title or '' }}">
+  </div>
+
+  <div class="nhsuk-form-group{% for e in errors %}{% if e.href=='#laySummary' %} nhsuk-form-group--error{% endif %}{% endfor %}">
+    <label class="nhsuk-label" for="laySummary">Lay summary</label>
+    <textarea class="nhsuk-textarea" id="laySummary" name="laySummary" rows="6">{{ model.laySummary or '' }}</textarea>
+  </div>
+
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="cpmsId">CPMS ID (optional)</label>
+    <input class="nhsuk-input nhsuk-input--width-20" id="cpmsId" name="cpmsId" value="{{ model.cpmsId or '' }}">
+  </div>
+
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="irasId">IRAS ID (optional)</label>
+    <input class="nhsuk-input nhsuk-input--width-20" id="irasId" name="irasId" value="{{ model.irasId or '' }}">
+  </div>
+
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+{% endblock %}

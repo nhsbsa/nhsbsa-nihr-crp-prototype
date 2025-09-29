@@ -1,209 +1,178 @@
-{% extends "layout.html" %}
-{% block pageTitle %}Submit a study – task list{% endblock %}
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Submit a study — task list{% endblock %}
 
-{% block content %}
-<div class="nhsuk-width-container">
-  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Submit a study</h1>
 
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds">
-
-        <h1 class="nhsuk-heading-xl">Submit a study</h1>
-        {% if pageHint %}
-          <p class="nhsuk-hint">{{ pageHint }}</p>
-        {% endif %}
-
-        {# Progress #}
-        <div class="nhsuk-inset-text nhsuk-u-margin-top-2">
-          <p class="nhsuk-u-margin-bottom-1"><strong>Status overview</strong></p>
-          <p class="nhsuk-body-s nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-2">
-            {{ completedCount }} of {{ totalCount }} sections complete
-            {% if estCount %} &nbsp;•&nbsp; Estimated volunteers: <strong>{{ estCount }}</strong>{% endif %}
-            {% if invitePendingCount != null %} &nbsp;•&nbsp; Invites pending: <strong>{{ invitePendingCount }}</strong>{% endif %}
-          </p>
-          <div aria-hidden="true" style="height:8px; background:#e8edee; border-radius:4px; overflow:hidden;">
-            <div style="height:8px; width: {{ progressPct }}%; background:#007f3b;"></div>
-          </div>
-          <p class="nhsuk-hint nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-0">
-            {% if lastSaved %}Last saved: {{ lastSaved }}{% endif %}
-          </p>
-        </div>
-
-        {# Next step #}
-        <div class="nhsuk-u-margin-top-4">
-          {% if nextHref %}
-            <a class="nhsuk-button" href="{{ nextHref }}">Continue to {{ nextLabel }}</a>
+      <div class="nhsuk-grid-column-one-half">
+        <p class="nhsuk-body-s nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-0">
+          {% if data and data.meta and data.meta.lastSaved %}
+            Last saved: <strong>{{ data.meta.lastSaved }}</strong>
           {% else %}
-            <a class="nhsuk-button" href="/researcher/preview">Review and submit</a>
+            Last saved: <strong>—</strong>
           {% endif %}
-        </div>
-
-        <ol class="app-task-list nhsuk-u-margin-top-6" style="padding-left:0; list-style:none;">
-
-          {# TABLE: Only the sections that have Start/Not started (1–7) #}
-          <li class="app-task-list__item nhsuk-u-padding-bottom-3 nhsuk-u-border-bottom">
-            <table class="nhsuk-table nhsuk-u-margin-bottom-0">
-              <caption class="nhsuk-table__caption nhsuk-table__caption--m">Your tasks</caption>
-              <thead class="nhsuk-table__head">
-                <tr class="nhsuk-table__row">
-                  <th scope="col" class="nhsuk-table__header">Section</th>
-                  <th scope="col" class="nhsuk-table__header">Status</th>
-                  <th scope="col" class="nhsuk-table__header nhsuk-u-text-align-right">Action</th>
-                </tr>
-              </thead>
-              <tbody class="nhsuk-table__body">
-                {# 1 #}
-                <tr class="nhsuk-table__row">
-                  <th scope="row" class="nhsuk-table__header">Identify your study</th>
-                  <td class="nhsuk-table__cell">
-                    {% if st.identify %}
-                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
-                    {% else %}
-                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
-                    {% endif %}
-                  </td>
-                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
-                    <a class="nhsuk-link" href="/researcher/identify">
-                      {% if st.identify %}Change{% else %}Start{% endif %}
-                    </a>
-                  </td>
-                </tr>
-
-                {# 2 #}
-                <tr class="nhsuk-table__row">
-                  <th scope="row" class="nhsuk-table__header">Study details</th>
-                  <td class="nhsuk-table__cell">
-                    {% if st.details %}
-                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
-                    {% else %}
-                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
-                    {% endif %}
-                  </td>
-                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
-                    <a class="nhsuk-link" href="/researcher/study-details">
-                      {% if st.details %}Change{% else %}Start{% endif %}
-                    </a>
-                  </td>
-                </tr>
-
-                {# 3 #}
-                <tr class="nhsuk-table__row">
-                  <th scope="row" class="nhsuk-table__header">Choose platform(s)</th>
-                  <td class="nhsuk-table__cell">
-                    {% if st.scope %}
-                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
-                    {% else %}
-                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
-                    {% endif %}
-                  </td>
-                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
-                    <a class="nhsuk-link" href="/researcher/scope">
-                      {% if st.scope %}Change{% else %}Start{% endif %}
-                    </a>
-                  </td>
-                </tr>
-
-                {# 4 #}
-                <tr class="nhsuk-table__row">
-                  <th scope="row" class="nhsuk-table__header">
-                    Volunteer criteria
-                    {% if estCount %}
-                      <div class="nhsuk-hint nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-0">Estimated volunteers matched: <strong>{{ estCount }}</strong></div>
-                    {% endif %}
-                  </th>
-                  <td class="nhsuk-table__cell">
-                    {% if st.criteria %}
-                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
-                    {% else %}
-                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
-                    {% endif %}
-                  </td>
-                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
-                    <a class="nhsuk-link" href="/researcher/volunteer-criteria">
-                      {% if st.criteria %}Change{% else %}Start{% endif %}
-                    </a>
-                  </td>
-                </tr>
-
-                {# 5 #}
-                <tr class="nhsuk-table__row">
-                  <th scope="row" class="nhsuk-table__header">Arms / sub-studies</th>
-                  <td class="nhsuk-table__cell">
-                    {% if st.arms %}
-                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
-                    {% else %}
-                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
-                    {% endif %}
-                  </td>
-                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
-                    <a class="nhsuk-link" href="/researcher/arms">
-                      {% if st.arms %}Change{% else %}Start{% endif %}
-                    </a>
-                  </td>
-                </tr>
-
-                {# 6 #}
-                <tr class="nhsuk-table__row">
-                  <th scope="row" class="nhsuk-table__header">
-                    Sites & contacts
-                    {% if invitePendingCount != null %}
-                      <div class="nhsuk-hint nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-0">Invites pending: <strong>{{ invitePendingCount }}</strong></div>
-                    {% endif %}
-                  </th>
-                  <td class="nhsuk-table__cell">
-                    {% if st.sites %}
-                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
-                    {% else %}
-                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
-                    {% endif %}
-                  </td>
-                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
-                    <a class="nhsuk-link" href="/researcher/sites">
-                      {% if st.sites %}Change{% else %}Start{% endif %}
-                    </a>
-                  </td>
-                </tr>
-
-                {# 7 #}
-                <tr class="nhsuk-table__row">
-                  <th scope="row" class="nhsuk-table__header">Ethics approval</th>
-                  <td class="nhsuk-table__cell">
-                    {% if st.ethics %}
-                      <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
-                    {% else %}
-                      <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
-                    {% endif %}
-                  </td>
-                  <td class="nhsuk-table__cell nhsuk-u-text-align-right">
-                    <a class="nhsuk-link" href="/researcher/ethics">
-                      {% if st.ethics %}Change{% else %}Start{% endif %}
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </li>
-
-          {# 8. Preview and submit — left UNCHANGED #}
-          <li class="app-task-list__item nhsuk-u-padding-bottom-3 nhsuk-u-border-bottom">
-            <span class="nhsuk-heading-m nhsuk-u-margin-bottom-1">Preview and submit</span>
-            <div class="nhsuk-u-display-flex nhsuk-u-flex-wrap">
-              {% if canPreview %}
-                <a class="nhsuk-link nhsuk-u-margin-right-3" href="/researcher/preview">Open preview</a>
-                <a class="nhsuk-link nhsuk-u-margin-right-3" href="/researcher/check-answers">Check your answers</a>
-              {% else %}
-                <span class="nhsuk-hint">Complete “Identify your study”, “Study details”, “Choose platform(s)” and “Volunteer criteria” to preview.</span>
-              {% endif %}
-            </div>
-          </li>
-        </ol>
-
-        <form method="post" action="/researcher/task-list/reset" class="nhsuk-u-margin-top-5">
-          <button class="nhsuk-button nhsuk-button--secondary" type="submit">Reset this prototype</button>
-        </form>
-
+        </p>
+      </div>
+      <div class="nhsuk-grid-column-one-half">
+        {% set feas = (data and data.feasibility and data.feasibility.totalEstimate) or 0 %}
+        {% set matched = (data and data.derived and data.derived.matchedEstimate) or 0 %}
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-text-align-right">
+          Estimated participants:
+          <strong>{{ matched }}</strong>{% if feas %} of <strong>{{ feas }}</strong>{% endif %}
+          {% if not feas %}<span class="nhsuk-hint"> run feasibility first</span>{% endif %}
+        </p>
       </div>
     </div>
-  </main>
+  </div>
 </div>
+
+{% from "researcher/includes/task-status.html" import statusTag, sectionCount %}
+
+{# --------- counters with safe fallbacks --------- #}
+{% set aCompleted = 0 %}{% set aTotal = 5 %}
+{% if data and data.progress and data.progress.sections and data.progress.sections.feasibility %}
+  {% set aCompleted = data.progress.sections.feasibility.completed or 0 %}
+  {% set aTotal = data.progress.sections.feasibility.total or 5 %}
+{% endif %}
+
+{# Section B is 8 items including Ethics #}
+{% set bCompleted = 0 %}{% set bTotal = 8 %}
+{% if data and data.progress and data.progress.sections and data.progress.sections.submit %}
+  {% set bCompleted = data.progress.sections.submit.completed or 0 %}
+  {% set bTotal = data.progress.sections.submit.total or 8 %}
+{% endif %}
+
+{# --------- decide if feasibility is "done" and collapse if so --------- #}
+{% set feasDone = false %}
+{% if data and data.feasibility and data.feasibility.completed %}{% set feasDone = true %}{% endif %}
+{% if not feasDone and feas %}{% set feasDone = true %}{% endif %}
+{% if not feasDone and data and data.status and (data.status['/researcher/feasibility/results'] in ['completed','in-progress']) %}
+  {% set feasDone = true %}
+{% endif %}
+{% if feasDone and aCompleted < aTotal %}
+  {% set aCompleted = aTotal %}
+{% endif %}
+
+{# --------- PHASE A --------- #}
+{% if feasDone %}
+  <section class="nhsuk-u-margin-bottom-6">
+    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">A. Feasibility</h2>
+    <p class="nhsuk-body-s nhsuk-u-secondary-text-color">{{ sectionCount(aCompleted, aTotal) }}</p>
+    <div class="nhsuk-inset-text nhsuk-u-margin-bottom-0">
+      <p class="nhsuk-body-s nhsuk-u-margin-bottom-2">
+        Completed. Estimated available: <strong>{{ feas }}</strong>. Current matched estimate: <strong>{{ matched }}</strong>.
+      </p>
+      <p class="nhsuk-body-s nhsuk-u-margin-bottom-0">
+        <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/feasibility/results">View results</a>
+        or <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/feasibility/demographics">Re-run feasibility</a>.
+      </p>
+    </div>
+  </section>
+{% else %}
+  <section class="nhsuk-u-margin-bottom-6">
+    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">A. Check study feasibility</h2>
+    <p class="nhsuk-body-s nhsuk-u-secondary-text-color">{{ sectionCount(aCompleted, aTotal) }}</p>
+    <ol class="app-task-list">
+      <li class="app-task-list__item">
+        <span class="app-task-list__task-name"><a href="/researcher/feasibility/intro">Start feasibility</a></span>
+        {{ statusTag((data and data.status and data.status['/researcher/feasibility/intro']) or 'not-started') }}
+      </li>
+      <li class="app-task-list__item">
+        <span class="app-task-list__task-name"><a href="/researcher/feasibility/demographics">Cohort demographics</a></span>
+        {{ statusTag((data and data.status and data.status['/researcher/feasibility/demographics']) or 'not-started') }}
+      </li>
+      <li class="app-task-list__item">
+        <span class="app-task-list__task-name"><a href="/researcher/feasibility/medical">Medical conditions / confirmation</a></span>
+        {{ statusTag((data and data.status and data.status['/researcher/feasibility/medical']) or 'not-started') }}
+      </li>
+      <li class="app-task-list__item">
+        <span class="app-task-list__task-name"><a href="/researcher/feasibility/sites">Sites and coverage</a></span>
+        {{ statusTag((data and data.status and data.status['/researcher/feasibility/sites']) or 'not-started') }}
+      </li>
+      <li class="app-task-list__item">
+        <span class="app-task-list__task-name"><a href="/researcher/feasibility/results">Feasibility results</a></span>
+        {% set resultsState = (data and data.status and data.status['/researcher/feasibility/results']) or (feas and 'completed' or 'not-started') %}
+        {{ statusTag(resultsState) }}
+      </li>
+    </ol>
+  </section>
+{% endif %}
+
+{# --------- PHASE B --------- #}
+<section class="nhsuk-u-margin-bottom-6">
+  <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">B. Submit a study</h2>
+  <p class="nhsuk-body-s nhsuk-u-secondary-text-color">{{ sectionCount(bCompleted, bTotal) }}</p>
+
+  <ol class="app-task-list">
+    <li class="app-task-list__item">
+      <span class="app-task-list__task-name"><a href="/researcher/identify-study">Identify the study</a></span>
+      {{ statusTag((data and data.status and data.status['/researcher/identify-study']) or 'not-started') }}
+    </li>
+    <li class="app-task-list__item">
+      <span class="app-task-list__task-name"><a href="/researcher/study-info">Study information</a></span>
+      {{ statusTag((data and data.status and data.status['/researcher/study-info']) or 'not-started') }}
+    </li>
+    <li class="app-task-list__item">
+      <span class="app-task-list__task-name"><a href="/researcher/study-type">Study type</a></span>
+      {{ statusTag((data and data.status and data.status['/researcher/study-type']) or 'not-started') }}
+    </li>
+    <li class="app-task-list__item">
+      <span class="app-task-list__task-name"><a href="/researcher/demographics">Demographic requirements</a></span>
+      {{ statusTag((data and data.status and data.status['/researcher/demographics']) or 'not-started') }}
+    </li>
+    <li class="app-task-list__item">
+      <span class="app-task-list__task-name"><a href="/researcher/medical">Medical requirements</a></span>
+      {{ statusTag((data and data.status and data.status['/researcher/medical']) or 'not-started') }}
+    </li>
+    <li class="app-task-list__item">
+      <span class="app-task-list__task-name"><a href="/researcher/sites">Sites</a></span>
+      {{ statusTag((data and data.status and data.status['/researcher/sites']) or 'not-started') }}
+    </li>
+
+    <li class="app-task-list__item">
+      <span class="app-task-list__task-name">
+        <a href="/researcher/ethics">Ethics approval</a>
+        {% set e = (data and data.submit and data.submit.ethics) or {} %}
+        {% if e.hasApproval == 'yes' and e.fileUploaded %}
+          <span class="nhsuk-tag nhsuk-u-margin-left-2">File uploaded</span>
+        {% elseif e.hasApproval == 'yes' and not e.fileUploaded %}
+          <span class="nhsuk-tag nhsuk-u-margin-left-2">No file yet</span>
+        {% endif %}
+      </span>
+      {{ statusTag((data and data.status and data.status['/researcher/ethics']) or 'not-started') }}
+    </li>
+
+    <li class="app-task-list__item">
+      <span class="app-task-list__task-name"><a href="/researcher/target-date">Target recruitment date</a></span>
+      {{ statusTag((data and data.status and data.status['/researcher/target-date']) or 'not-started') }}
+    </li>
+  </ol>
+</section>
+
+<div class="nhsuk-button-group">
+  {% if bCompleted >= bTotal %}
+    <a class="nhsuk-button" href="/researcher/preview">Check your answers and submit</a>
+  {% else %}
+    <button class="nhsuk-button" disabled aria-disabled="true">Check your answers and submit</button>
+    <p class="nhsuk-hint nhsuk-u-margin-top-2">Complete all tasks in section B to continue.</p>
+  {% endif %}
+  <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher">Back to study management</a>
+</div>
+{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    .app-task-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid #b1b4b6 }
+    .app-task-list__item { display: flex; justify-content: space-between; align-items: baseline; padding: 16px 0; border-bottom: 1px solid #b1b4b6 }
+    .app-task-list__task-name { font-weight: 600; margin-right: 16px }
+    .app-status-tag { display: inline-block; padding: 2px 8px; border-radius: 2px; font-size: 14px; line-height: 1.6 }
+    .app-status--not-started { background: #f3f2f1; color: #0b0c0c }
+    .app-status--in-progress { background: #ffefbf; color: #594d00 }
+    .app-status--completed { background: #dff0d8; color: #0b0c0c }
+    .app-status--cannot-start { background: #f3f2f1; color: #505a5f }
+  </style>
 {% endblock %}

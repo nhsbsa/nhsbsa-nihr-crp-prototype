@@ -1,0 +1,98 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Demographic requirements{% endblock %}
+
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Demographic requirements</h1>
+<p class="nhsuk-body">We’ve prefilled these from your feasibility checks. Update if needed.</p>
+
+{% if errors and errors.length %}
+<div class="nhsuk-error-summary" role="alert" tabindex="-1">
+  <h2 class="nhsuk-error-summary__title">There is a problem</h2>
+  <div class="nhsuk-error-summary__body">
+    <ul class="nhsuk-list nhsuk-error-summary__list">
+      {% for e in errors %}
+        <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+<form method="post" action="/researcher/demographics" novalidate>
+  {# Sex #}
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="sex">Sex</label>
+    {% set v_sex = model.sex or 'any' %}
+    <select class="nhsuk-select" id="sex" name="sex">
+      <option value="any" {% if v_sex=='any' %}selected{% endif %}>Any</option>
+      <option value="female" {% if v_sex=='female' %}selected{% endif %}>Female</option>
+      <option value="male" {% if v_sex=='male' %}selected{% endif %}>Male</option>
+      <option value="other" {% if v_sex=='other' %}selected{% endif %}>Other / prefer not to say</option>
+    </select>
+  </div>
+
+  {# Age #}
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend">Age range</legend>
+      {% set mode = model.ageMode or 'any' %}
+
+      <div class="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="age-any" name="ageMode" type="radio" value="any" {% if mode=='any' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="age-any">Any</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="age-18plus" name="ageMode" type="radio" value="18plus" {% if mode=='18plus' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="age-18plus">18 and over</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="age-custom" name="ageMode" type="radio" value="custom" {% if mode=='custom' %}checked{% endif %} data-aria-controls="age-custom-fields">
+          <label class="nhsuk-label nhsuk-radios__label" for="age-custom">Custom range</label>
+        </div>
+      </div>
+
+      <div id="age-custom-fields" class="nhsuk-u-margin-top-3" {% if mode!='custom' %}hidden{% endif %}>
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-one-quarter">
+            {% set hasMinErr = false %}
+            {% for e in errors %}{% if e.href=='#ageMin' %}{% set hasMinErr = true %}{% endif %}{% endfor %}
+            <div class="nhsuk-form-group{% if hasMinErr %} nhsuk-form-group--error{% endif %}">
+              <label class="nhsuk-label" for="ageMin">Min</label>
+              <input class="nhsuk-input nhsuk-input--width-5" id="ageMin" name="ageMin" value="{{ model.ageMin or '' }}">
+            </div>
+          </div>
+          <div class="nhsuk-grid-column-one-quarter">
+            {% set hasMaxErr = false %}
+            {% for e in errors %}{% if e.href=='#ageMax' %}{% set hasMaxErr = true %}{% endif %}{% endfor %}
+            <div class="nhsuk-form-group{% if hasMaxErr %} nhsuk-form-group--error{% endif %}">
+              <label class="nhsuk-label" for="ageMax">Max</label>
+              <input class="nhsuk-input nhsuk-input--width-5" id="ageMax" name="ageMax" value="{{ model.ageMax or '' }}">
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  {# Regions #}
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="regions">Regions</label>
+    <span class="nhsuk-hint">Pick all that apply.</span>
+    {% set selected = model.regions or [] %}
+    <select class="nhsuk-select" id="regions" name="regions" multiple size="8">
+      {% for r in [
+        'East Midlands','East of England','London','North East','North West',
+        'South East','South West','West Midlands','Yorkshire and the Humber','Wales','Scotland','Northern Ireland'
+      ] %}
+        <option value="{{ r }}" {% if r in selected %}selected{% endif %}>{{ r }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+{% endblock %}

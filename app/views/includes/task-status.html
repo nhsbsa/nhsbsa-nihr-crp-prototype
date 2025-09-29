@@ -1,0 +1,11 @@
+{# app/views/includes/task-status.html #}
+{% set key = statusKey or 'unknown' %}
+{% set status = (data.taskStatus and data.taskStatus[key]) or 'not started' %}
+
+{% if status == 'completed' %}
+  <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
+{% elseif status == 'in progress' %}
+  <strong class="nhsuk-tag nhsuk-tag--blue">In progress</strong>
+{% else %}
+  <strong class="nhsuk-tag nhsuk-tag--grey">Not started</strong>
+{% endif %}

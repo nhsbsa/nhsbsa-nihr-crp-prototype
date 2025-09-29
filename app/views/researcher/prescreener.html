@@ -1,0 +1,33 @@
+<!-- app/views/researcher/prescreener.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Create a pre-screener{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Create a pre-screener</h1>
+      {% if fromRMS %}
+      <div class="nhsuk-inset-text"><p>You arrived from RMS to set up a pre-screener for <strong>{{ s.meta.title }}</strong>.</p></div>
+      {% endif %}
+      <form method="post" action="/researcher/studies/{{ s.id }}/pre-screener" novalidate>
+        <div class="nhsuk-form-group {{ errors.name ? 'nhsuk-form-group--error' : '' }}">
+          <label class="nhsuk-label" for="name">Pre-screener name</label>
+          {% if errors.name %}<span class="nhsuk-error-message">{{ errors.name }}</span>{% endif %}
+          <input class="nhsuk-input" id="name" name="name" type="text" value="{{ values.name or '' }}">
+        </div>
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="intro">Intro text</label>
+          <textarea class="nhsuk-textarea" id="intro" name="intro" rows="4">{{ values.intro or '' }}</textarea>
+        </div>
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="questions">Questions (one per line)</label>
+          <textarea class="nhsuk-textarea" id="questions" name="questions" rows="6">{{ values.questions or '' }}</textarea>
+        </div>
+        <button class="nhsuk-button" data-module="nhsuk-button">Submit for approval</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Target recruitment date{% endblock %}
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/researcher/task-list">Back to task list</a>
+<h1 class="nhsuk-heading-l">Target recruitment date</h1>
+
+<form method="post" action="/researcher/target-date">
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="targetDate">Target start date</label>
+    <input class="nhsuk-input nhsuk-input--width-10" id="targetDate" name="targetDate" type="date" value="{{ data.study and data.study.info and data.study.info.targetDate or '' }}">
+    <span class="nhsuk-hint">For admin eligibility checks, this should be at least 3 months from today.</span>
+  </div>
+
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save</button>
+  </div>
+</form>
+{% endblock %}

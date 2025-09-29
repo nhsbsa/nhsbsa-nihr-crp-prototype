@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Study submitted{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <div class="nhsuk-panel nhsuk-panel--confirmation">
+        <h1 class="nhsuk-panel__title">Study submitted</h1>
+        <div class="nhsuk-panel__body">
+          Your study <strong>{{ s.meta.title }}</strong> has been sent for admin checks. Reference: <strong>{{ s.id }}</strong>.
+        </div>
+      </div>
+      <p class="nhsuk-u-margin-top-4"><a class="nhsuk-link" href="/researcher">Go to dashboard</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

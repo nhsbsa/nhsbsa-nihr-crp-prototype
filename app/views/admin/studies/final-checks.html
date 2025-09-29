@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Final checks & publish{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "admin/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "admin/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Final checks &amp; publish</h1>
+      <p class="nhsuk-body">Study: <strong>{{ s.meta.title }}</strong></p>
+
+      <div class="nhsuk-inset-text">
+        <p>Checklist:</p>
+        <ul class="nhsuk-list nhsuk-list--bullet">
+          <li>Ethics approval in place:
+            <strong>
+              {% if s.ethics and s.ethics.hasEthics == 'yes' %}
+                Yes
+              {% else %}
+                No
+              {% endif %}
+            </strong>
+          </li>
+          <li>Volunteer matching criteria confirmed</li>
+          <li>Pre-screener
+            {% if not s.preScreener %}
+              not used
+            {% else %}
+              status: <strong>{{ s.preScreener.status }}</strong>
+            {% endif %}
+          </li>
+          <li>Email/letter template
+            {% if not s.emailTemplate %}
+              not uploaded
+            {% else %}
+              status: <strong>{{ s.emailTemplate.status }}</strong>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+
+      <form method="post" action="/admin/studies/{{ s.id }}/final-checks" novalidate>
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Publish</legend>
+            <div class="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="pub-now" type="radio" name="publishOption" value="now" checked>
+                <label class="nhsuk-label nhsuk-radios__label" for="pub-now">Publish now</label>
+              </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="pub-sch" type="radio" name="publishOption" value="schedule">
+                <label class="nhsuk-label nhsuk-radios__label" for="pub-sch">Schedule a publish date/time</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="nhsuk-form-group {{ errors.publishDate ? 'nhsuk-form-group--error' : '' }}">
+          <label class="nhsuk-label" for="publishDate">Publish date (YYYY-MM-DD)</label>
+          {% if errors.publishDate %}<span class="nhsuk-error-message">{{ errors.publishDate }}</span>{% endif %}
+          <input class="nhsuk-input" id="publishDate" name="publishDate" type="text" placeholder="2025-11-01" value="{{ values.publishDate or '' }}">
+        </div>
+
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="publishTime">Publish time (HH:MM, default 09:00)</label>
+          <input class="nhsuk-input" id="publishTime" name="publishTime" type="text" placeholder="09:00" value="{{ values.publishTime or '' }}">
+        </div>
+
+        <button class="nhsuk-button" data-module="nhsuk-button">Confirm</button>
+      </form>
+
+      {% if s.scheduledAt %}
+      <div class="nhsuk-inset-text nhsuk-u-margin-top-4">
+        <p>Currently scheduled for: <strong>{{ s.scheduledAt }}</strong></p>
+        <p><a href="/admin/studies/{{ s.id }}/publish-reminder">Preview admin reminder (1 week before)</a></p>
+        <p><a href="/admin/studies/{{ s.id }}/publish-now">Publish now</a></p>
+      </div>
+      {% endif %}
+
+      <p class="nhsuk-u-margin-top-4"><a href="/admin/studies/{{ s.id }}" class="nhsuk-link">Back to study</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

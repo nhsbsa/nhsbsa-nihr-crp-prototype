@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Study information{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Study information</h1>
+
+      <form method="post" action="/researcher/study/info" novalidate>
+        <div class="nhsuk-form-group {% if errors.title %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="title">Study title</label>
+          {% if errors.title %}<span class="nhsuk-error-message">{{ errors.title }}</span>{% endif %}
+          <input class="nhsuk-input" id="title" name="title" type="text" value="{{ values.title }}">
+        </div>
+
+        <div class="nhsuk-form-group {% if errors.shortName %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="shortName">Short name</label>
+          {% if errors.shortName %}<span class="nhsuk-error-message">{{ errors.shortName }}</span>{% endif %}
+          <input class="nhsuk-input nhsuk-u-width-one-half" id="shortName" name="shortName" type="text" value="{{ values.shortName }}">
+        </div>
+
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="overview">Lay summary / overview</label>
+          <textarea class="nhsuk-textarea" id="overview" name="overview" rows="5">{{ values.overview }}</textarea>
+        </div>
+
+        <button class="nhsuk-button" name="submitAction" value="continue" data-module="nhsuk-button">Save and continue</button>
+        <button class="nhsuk-button nhsuk-button--secondary" name="submitAction" value="save" data-module="nhsuk-button">Save and return to tasklist</button>
+      </form>
+
+      <p class="nhsuk-u-margin-top-4"><a class="nhsuk-link" href="/researcher/start-study">Back to tasklist</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

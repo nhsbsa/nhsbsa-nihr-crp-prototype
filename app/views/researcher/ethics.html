@@ -1,111 +1,120 @@
-{% extends "layout.html" %}
+{% extends "researcher/layout-researcher.html" %}
 {% block pageTitle %}Ethics approval{% endblock %}
 
-{% block content %}
-<div class="nhsuk-width-container">
-  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
-    <div class="nhsuk-grid-row"><div class="nhsuk-grid-column-two-thirds">
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Ethics approval</h1>
+<p class="nhsuk-body">Tell us whether your study has Research Ethics Committee (REC) approval. You can upload evidence now or add it later.</p>
 
-      <a class="nhsuk-back-link" href="/researcher/task-list">Back</a>
-      <h1 class="nhsuk-heading-xl">Ethics approval</h1>
-      <p class="nhsuk-body">Tell us if you’ve received ethics approval for this study.</p>
+{% if errors and errors.length %}
+<div class="nhsuk-error-summary" role="alert" tabindex="-1">
+  <h2 class="nhsuk-error-summary__title">There is a problem</h2>
+  <div class="nhsuk-error-summary__body">
+    <ul class="nhsuk-list nhsuk-error-summary__list">
+      {% for e in errors %}<li><a href="{{ e.href }}">{{ e.text }}</a></li>{% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
 
-      {% if errors and (errors.hasEthics or errors.approvalFile) %}
-      <div class="nhsuk-error-summary" role="alert" tabindex="-1" aria-labelledby="error-summary-title">
-        <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
-        <div class="nhsuk-error-summary__body">
-          <ul class="nhsuk-list nhsuk-error-summary__list">
-            {% if errors.hasEthics %}<li><a href="#hasEthics">Select yes or no</a></li>{% endif %}
-            {% if errors.approvalFile %}<li><a href="#approvalFile">Upload your approval letter</a></li>{% endif %}
-          </ul>
+<form method="post" action="/researcher/ethics" enctype="multipart/form-data" novalidate>
+  {% set v = model.hasApproval or '' %}
+  {% set pm = model.proofMethod or 'ref' %}
+
+  <div class="nhsuk-form-group{% if errors | selectattr('href','equalto','#hasApproval-yes') | list | length %} nhsuk-form-group--error{% endif %}">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend">Do you have REC approval?</legend>
+      <div class="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="hasApproval-yes" name="hasApproval" type="radio" value="yes" {% if v=='yes' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="hasApproval-yes">Yes</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="hasApproval-no" name="hasApproval" type="radio" value="no" {% if v=='no' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="hasApproval-no">No</label>
         </div>
       </div>
-      {% endif %}
+    </fieldset>
+  </div>
 
-      <form action="/researcher/ethics" method="post" novalidate>
-        <div class="nhsuk-form-group {% if errors.hasEthics %}nhsuk-form-group--error{% endif %}">
-          <fieldset class="nhsuk-fieldset" aria-describedby="hasEthics-hint{% if errors.hasEthics %} hasEthics-error{% endif %}">
-            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-              <h2 class="nhsuk-fieldset__heading">Do you have ethics approval?</h2>
-            </legend>
-            <div id="hasEthics-hint" class="nhsuk-hint">You can continue without it, but your study won’t go live until it’s confirmed.</div>
-            {% if errors.hasEthics %}
-              <p id="hasEthics-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.hasEthics }}</p>
-            {% endif %}
+  <div id="ethics-yes-block" class="nhsuk-u-margin-top-3" {% if v!='yes' %}hidden{% endif %}>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="proofMethod">How do you want to provide proof?</label>
+      <select class="nhsuk-select nhsuk-u-width-two-thirds" id="proofMethod" name="proofMethod">
+        <option value="ref" {% if pm=='ref' %}selected{% endif %}>Provide REC reference and approval date</option>
+        <option value="upload" {% if pm=='upload' %}selected{% endif %}>Upload approval letter</option>
+      </select>
+      <p class="nhsuk-hint nhsuk-u-margin-top-1">You can do both if you want, but one is enough for now.</p>
+    </div>
 
-            <div class="nhsuk-radios" data-module="nhsuk-radios" id="hasEthics">
-              <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input"
-                       id="hasEthics-yes" name="hasEthics" type="radio" value="yes"
-                       aria-controls="conditional-hasEthics-yes"
-                       aria-expanded="{% if data.hasEthics == 'yes' %}true{% else %}false{% endif %}"
-                       {% if data.hasEthics == 'yes' %}checked{% endif %}>
-                <label class="nhsuk-label nhsuk-radios__label" for="hasEthics-yes">Yes</label>
-              </div>
+    <div id="proof-ref" class="nhsuk-u-margin-top-3" {% if pm!='ref' %}hidden{% endif %}>
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="reference">REC reference</label>
+        <input class="nhsuk-input nhsuk-input--width-20" id="reference" name="reference" value="{{ model.reference or '' }}">
+      </div>
 
-              <div class="nhsuk-radios__conditional {% if data.hasEthics != 'yes' %}nhsuk-radios__conditional--hidden{% endif %}" id="conditional-hasEthics-yes">
-                <div class="nhsuk-form-group {% if errors.approvalFile %}nhsuk-form-group--error{% endif %}">
-                  <label class="nhsuk-label" for="approvalFile">Upload your approval letter</label>
-                  <span class="nhsuk-hint" id="approvalFile-hint">PDF or image is fine for the prototype.</span>
-                  {% if errors.approvalFile %}
-                    <p id="approvalFile-error" class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.approvalFile }}</p>
-                  {% endif %}
-                  <input class="nhsuk-file-upload" id="approvalFile" name="__file_dummy" type="file"
-                         {% if errors.approvalFile %}aria-describedby="approvalFile-error approvalFile-hint"{% else %}aria-describedby="approvalFile-hint"{% endif %}>
-                  <input type="hidden" id="approvalFileName" name="approvalFileName" value="{{ data.approvalFile or '' }}">
-                  {% if data.approvalFile %}
-                    <p class="nhsuk-hint nhsuk-u-margin-top-2">Currently selected: <strong>{{ data.approvalFile }}</strong></p>
-                  {% endif %}
-                </div>
-              </div>
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="approvalDate">Approval date (YYYY-MM-DD)</label>
+        <input class="nhsuk-input nhsuk-input--width-10" id="approvalDate" name="approvalDate" value="{{ model.approvalDate or '' }}">
+      </div>
+    </div>
 
-              <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input"
-                       id="hasEthics-no" name="hasEthics" type="radio" value="no"
-                       aria-expanded="{% if data.hasEthics == 'no' %}true{% else %}false{% endif %}"
-                       {% if data.hasEthics == 'no' %}checked{% endif %}>
-                <label class="nhsuk-label nhsuk-radios__label" for="hasEthics-no">No</label>
-              </div>
-            </div>
-          </fieldset>
-        </div>
+    <div id="proof-upload" class="nhsuk-u-margin-top-3" {% if pm!='upload' %}hidden{% endif %}>
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="approvalFile">Upload approval letter (PDF, DOC/DOCX, JPG, PNG)</label>
+        {% if model.file and model.file.originalname %}
+          <p class="nhsuk-hint">Already uploaded: <strong>{{ model.file.originalname }}</strong> ({{ model.file.size }} bytes)</p>
+        {% endif %}
+        <input class="nhsuk-file-upload" id="approvalFile" name="approvalFile" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+      </div>
+    </div>
+  </div>
 
-        <div class="nhsuk-inset-text nhsuk-u-margin-top-2">
-          <span class="nhsuk-u-visually-hidden">Information: </span>
-          <p>If you don’t have approval yet, you can submit the study for review. We’ll hold it until approval is confirmed.</p>
-        </div>
+  <div id="ethics-no-block" class="nhsuk-u-margin-top-3" {% if v!='no' %}hidden{% endif %}>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="expectedDate">Expected approval date (YYYY-MM-DD) (optional)</label>
+      <input class="nhsuk-input nhsuk-input--width-10" id="expectedDate" name="expectedDate" value="{{ model.expectedDate or '' }}">
+    </div>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="notes">Notes (optional)</label>
+      <textarea class="nhsuk-textarea" id="notes" name="notes" rows="4">{{ model.notes or '' }}</textarea>
+    </div>
+  </div>
 
-        <div class="nhsuk-button-group">
-          <button class="nhsuk-button" type="submit">Save and return</button>
-          <a class="nhsuk-button nhsuk-button--secondary" href="/researcher/task-list">Back to task list</a>
-        </div>
-      </form>
-
-    </div></div>
-  </main>
-</div>
+  <div class="nhsuk-button-group">
+    <button type="submit" class="nhsuk-button">Save and continue</button>
+    <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
 
 <script>
-  (function () {
-    var yes = document.getElementById('hasEthics-yes');
-    var no  = document.getElementById('hasEthics-no');
-    var panel = document.getElementById('conditional-hasEthics-yes');
-    if (!yes || !no || !panel) return;
-    function reveal(on){ panel.classList.toggle('nhsuk-radios__conditional--hidden', !on); yes.setAttribute('aria-expanded', on ? 'true':'false'); }
-    function init(){ reveal(yes.checked); }
-    yes.addEventListener('change', function(){ if (yes.checked) reveal(true); });
-    no.addEventListener('change',  function(){ if (no.checked)  reveal(false); });
-    init();
-  })();
+  (function(){
+    const yes = document.getElementById('hasApproval-yes')
+    const no  = document.getElementById('hasApproval-no')
+    const yesBlock = document.getElementById('ethics-yes-block')
+    const noBlock  = document.getElementById('ethics-no-block')
+    const pm = document.getElementById('proofMethod')
+    const ref = document.getElementById('proof-ref')
+    const up  = document.getElementById('proof-upload')
 
-  (function () {
-    var file = document.getElementById('approvalFile');
-    var hidden = document.getElementById('approvalFileName');
-    if (!file || !hidden) return;
-    file.addEventListener('change', function () {
-      var name = (file.files && file.files.length) ? file.files[0].name : (file.value.split('\\').pop());
-      hidden.value = name || '';
-    });
-  })();
+    function toggleYesNo() {
+      const hasYes = yes.checked
+      yesBlock.hidden = !hasYes
+      noBlock.hidden  = hasYes
+    }
+    function toggleProof() {
+      const v = pm.value
+      ref.hidden = v !== 'ref'
+      up.hidden  = v !== 'upload'
+    }
+
+    if (yes && no) {
+      yes.addEventListener('change', toggleYesNo)
+      no.addEventListener('change', toggleYesNo)
+    }
+    if (pm) pm.addEventListener('change', toggleProof)
+
+    toggleYesNo()
+    toggleProof()
+  })()
 </script>
 {% endblock %}

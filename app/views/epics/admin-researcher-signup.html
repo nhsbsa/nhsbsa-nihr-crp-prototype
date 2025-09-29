@@ -15,7 +15,9 @@
       <span class="nhsuk-tag">Epic in progress</span>
       <h1 class="nhsuk-heading-xl nhsuk-u-margin-top-2">Admin / Researcher sign up &amp; login</h1>
       <p class="nhsuk-body">Authentication and first-time onboarding for admins and researchers. Choose a journey to start testing.</p>
-      <p class="nhsuk-hint">Last updated: 02 Sep 2025</p>
+      <p class="nhsuk-hint">
+        Last updated: <span class="js-last-updated" data-url="/prototypes/admin-researcher-signup/index">—</span>
+      </p>
     </div>
   </div>
 
@@ -23,15 +25,17 @@
 
   <ul class="nhsuk-grid-row nhsuk-card-group">
 
+    <!-- Researcher: sign up / sign in (FIXED LINK) -->
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
         <h3 class="nhsuk-card__heading nhsuk-heading-m">
-          <a class="nhsuk-card__link" href="/prototypes/admin-researcher-signup?from=epic">Researcher sign up</a>
+          <a class="nhsuk-card__link" href="/prototypes/admin-researcher-signup/index?from=epic">Researcher sign up</a>
         </h3>
         <p class="nhsuk-card__description">Create a researcher account via email/password or GOV.UK One Login (simulated).</p>
       </div></div>
     </li>
 
+    <!-- Admin: sign in then create admin account -->
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
         <h3 class="nhsuk-card__heading nhsuk-heading-m">
@@ -41,6 +45,7 @@
       </div></div>
     </li>
 
+    <!-- Admin: sign in then manage requests -->
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
         <h3 class="nhsuk-card__heading nhsuk-heading-m">
@@ -50,6 +55,7 @@
       </div></div>
     </li>
 
+    <!-- Admin: sign in then delete admin -->
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
         <h3 class="nhsuk-card__heading nhsuk-heading-m">
@@ -59,6 +65,7 @@
       </div></div>
     </li>
 
+    <!-- Admin: sign in then delete researcher -->
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
         <h3 class="nhsuk-card__heading nhsuk-heading-m">
@@ -68,6 +75,7 @@
       </div></div>
     </li>
 
+    <!-- Researcher: sign in then delete self -->
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
         <h3 class="nhsuk-card__heading nhsuk-heading-m">
@@ -77,6 +85,7 @@
       </div></div>
     </li>
 
+    <!-- Researcher: sign in then deletion blocked -->
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable"><div class="nhsuk-card__content">
         <h3 class="nhsuk-card__heading nhsuk-heading-m">
@@ -93,4 +102,36 @@
   </div>
 
 </div>
+
+<script>
+(function(){
+  function formatUK(d){
+    const dt = new Date(d);
+    if (isNaN(dt)) return '';
+    const day = String(dt.getDate()).padStart(2,'0');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return day + ' ' + months[dt.getMonth()] + ' ' + dt.getFullYear();
+  }
+  function setFromDoc(el){
+    el.textContent = formatUK(document.lastModified || Date.now());
+  }
+  function setFromHead(el, url){
+    fetch(url, { method: 'HEAD' })
+      .then(r => {
+        const lm = r.headers.get('last-modified');
+        if (lm) el.textContent = formatUK(lm);
+        else setFromDoc(el);
+      })
+      .catch(() => setFromDoc(el));
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.js-last-updated').forEach(function(el){
+      const url = el.getAttribute('data-url');
+      if (url) setFromHead(el, url);
+      else setFromDoc(el);
+    });
+  });
+})();
+</script>
+
 {% endblock %}

@@ -1,0 +1,37 @@
+<!-- app/views/admin/studies/prescreener-review.html -->
+{% extends "layout.html" %}
+{% block pageTitle %}Review pre-screener{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "admin/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "admin/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Review pre-screener</h1>
+      <p class="nhsuk-body">Study: <strong>{{ s.meta.title }}</strong></p>
+
+      {% if not s.preScreener %}
+        <p class="nhsuk-body">No pre-screener submitted yet.</p>
+      {% else %}
+        <div class="nhsuk-inset-text">
+          <p><strong>Name:</strong> {{ s.preScreener.name }}</p>
+          <p><strong>Intro:</strong> {{ s.preScreener.intro }}</p>
+          <p><strong>Questions:</strong></p>
+          <pre class="nhsuk-u-font-size-16">{{ s.preScreener.questions }}</pre>
+          <p><strong>Status:</strong> {{ s.preScreener.status }}</p>
+        </div>
+        <form method="post" action="/admin/studies/{{ s.id }}/prescreener/approve"><button class="nhsuk-button">Approve</button></form>
+        <form method="post" action="/admin/studies/{{ s.id }}/prescreener/reject" class="nhsuk-u-margin-top-2">
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="note">Reason (optional)</label>
+            <textarea class="nhsuk-textarea" id="note" name="note" rows="3"></textarea>
+          </div>
+          <button class="nhsuk-button nhsuk-button--secondary">Reject</button>
+        </form>
+      {% endif %}
+
+      <p class="nhsuk-u-margin-top-4"><a href="/admin/studies/{{ s.id }}" class="nhsuk-link">Back to study</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

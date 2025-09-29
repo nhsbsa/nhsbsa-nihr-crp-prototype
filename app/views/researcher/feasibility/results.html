@@ -1,0 +1,60 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Feasibility: results{% endblock %}
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/researcher/feasibility/sites">Back</a>
+<h1 class="nhsuk-heading-l">Feasibility results</h1>
+
+{% set total = data.feasibility and data.feasibility.totalEstimate or 0 %}
+{% set matched = data.derived and data.derived.matchedEstimate or 0 %}
+{% set target = data.feasibility and data.feasibility.targetRecruitment or '' %}
+{% set platform = data.feasibility and data.feasibility.platform or 'BPOR' %}
+
+<div class="nhsuk-card nhsuk-u-margin-bottom-5">
+  <div class="nhsuk-card__content">
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Platform</dt>
+        <dd class="nhsuk-summary-list__value">{{ platform }}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Target recruitment</dt>
+        <dd class="nhsuk-summary-list__value">{{ target or '—' }}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Estimated available (from registry)</dt>
+        <dd class="nhsuk-summary-list__value">{{ total }}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Estimated matched (defaults)</dt>
+        <dd class="nhsuk-summary-list__value">{{ matched }}</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+{% set msg = 'Proceed to create a study request.' %}
+{% if target and total and (total | int) < (target | int) %}
+  {% set msg = 'Not recommended — estimated available is below your target. Consider widening criteria.' %}
+{% elseif matched and target and (matched | int) < (target | int) %}
+  {% set msg = 'Borderline — matched below target. Consider widening criteria or adding sites.' %}
+{% endif %}
+
+<p class="nhsuk-body">{{ msg }}</p>
+
+<form method="post" action="/researcher/feasibility/results">
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Create study request</button>
+    <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/feasibility/demographics">Adjust criteria</a>
+  </div>
+</form>
+
+<!-- {# Placeholder for a V1 dashboard later #}
+<div class="nhsuk-details nhsuk-u-margin-top-5">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">View feasibility breakdown (prototype)</span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <p>This is a simplified MVP. A dashboard view can visualise contribution by demographics, medical confirmation, and site coverage in V1.</p>
+  </div> 
+</div>-->
+{% endblock %}

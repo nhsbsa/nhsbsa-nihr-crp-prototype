@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Study type{% endblock %}
+{% block content %}
+<div class="nhsuk-width-container">
+  {% include "researcher/_signed-in-header.html" %}
+  <div class="nhsuk-grid-row">
+    {% include "researcher/_side-nav.html" %}
+    <div class="nhsuk-grid-column-three-quarters">
+      <h1 class="nhsuk-heading-xl">Study type</h1>
+
+      <form method="post" action="/researcher/study/type" novalidate>
+        <div class="nhsuk-form-group {% if errors.portfolio %}nhsuk-form-group--error{% endif %}">
+          <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Portfolio</legend>
+            {% if errors.portfolio %}<span class="nhsuk-error-message">{{ errors.portfolio }}</span>{% endif %}
+            <div class="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="portfolio-yes" type="radio" name="portfolio" value="portfolio" {% if values.portfolio == 'portfolio' %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="portfolio-yes">Portfolio</label>
+              </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="portfolio-no" type="radio" name="portfolio" value="non-portfolio" {% if values.portfolio == 'non-portfolio' %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="portfolio-no">Non-portfolio</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="nhsuk-form-group {% if errors.studyType %}nhsuk-form-group--error{% endif %}">
+          <label class="nhsuk-label" for="studyType">Study type</label>
+          {% if errors.studyType %}<span class="nhsuk-error-message">{{ errors.studyType }}</span>{% endif %}
+          <select class="nhsuk-select nhsuk-u-width-one-half" id="studyType" name="studyType">
+            <option value="">Select</option>
+            <option value="Interventional" {% if values.studyType == 'Interventional' %}selected{% endif %}>Interventional</option>
+            <option value="Observational" {% if values.studyType == 'Observational' %}selected{% endif %}>Observational</option>
+            <option value="Registry" {% if values.studyType == 'Registry' %}selected{% endif %}>Registry</option>
+          </select>
+        </div>
+
+        <button class="nhsuk-button" name="submitAction" value="continue" data-module="nhsuk-button">Save and continue</button>
+        <button class="nhsuk-button nhsuk-button--secondary" name="submitAction" value="save" data-module="nhsuk-button">Save and return to tasklist</button>
+      </form>
+
+      <p class="nhsuk-u-margin-top-4"><a class="nhsuk-link" href="/researcher/start-study">Back to tasklist</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

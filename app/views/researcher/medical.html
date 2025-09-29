@@ -1,0 +1,59 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Medical requirements{% endblock %}
+
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Medical requirements</h1>
+<p class="nhsuk-body">
+  We’ve prefilled these from your feasibility checks. Update if needed.
+</p>
+
+{% if errors and errors.length %}
+<div class="nhsuk-error-summary" role="alert" tabindex="-1">
+  <h2 class="nhsuk-error-summary__title">There is a problem</h2>
+  <div class="nhsuk-error-summary__body">
+    <ul class="nhsuk-list nhsuk-error-summary__list">
+      {% for e in errors %}
+        <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+<form method="post" action="/researcher/medical" novalidate>
+  {# Conditions / interests #}
+  {% set hasCondErr = false %}
+  {% for e in errors %}{% if e.href=='#conditions' %}{% set hasCondErr = true %}{% endif %}{% endfor %}
+  <div class="nhsuk-form-group{% if hasCondErr %} nhsuk-form-group--error{% endif %}">
+    <label class="nhsuk-label" for="conditions">Medical conditions or areas of interest</label>
+    <span class="nhsuk-hint">
+      List the conditions or health interests relevant to this study. Separate with commas.
+    </span>
+    <textarea class="nhsuk-textarea" id="conditions" name="conditions" rows="5">{{ model.conditions or '' }}</textarea>
+  </div>
+
+  {# Confirmation requirement (JDR often requires confirmed) #}
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend">Require confirmed diagnosis?</legend>
+      <span class="nhsuk-hint">If required, only volunteers with a confirmed diagnosis will be counted.</span>
+      {% set rc = model.requiresConfirmed or 'no' %}
+      <div class="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="requiresConfirmed-yes" name="requiresConfirmed" type="radio" value="yes" {% if rc=='yes' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="requiresConfirmed-yes">Yes, confirmed only</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="requiresConfirmed-no" name="requiresConfirmed" type="radio" value="no" {% if rc=='no' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="requiresConfirmed-no">No, include unconfirmed</label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+{% endblock %}

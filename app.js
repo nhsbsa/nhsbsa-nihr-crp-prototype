@@ -179,10 +179,7 @@ app.use(locals(config))
 app.set('view engine', 'html')
 exampleTemplatesApp.set('view engine', 'html')
 
-// This setting trusts the X-Forwarded headers set by
-// a proxy and uses them to set the standard header in
-// req. This is needed for hosts like Heroku.
-// See https://expressjs.com/en/guide/behind-proxies.html
+// This setting trusts the X-Forwarded headers set by a proxy
 app.set('trust proxy', 1)
 
 // Use public folder for static assets
@@ -194,13 +191,150 @@ app.use(
   express.static(join(__dirname, 'node_modules/nhsuk-frontend/dist/nhsuk'))
 )
 
-// Use custom application routes
-app.use('/', routes)
+/* ------------------------------------------------------------------
+   HARD-WIRED: Identify Study page (immune to greedy routers/auto-router)
+   ------------------------------------------------------------------ */
+let CPMS = {}
+try {
+  CPMS = require('./app/lib/cpms')
+  if (!CPMS || typeof CPMS.getById !== 'function' || typeof CPMS.normalize !== 'function') {
+    throw new Error('cpms helper missing exports')
+  }
+  console.log('[app] cpms helper loaded from app/lib/cpms.js')
+} catch (e) {
+  console.warn('[app] cpms helper not found, using inline fallback:', e.message)
+  CPMS = {
+    normalize(id) {
+      if (!id) return ''
+      const raw = String(id).trim().toUpperCase().replace(/[\s-]+/g, '')
+      const m = raw.match(/^CPMS?(\d{4,})$/) || raw.match(/^(\d{4,})$/)
+      if (m) return 'CPMS' + (m[1] || m[0])
+      if (/^CPMS\d{4,}$/.test(raw)) return raw
+      return ''
+    },
+    getById(id) {
+      const key = this.normalize(id)
+      if (!key) return null
+      const demo = {
+        'CPMS123456': {
+          cpmsId: 'CPMS123456',
+          irasId: 'IRAS-21/NE/0001',
+          title: 'Randomised evaluation of Widgetumab in adults with Condition X',
+          laySummary: 'Evaluates whether Widgetumab improves daily functioning for adults with Condition X.'
+        },
+        'CPMS654321': {
+          cpmsId: 'CPMS654321',
+          irasId: 'IRAS-22/LON/0007',
+          title: 'Observational registry of sleep patterns after remote working',
+          laySummary: 'Observes sleep patterns of adults working remotely to understand lifestyle effects.'
+        }
+      }
+      return demo[key] || {
+        cpmsId: key,
+        irasId: '',
+        title: `Study ${key}`,
+        laySummary: 'Summary to be confirmed. Populate from CPMS or edit manually.'
+      }
+    }
+  }
+}
 
-// Automatically route pages
-app.get(/^([^.]+)$/, (req, res, next) => {
-  automaticRouting.matchRoutes(req, res, next)
+function ensureData(req) {
+  const data = req.session.data || (req.session.data = {})
+  if (!data.study) data.study = {}
+  return data
+}
+function renderIdentify(res, locals) {
+  res.render('researcher/identify-study.html', {
+    errors: locals.errors || [],
+    cpmsQuery: locals.cpmsQuery || '',
+    found: !!locals.found,
+    lookup: locals.lookup || null,
+    saved: locals.saved || {},
+    activeNav: 'create-request'
+  })
+}
+
+app.get('/researcher/identify-study', (req, res) => {
+  console.log('[identify-study] GET')
+  const data = ensureData(req)
+  renderIdentify(res, {
+    errors: [],
+    cpmsQuery: '',
+    found: false,
+    lookup: null,
+    saved: data.study.identify || {}
+  })
 })
+
+app.post('/researcher/identify-study', (req, res) => {
+  const data = ensureData(req)
+  const body = req.body || {}
+  const action = body._action || 'save'
+  const errors = []
+
+  if (action === 'lookup') {
+    const raw = (body.cpmsId || '').trim()
+    const norm = CPMS.normalize(raw)
+    console.log('[identify-study] POST lookup', raw, '=>', norm || '(invalid)')
+    if (!norm) {
+      errors.push({ href: '#cpmsId', text: 'Enter a CPMS ID in the correct format' })
+      return renderIdentify(res, {
+        errors, cpmsQuery: raw, found: false, lookup: null, saved: data.study.identify || {}
+      })
+    }
+    const hit = CPMS.getById(norm)
+    return renderIdentify(res, {
+      errors: [], cpmsQuery: norm, found: !!hit, lookup: hit, saved: data.study.identify || {}
+    })
+  }
+
+  if (action === 'use-found') {
+    const raw = (body.cpmsId || '').trim()
+    const hit = CPMS.getById(raw)
+    console.log('[identify-study] POST use-found', raw, '=>', hit ? 'hit' : 'miss')
+    if (!hit) {
+      errors.push({ href: '#cpmsId', text: 'That CPMS record is not available. Try searching again.' })
+      return renderIdentify(res, {
+        errors, cpmsQuery: raw, found: false, lookup: null, saved: data.study.identify || {}
+      })
+    }
+    data.study.identify = {
+      mode: 'cpms',
+      cpmsId: hit.cpmsId,
+      irasId: hit.irasId || '',
+      title: hit.title || '',
+      laySummary: hit.laySummary || ''
+    }
+    if (!data.status) data.status = {}
+    data.status['/researcher/identify-study'] = 'completed'
+    return res.redirect('/researcher/task-list')
+  }
+
+  if (action === 'clear') {
+    console.log('[identify-study] POST clear')
+    if (data.study) delete data.study.identify
+    return res.redirect('/researcher/identify-study')
+  }
+
+  console.log('[identify-study] POST save manual')
+  const title = (body.title || '').trim()
+  const laySummary = (body.laySummary || '').trim()
+  if (!title && !laySummary) {
+    errors.push({ href: '#title', text: 'Enter a study title or use CPMS' })
+    errors.push({ href: '#laySummary', text: 'Enter a lay summary or use CPMS' })
+    return renderIdentify(res, {
+      errors, cpmsQuery: '', found: false, lookup: null, saved: { title: '', laySummary: '' }
+    })
+  }
+
+  data.study.identify = { mode: 'manual', title, laySummary, cpmsId: '', irasId: '' }
+  if (!data.status) data.status = {}
+  data.status['/researcher/identify-study'] = 'completed'
+  return res.redirect('/researcher/task-list')
+})
+
+/* ------------------------------------------------------------------ */
 
 // Example template routes
 app.use('/example-templates', exampleTemplatesApp)
@@ -221,9 +355,13 @@ exampleTemplatesApp.get(/^([^.]+)$/, (req, res, next) => {
   automaticRouting.matchRoutes(req, res, next)
 })
 
+// Use custom application routes (MUST be before auto-routing)
+app.use('/', routes)
+
+// Prototype admin
 app.use('/prototype-admin', prototypeAdminRoutes)
 
-// Redirect all POSTs to GETs - this allows users to use POST for autoStoreData
+// Redirect all POSTs to GETs - allows POST for autoStoreData
 app.post(/^\/([^.]+)$/, (req, res) => {
   res.redirect(
     urlFormat({
@@ -231,6 +369,12 @@ app.post(/^\/([^.]+)$/, (req, res) => {
       query: req.query
     })
   )
+})
+
+/** AUTO-ROUTING FOR APP — MOUNT LAST */
+app.get(/^([^.]+)$/, (req, res, next) => {
+  console.log('[app] auto-routing (last) matching', req.path)
+  automaticRouting.matchRoutes(req, res, next)
 })
 
 // Catch 404 and forward to error handler
@@ -251,8 +395,8 @@ app.use((err, req, res) => {
 app.listen(port)
 
 if (
-  process.env.WATCH !== 'true' && // If the user isn’t running watch
-  process.env.NODE_ENV !== 'production' // and it’s not in production mode
+  process.env.WATCH !== 'true' &&
+  process.env.NODE_ENV !== 'production'
 ) {
   console.info(`Running at http://localhost:${port}/`)
   console.info('')

@@ -1,80 +1,19 @@
-{% extends "layout.html" %}
-{% block pageTitle %}Arms / sub-studies{% endblock %}
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Arms / sub-studies (optional){% endblock %}
 
-{% block content %}
-<div class="nhsuk-width-container">
-  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
-    <div class="nhsuk-grid-row"><div class="nhsuk-grid-column-two-thirds">
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Arms / sub-studies <span class="nhsuk-tag nhsuk-tag--grey">Optional</span></h1>
+<p class="nhsuk-body">List each arm on a new line. This isn’t required for submission.</p>
 
-      <a class="nhsuk-back-link" href="/researcher/task-list">Back</a>
-      <h1 class="nhsuk-heading-xl">Does your study have more than one arm?</h1>
+<form method="post" action="/researcher/arms">
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="items">Arms</label>
+    <textarea class="nhsuk-textarea" id="items" name="items" rows="6">{{ (model.list and model.list | join('\n')) or '' }}</textarea>
+  </div>
 
-      {% if errors and (errors.hasMultiple or errors.arms) %}
-      <div class="nhsuk-error-summary" role="alert" tabindex="-1" aria-labelledby="error-summary-title">
-        <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
-        <div class="nhsuk-error-summary__body">
-          <ul class="nhsuk-list nhsuk-error-summary__list">
-            {% if errors.hasMultiple %}<li><a href="#hasMultiple">{{ errors.hasMultiple }}</a></li>{% endif %}
-            {% if errors.arms %}<li><a href="#armName-0">{{ errors.arms }}</a></li>{% endif %}
-          </ul>
-        </div>
-      </div>
-      {% endif %}
-
-      <form method="post" action="/researcher/arms" novalidate>
-        <div class="nhsuk-form-group {% if errors.hasMultiple %}nhsuk-form-group--error{% endif %}">
-          {% if errors.hasMultiple %}
-          <p class="nhsuk-error-message" id="hasMultiple-error"><span class="nhsuk-u-visually-hidden">Error:</span> {{ errors.hasMultiple }}</p>
-          {% endif %}
-          <div class="nhsuk-radios" id="hasMultiple" data-module="nhsuk-radios">
-            <div class="nhsuk-radios__item">
-              <input class="nhsuk-radios__input" id="hasMultiple-yes" name="hasMultiple" type="radio" value="yes" {% if data.hasMultiple == 'yes' %}checked{% endif %}>
-              <label class="nhsuk-label nhsuk-radios__label" for="hasMultiple-yes">Yes</label>
-            </div>
-            <div class="nhsuk-radios__item">
-              <input class="nhsuk-radios__input" id="hasMultiple-no" name="hasMultiple" type="radio" value="no" {% if data.hasMultiple == 'no' %}checked{% endif %}>
-              <label class="nhsuk-label nhsuk-radios__label" for="hasMultiple-no">No</label>
-            </div>
-          </div>
-        </div>
-
-        <div id="arms-fields" {% if data.hasMultiple != 'yes' %}hidden{% endif %}>
-          <h2 class="nhsuk-heading-m">Study arms</h2>
-          {% set arms = data.arms or [] %}
-          {% for a in arms %}
-          <div class="nhsuk-form-group">
-            <label class="nhsuk-label" for="armName-{{ loop.index0 }}">Arm name</label>
-            <input class="nhsuk-input" id="armName-{{ loop.index0 }}" name="armName" type="text" value="{{ a.name or '' }}">
-          </div>
-          <div class="nhsuk-form-group nhsuk-u-margin-bottom-6">
-            <label class="nhsuk-label" for="armDesc-{{ loop.index0 }}">Description (optional)</label>
-            <textarea class="nhsuk-textarea" id="armDesc-{{ loop.index0 }}" name="armDesc" rows="3">{{ a.desc or '' }}</textarea>
-          </div>
-          {% endfor %}
-
-          <button class="nhsuk-button nhsuk-button--secondary" name="action" value="add" type="submit">Add another arm</button>
-        </div>
-
-        <div class="nhsuk-button-group nhsuk-u-margin-top-4">
-          <button class="nhsuk-button" type="submit">Save and return</button>
-          <a class="nhsuk-button nhsuk-button--secondary" href="/researcher/task-list">Back to task list</a>
-        </div>
-      </form>
-
-    </div></div>
-  </main>
-</div>
-
-<script>
-  (function(){
-    var radios = document.getElementsByName('hasMultiple');
-    var panel = document.getElementById('arms-fields');
-    function update(){ 
-      var val = Array.from(radios).find(r=>r.checked)?.value;
-      panel.hidden = (val !== 'yes');
-    }
-    Array.from(radios).forEach(r=>r.addEventListener('change', update));
-    update();
-  })();
-</script>
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save</button>
+    <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
 {% endblock %}
