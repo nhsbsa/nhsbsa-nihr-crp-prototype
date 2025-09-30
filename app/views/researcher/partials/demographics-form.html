@@ -1,152 +1,152 @@
-{# expects: partialAction, partialModel #}
-<form method="post" action="{{ partialAction }}" novalidate>
-  {# ---------- AGE RANGE ---------- #}
+{# researcher/partials/demographics-form.html #}
+{# Resolve action and model with robust fallbacks #}
+{% set actionUrl =
+    partialAction
+    or action
+    or "/researcher/feasibility/demographics"
+%}
+
+{% set m = model
+    or partialModel
+    or (data and data.criteria and data.criteria.demographics)
+    or (data and data.feasibility and data.feasibility.demographics)
+    or (data and data.submission and data.submission.demographics)
+    or {} %}
+
+{% set errs = errors or [] %}
+
+<form method="post" action="{{ actionUrl }}" novalidate>
+  {# Sex #}
   <div class="nhsuk-form-group">
-    <fieldset class="nhsuk-fieldset" aria-describedby="age-hint">
-      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Age range</legend>
-      <span class="nhsuk-hint" id="age-hint">Choose a preset or enter a custom range.</span>
-      {% set ar = partialModel and partialModel.ageRange or '18-65' %}
-      {% set customMin = partialModel and partialModel.customAgeMin or '' %}
-      {% set customMax = partialModel and partialModel.customAgeMax or '' %}
-
-      <div class="nhsuk-radios" data-module="radios">
-        {% for opt in ['18-65','25-60','30-55','Custom'] %}
-          <div class="nhsuk-radios__item">
-            <input class="nhsuk-radios__input"
-                   id="age-{{ opt }}"
-                   name="ageRange"
-                   type="radio"
-                   value="{{ opt }}"
-                   {% if ar == opt %}checked{% endif %}
-                   {% if opt == 'Custom' %}aria-controls="custom-age-panel" aria-expanded="{{ 'true' if ar == 'Custom' else 'false' }}"{% endif %}>
-            <label class="nhsuk-label nhsuk-radios__label" for="age-{{ opt }}">{{ opt }}</label>
-          </div>
-        {% endfor %}
-
-        <div class="nhsuk-radios__conditional {% if ar != 'Custom' %}nhsuk-radios__conditional--hidden{% endif %}" id="custom-age-panel">
-          <div class="nhsuk-form-group">
-            <label class="nhsuk-label" for="customAgeMin">Minimum age</label>
-            <input class="nhsuk-input nhsuk-input--width-5" id="customAgeMin" name="customAgeMin" type="number" min="0" max="120" value="{{ customMin }}">
-          </div>
-          <div class="nhsuk-form-group">
-            <label class="nhsuk-label" for="customAgeMax">Maximum age</label>
-            <input class="nhsuk-input nhsuk-input--width-5" id="customAgeMax" name="customAgeMax" type="number" min="0" max="120" value="{{ customMax }}">
-          </div>
-          <p class="nhsuk-hint">Enter whole years. Max must be greater than or equal to min.</p>
-        </div>
-      </div>
-    </fieldset>
+    <label class="nhsuk-label" for="sex">Sex</label>
+    {% set v_sex = m.sex or 'any' %}
+    <select class="nhsuk-select" id="sex" name="sex">
+      <option value="any"   {% if v_sex=='any' %}selected{% endif %}>Any</option>
+      <option value="female"{% if v_sex=='female' %}selected{% endif %}>Female</option>
+      <option value="male"  {% if v_sex=='male' %}selected{% endif %}>Male</option>
+      <option value="other" {% if v_sex=='other' %}selected{% endif %}>Other / prefer not to say</option>
+    </select>
   </div>
 
-  {# ---------- SEX ---------- #}
+  {# Age #}
   <div class="nhsuk-form-group">
     <fieldset class="nhsuk-fieldset">
-      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Sex</legend>
-      {% set sex = partialModel and partialModel.sex or 'any' %}
-      <div class="nhsuk-radios">
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="sex-any" name="sex" type="radio" value="any" {% if sex == 'any' %}checked{% endif %}>
-          <label class="nhsuk-label nhsuk-radios__label" for="sex-any">Any</label>
-        </div>
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="sex-male" name="sex" type="radio" value="male" {% if sex == 'male' %}checked{% endif %}>
-          <label class="nhsuk-label nhsuk-radios__label" for="sex-male">Male</label>
-        </div>
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="sex-female" name="sex" type="radio" value="female" {% if sex == 'female' %}checked{% endif %}>
-          <label class="nhsuk-label nhsuk-radios__label" for="sex-female">Female</label>
-        </div>
-      </div>
-    </fieldset>
-  </div>
+      <legend class="nhsuk-fieldset__legend">Age range</legend>
+      {% set mode = m.ageMode or 'any' %}
 
-  {# ---------- REGIONS (with search + quick actions) ---------- #}
-  <div class="nhsuk-form-group">
-    <fieldset class="nhsuk-fieldset" aria-describedby="regions-hint">
-      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Regions</legend>
-      <span class="nhsuk-hint" id="regions-hint">Filter and select one or more regions.</span>
-
-      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-2">
-        <div class="nhsuk-grid-column-one-half">
-          <label class="nhsuk-label" for="regionFilter">Filter regions</label>
-          <input class="nhsuk-input" id="regionFilter" type="text" placeholder="Type to filter…">
+      <div class="nhsuk-radios" data-module="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="age-any" name="ageMode" type="radio" value="any" {% if mode=='any' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="age-any">Any</label>
         </div>
-        <div class="nhsuk-grid-column-one-half nhsuk-u-margin-top-5">
-          <button class="nhsuk-link" type="button" id="selectAllRegions">Select all</button>
-          <span class="nhsuk-u-visually-hidden"> | </span>
-          <button class="nhsuk-link" type="button" id="clearAllRegions">Clear all</button>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="age-18plus" name="ageMode" type="radio" value="18plus" {% if mode=='18plus' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="age-18plus">18 and over</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="age-custom" name="ageMode" type="radio" value="custom" {% if mode=='custom' %}checked{% endif %} aria-controls="age-custom-fields" aria-expanded="{{ 'true' if mode=='custom' else 'false' }}">
+          <label class="nhsuk-label nhsuk-radios__label" for="age-custom">Custom range</label>
         </div>
       </div>
 
-      {% set regions = partialModel and partialModel.regions or [] %}
-      {% set REGION_OPTS = [
-        ['NE','North East'],
-        ['NW','North West'],
-        ['YH','Yorkshire and the Humber'],
-        ['EM','East Midlands'],
-        ['WM','West Midlands'],
-        ['EE','East of England'],
-        ['LON','London'],
-        ['SE','South East'],
-        ['SW','South West'],
-        ['SCT','Scotland'],
-        ['WAL','Wales'],
-        ['NI','Northern Ireland']
-      ] %}
-
-      <div class="nhsuk-checkboxes" id="regionsList" data-module="filterable-checkboxes">
-        {% for code, label in REGION_OPTS %}
-          <div class="nhsuk-checkboxes__item" data-label="{{ label | lower }}">
-            <input class="nhsuk-checkboxes__input" id="reg-{{ code }}" name="regions" type="checkbox" value="{{ code }}" {% if code in regions %}checked{% endif %}>
-            <label class="nhsuk-label nhsuk-checkboxes__label" for="reg-{{ code }}">{{ label }}</label>
+      <div id="age-custom-fields" class="nhsuk-u-margin-top-3" {% if mode!='custom' %}hidden{% endif %}>
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-one-quarter">
+            {% set hasMinErr = false %}
+            {% for e in errs %}{% if e.href=='#ageMin' %}{% set hasMinErr = true %}{% endif %}{% endfor %}
+            <div class="nhsuk-form-group{% if hasMinErr %} nhsuk-form-group--error{% endif %}">
+              <label class="nhsuk-label" for="ageMin">Min</label>
+              <input class="nhsuk-input nhsuk-input--width-5" id="ageMin" name="ageMin" value="{{ m.ageMin or '' }}">
+            </div>
           </div>
-        {% endfor %}
+          <div class="nhsuk-grid-column-one-quarter">
+            {% set hasMaxErr = false %}
+            {% for e in errs %}{% if e.href=='#ageMax' %}{% set hasMaxErr = true %}{% endif %}{% endfor %}
+            <div class="nhsuk-form-group{% if hasMaxErr %} nhsuk-form-group--error{% endif %}">
+              <label class="nhsuk-label" for="ageMax">Max</label>
+              <input class="nhsuk-input nhsuk-input--width-5" id="ageMax" name="ageMax" value="{{ m.ageMax or '' }}">
+            </div>
+          </div>
+        </div>
       </div>
     </fieldset>
   </div>
+
+        {# Regions #}
+        <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="regions">Regions</label>
+        <span class="nhsuk-hint">Pick all that apply.</span>
+
+        <div class="nhsuk-u-margin-bottom-2">
+            <button type="button" class="nhsuk-link" id="regions-select-all">Select all</button>
+            <span aria-hidden="true"> · </span>
+            <button type="button" class="nhsuk-link" id="regions-clear">Clear</button>
+        </div>
+
+        {% set selected = m.regions or [] %}
+        <select class="nhsuk-select regions-select"
+                id="regions"
+                name="regions"
+                multiple
+                size="12"
+                aria-describedby="regions-hint">
+            {% for r in [
+            'East Midlands','East of England','London','North East','North West',
+            'South East','South West','West Midlands','Yorkshire and the Humber',
+            'Wales','Scotland','Northern Ireland'
+            ] %}
+            <option value="{{ r }}" {% if r in selected %}selected{% endif %}>{{ r }}</option>
+            {% endfor %}
+        </select>
+
+        <p id="regions-hint" class="nhsuk-hint nhsuk-u-margin-top-2">
+            Hold <kbd>Ctrl</kbd> (Windows) or <kbd>⌘</kbd> (Mac) to select more than one.
+        </p>
+        </div>
+
 
   <div class="nhsuk-button-group">
     <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
   </div>
 </form>
 
+<style>
+  /* Give the multi-select some breathing room on all pages using this partial */
+  .regions-select {
+    min-height: 16rem; /* backup if size attr gets ignored by some browsers */
+  }
+</style>
+
 <script>
-  (function() {
-    // Radios conditional toggle for "Custom"
-    var radios = document.querySelectorAll('input[name="ageRange"]');
-    var panel = document.getElementById('custom-age-panel');
-    function sync() {
-      var v = document.querySelector('input[name="ageRange"]:checked');
-      if (!v) return;
-      var isCustom = v.value === 'Custom';
-      if (panel) panel.classList.toggle('nhsuk-radios__conditional--hidden', !isCustom);
-      if (v.hasAttribute('aria-controls')) v.setAttribute('aria-expanded', isCustom ? 'true' : 'false');
-    }
-    radios.forEach(function(r){ r.addEventListener('change', sync); });
-    sync();
+  (function () {
+    var box = document.getElementById('regions');
+    var btnAll = document.getElementById('regions-select-all');
+    var btnClear = document.getElementById('regions-clear');
+    if (!box || !btnAll || !btnClear) return;
 
-    // Region filter
-    var filter = document.getElementById('regionFilter');
-    var list = document.getElementById('regionsList');
-    if (filter && list) {
-      filter.addEventListener('input', function(){
-        var q = filter.value.trim().toLowerCase();
-        list.querySelectorAll('.nhsuk-checkboxes__item').forEach(function(item){
-          var label = item.getAttribute('data-label') || '';
-          item.style.display = (!q || label.indexOf(q) !== -1) ? '' : 'none';
-        });
-      });
-    }
-
-    // Select/Clear all
-    var selectAll = document.getElementById('selectAllRegions');
-    var clearAll = document.getElementById('clearAllRegions');
-    function setAll(checked) {
-      list.querySelectorAll('input[type="checkbox"][name="regions"]').forEach(function(cb){
-        if (cb.offsetParent !== null) cb.checked = checked; // only visible items
-      });
-    }
-    if (selectAll) selectAll.addEventListener('click', function(e){ e.preventDefault(); setAll(true); });
-    if (clearAll) clearAll.addEventListener('click', function(e){ e.preventDefault(); setAll(false); });
+    btnAll.addEventListener('click', function () {
+      for (var i = 0; i < box.options.length; i++) box.options[i].selected = true;
+      box.focus();
+    });
+    btnClear.addEventListener('click', function () {
+      for (var i = 0; i < box.options.length; i++) box.options[i].selected = false;
+      box.focus();
+    });
   })();
+</script>
+
+
+<script>
+  // Tiny progressive enhancement for the custom age fields
+  document.addEventListener('change', function(e){
+    if (e.target && e.target.name === 'ageMode') {
+      var box = document.getElementById('age-custom-fields');
+      var isCustom = e.target.value === 'custom';
+      if (box) {
+        if (isCustom) { box.removeAttribute('hidden'); }
+        else { box.setAttribute('hidden',''); }
+      }
+    }
+  });
 </script>

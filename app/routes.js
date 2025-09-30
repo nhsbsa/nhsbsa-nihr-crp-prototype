@@ -21,12 +21,16 @@ function safeMount(relPath, label = relPath) {
 safeMount('./home', 'home')
 safeMount('./home-auto', 'home-auto')
 
+
 // Hydrate Section B from feasibility/identify before anything renders
 safeMount('./mw-hydrate-submit', 'mw-hydrate-submit')
 
 // Public/epic
 safeMount('./routes-auth', 'routes-auth')
 safeMount('./routes-epics', 'routes-epics')
+
+router.use(require('./mw-criteria-bridge'))
+router.use(require('./researcher-preview'))
 
 // Researcher scaffolding
 safeMount('./researcher-nav-middleware', 'researcher-nav-middleware')
