@@ -1,0 +1,323 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Matching criteria (from feasibility){% endblock %}
+
+{% block researcherContent %}
+
+<a class="nhsuk-skip-link" href="#criteria">Skip to criteria</a>
+
+<h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Matching criteria</h1>
+<p class="nhsuk-body">
+  These criteria come from your feasibility check (Section A). Use the “Edit” links to change anything.
+</p>
+
+{# ------------------- MODEL ------------------- #}
+{% set model = model or (data and data.feasibility) or {} %}
+{% set sites = (model.sites and model.sites.list) or [] %}
+{% set defaultRadius = (model.sites and model.sites.defaultRadius) or 10 %}
+{% set dx = (model.diagnoses and model.diagnoses) or [] %}
+{% set demo = model.demographics or {} %}
+{% set demoX = model.demographicsExtended or {} %}
+{% set med = model.medical or {} %}
+{% set dis = model.disabilities or {} %}
+{% set other = model.other or {} %}
+
+{# Clean out _unchecked artefacts from autoStoreData #}
+{% set symptoms = (demo.symptoms or []) | reject('equalto','_unchecked') %}
+
+{# ------------------- TOP SUMMARY (aligned table) ------------------- #}
+<div class="nhsuk-card nhsuk-u-margin-bottom-5">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-3">Summary</h2>
+
+    <table class="nhsuk-table">
+      <caption class="nhsuk-u-visually-hidden">High-level configuration summary</caption>
+      <thead class="nhsuk-table__head">
+        <tr class="nhsuk-table__row">
+          <th scope="col" class="nhsuk-table__header" style="width: 35%">Item</th>
+          <th scope="col" class="nhsuk-table__header">Current value</th>
+          <th scope="col" class="nhsuk-table__header" style="width: 10%">Action</th>
+        </tr>
+      </thead>
+      <tbody class="nhsuk-table__body">
+        <tr class="nhsuk-table__row">
+          <th scope="row" class="nhsuk-table__header">Sites configured</th>
+          <td class="nhsuk-table__cell">
+            {% if sites.length %}
+              <span class="nhsuk-tag">{{ sites.length }}</span>
+              <span class="nhsuk-u-margin-left-2">Default radius {{ defaultRadius }} miles</span>
+            {% else %}
+              <span class="nhsuk-tag nhsuk-tag--grey">None</span>
+            {% endif %}
+          </td>
+          <td class="nhsuk-table__cell">
+            <a class="nhsuk-link" href="/researcher/feasibility/sites">Edit</a>
+          </td>
+        </tr>
+
+        <tr class="nhsuk-table__row">
+          <th scope="row" class="nhsuk-table__header">Diagnoses</th>
+          <td class="nhsuk-table__cell">
+            {% if dx.length %}
+              <span class="nhsuk-tag">{{ dx.length }}</span>
+            {% else %}
+              <span class="nhsuk-tag nhsuk-tag--grey">None</span>
+            {% endif %}
+          </td>
+          <td class="nhsuk-table__cell">
+            <a class="nhsuk-link" href="/researcher/feasibility/diagnoses">Edit</a>
+          </td>
+        </tr>
+
+        <tr class="nhsuk-table__row">
+          <th scope="row" class="nhsuk-table__header">Demographics</th>
+          <td class="nhsuk-table__cell">
+            {% if demo.ageMode == 'any' %}
+              Any age
+            {% elif demo.ageMode == '18plus' %}
+              18+
+            {% elif demo.ageMode == 'custom' %}
+              {{ demo.ageMin or '—' }} to {{ demo.ageMax or '—' }}
+            {% else %}—{% endif %}
+            {% if symptoms and symptoms.length %}
+              <span class="nhsuk-u-margin-left-2">• Symptoms: {{ symptoms | join(', ') }}</span>
+            {% endif %}
+          </td>
+          <td class="nhsuk-table__cell">
+            <a class="nhsuk-link" href="/researcher/feasibility/demographics">Edit</a>
+          </td>
+        </tr>
+
+        <tr class="nhsuk-table__row">
+          <th scope="row" class="nhsuk-table__header">Extended demographics</th>
+          <td class="nhsuk-table__cell">
+            {% set eCount = ((demoX.ethnicity or []).length) + ((demoX.gender or []).length) + ((demoX.sexAtBirth or []).length) %}
+            {% if eCount %}
+              <span class="nhsuk-tag">{{ eCount }}</span>
+            {% else %}
+              <span class="nhsuk-tag nhsuk-tag--grey">None</span>
+            {% endif %}
+          </td>
+          <td class="nhsuk-table__cell">
+            <a class="nhsuk-link" href="/researcher/feasibility/demographics-extended">Edit</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<a id="criteria"></a>
+
+{# ------------------- SITES & COVERAGE ------------------- #}
+<h2 class="nhsuk-heading-m">Sites and coverage</h2>
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    {% if sites.length %}
+      <dl class="nhsuk-summary-list">
+        {% for s in sites %}
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              <strong>{{ s.name or 'Site' }}</strong>
+              {% if s.code %}<span class="nhsuk-u-secondary-text-color"> ({{ s.code }})</span>{% endif %}
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if s.radius %}Radius {{ s.radius }} miles{% else %}<span class="nhsuk-hint">No radius set</span>{% endif %}
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a class="nhsuk-link" href="/researcher/feasibility/sites" aria-label="Edit {{ s.name or 'site' }}">Edit</a>
+            </dd>
+          </div>
+        {% endfor %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Default radius</dt>
+          <dd class="nhsuk-summary-list__value">{{ defaultRadius }} miles</dd>
+          <dd class="nhsuk-summary-list__actions">
+            <a class="nhsuk-link" href="/researcher/feasibility/sites" aria-label="Edit default radius">Edit</a>
+          </dd>
+        </div>
+      </dl>
+    {% else %}
+      <p class="nhsuk-hint nhsuk-u-margin-bottom-0">
+        No sites added. <a href="/researcher/feasibility/sites">Add sites in Section A</a>.
+      </p>
+    {% endif %}
+  </div>
+</div>
+
+{# ------------------- DIAGNOSES ------------------- #}
+<h2 class="nhsuk-heading-m">Diagnoses</h2>
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    {% if dx.length %}
+      <ul class="nhsuk-list nhsuk-list--bullet nhsuk-u-margin-bottom-2">
+        {% for d in dx %}<li>{{ d }}</li>{% endfor %}
+      </ul>
+    {% else %}
+      <p class="nhsuk-hint nhsuk-u-margin-bottom-0">No diagnoses selected.</p>
+    {% endif %}
+    <p class="nhsuk-u-margin-top-2">
+      <a class="nhsuk-link" href="/researcher/feasibility/diagnoses" aria-label="Edit diagnoses">Edit</a>
+    </p>
+  </div>
+</div>
+
+{# ------------------- DEMOGRAPHICS ------------------- #}
+<h2 class="nhsuk-heading-m">Demographics</h2>
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Age</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if demo.ageMode == 'any' %}
+            Any
+          {% elif demo.ageMode == '18plus' %}
+            18+
+          {% elif demo.ageMode == 'custom' %}
+            {{ demo.ageMin or '—' }} to {{ demo.ageMax or '—' }}
+          {% else %}—{% endif %}
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a class="nhsuk-link" href="/researcher/feasibility/demographics" aria-label="Edit age criteria">Edit</a>
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Symptoms</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if symptoms and symptoms.length %}
+            {{ symptoms | join(', ') }}
+          {% else %}—{% endif %}
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a class="nhsuk-link" href="/researcher/feasibility/demographics" aria-label="Edit symptoms">Edit</a>
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Ethnic groups</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if demoX.ethnicity and demoX.ethnicity.length %}
+            {{ demoX.ethnicity | join(', ') }}
+          {% else %}—{% endif %}
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a class="nhsuk-link" href="/researcher/feasibility/demographics-extended" aria-label="Edit ethnic groups">Edit</a>
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Gender</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if demoX.gender and demoX.gender.length %}
+            {{ demoX.gender | join(', ') }}
+          {% else %}—{% endif %}
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a class="nhsuk-link" href="/researcher/feasibility/demographics-extended" aria-label="Edit gender">Edit</a>
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Sex at birth</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if demoX.sexAtBirth and demoX.sexAtBirth.length %}
+            {{ demoX.sexAtBirth | join(', ') }}
+          {% else %}—{% endif %}
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a class="nhsuk-link" href="/researcher/feasibility/demographics-extended" aria-label="Edit sex at birth">Edit</a>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+{# ------------------- MEDICAL ------------------- #}
+<h2 class="nhsuk-heading-m">Medical criteria</h2>
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Include medical</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if med.include and med.include.length %}
+            {{ med.include | join(', ') }}
+          {% else %}—{% endif %}
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a class="nhsuk-link" href="/researcher/feasibility/medical" aria-label="Edit medical include criteria">Edit</a>
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Exclude medical</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if med.exclude and med.exclude.length %}
+            {{ med.exclude | join(', ') }}
+          {% else %}—{% endif %}
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a class="nhsuk-link" href="/researcher/feasibility/medical" aria-label="Edit medical exclude criteria">Edit</a>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+{# ------------------- DISABILITIES ------------------- #}
+<h2 class="nhsuk-heading-m">Disabilities</h2>
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Include disabilities</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if dis.include and dis.include.length %}
+            {{ dis.include | join(', ') }}
+          {% else %}—{% endif %}
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a class="nhsuk-link" href="/researcher/feasibility/disabilities" aria-label="Edit disabilities include criteria">Edit</a>
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Exclude disabilities</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if dis.exclude and dis.exclude.length %}
+            {{ dis.exclude | join(', ') }}
+          {% else %}—{% endif %}
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a class="nhsuk-link" href="/researcher/feasibility/disabilities" aria-label="Edit disabilities exclude criteria">Edit</a>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+{# ------------------- OTHER CRITERIA ------------------- #}
+{% set hasOther = other and (other.caresForPwD or (other.carerExperience and other.carerExperience.length) or other.livesInCareHome or other.hasCarer or other.mmse) %}
+{% if hasOther %}
+  <h2 class="nhsuk-heading-m">Other criteria</h2>
+  <div class="nhsuk-card nhsuk-u-margin-bottom-4">
+    <div class="nhsuk-card__content">
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        {% if other.caresForPwD %}<li>Cares for person with dementia: {{ other.caresForPwD }}</li>{% endif %}
+        {% if other.carerExperience and other.carerExperience.length %}<li>Carer experience: {{ other.carerExperience | join(', ') }}</li>{% endif %}
+        {% if other.livesInCareHome %}<li>Lives in care home: {{ other.livesInCareHome }}</li>{% endif %}
+        {% if other.hasCarer %}<li>Has a carer: {{ other.hasCarer }}</li>{% endif %}
+        {% if other.mmse %}<li>MMSE: {{ other.mmse }}</li>{% endif %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+{# ------------------- ACTIONS ------------------- #}
+<div class="nhsuk-button-group nhsuk-u-margin-top-6">
+  <a class="nhsuk-button" href="/researcher/task-list">Back to task list</a>
+  <a class="nhsuk-link nhsuk-u-margin-left-4" href="/researcher/feasibility/results">View feasibility results</a>
+</div>
+
+{% endblock %}

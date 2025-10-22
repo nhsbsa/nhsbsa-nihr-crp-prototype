@@ -5,114 +5,273 @@
 <a class="nhsuk-back-link" href="/researcher/task-list">Back to task list</a>
 <h1 class="nhsuk-heading-l">Review your study details</h1>
 
-{# Top-line numbers #}
-<p class="nhsuk-body-s nhsuk-u-margin-bottom-3">
-  Volunteers: {{ (vm and vm.matchedEstimate) or (data.derived and data.derived.matchedEstimate) or '—' }}
-  {% set total = (vm and vm.totalEstimate) or (data.feasibility and data.feasibility.totalEstimate) %}
-  {% if total %} matched of {{ total }} estimated{% endif %}
+{# Top-line feasibility numbers #}
+{% set matched = (data and data.derived and data.derived.matchedEstimate) or '—' %}
+{% set total = (data and data.feasibility and data.feasibility.totalEstimate) or '' %}
+<p class="nhsuk-body-s nhsuk-u-margin-bottom-4">
+  Volunteers: <strong>{{ matched }}</strong>{% if total %} matched of <strong>{{ total }}</strong> estimated{% endif %}
 </p>
 
-{# Study summary #}
-<div class="nhsuk-card nhsuk-u-margin-bottom-4"><div class="nhsuk-card__content">
-  <h2 class="nhsuk-heading-m">Study summary</h2>
-  {% set title = (vm and vm.title) or (data.study and data.study.title) %}
-  <p><strong>Title:</strong> {{ title or '—' }}</p>
-  <p><strong>CPMS:</strong> {{ (vm and vm.cpmsId) or (data.study and data.study.cpmsId) or '—' }}
-     <strong class="nhsuk-u-margin-left-3">IRAS:</strong> {{ (vm and vm.irasId) or (data.study and data.study.irasId) or '—' }}</p>
-  <p><strong>Sponsor:</strong> {{ (vm and vm.sponsor) or (data.study and data.study.sponsor) or '—' }}</p>
-  {% set lay = (vm and vm.laySummary) or (data.study and data.study.laySummary) %}
-  <details class="nhsuk-details nhsuk-u-margin-top-2" {% if lay %}open{% endif %}>
-    <summary class="nhsuk-details__summary"><span class="nhsuk-details__summary-text">Lay summary</span></summary>
-    <div class="nhsuk-details__text">
-      <p class="nhsuk-body">{{ lay or 'No lay summary provided.' }}</p>
+{# ============== SECTION B: Identify the study ============== #}
+{% set st = (data and data.submit and data.submit.study) or {} %}
+{% set ethicsYes = ((st.ethicsApproval or '') | lower) == 'yes' %}
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Study summary</h2>
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Study name</dt>
+            <dd class="nhsuk-summary-list__value">{{ st.name or '—' }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Chief investigator</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if st.ciTitle or st.ciName %}
+                {{ [st.ciTitle, st.ciName] | reject('equalto','') | join(' ') }}
+              {% else %}—{% endif %}
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Study coordinator</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if st.coordinator and (st.coordinator.name or st.coordinator.email) %}
+                {{ st.coordinator.name or '—' }}{% if st.coordinator.email %} &lt;{{ st.coordinator.email }}&gt;{% endif %}
+              {% else %}—{% endif %}
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Sponsor</dt>
+            <dd class="nhsuk-summary-list__value">{{ st.sponsor or '—' }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Funder</dt>
+            <dd class="nhsuk-summary-list__value">{{ st.funder or '—' }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">CRO</dt>
+            <dd class="nhsuk-summary-list__value">{{ st.cro or '—' }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">NIHR grant code</dt>
+            <dd class="nhsuk-summary-list__value">{{ st.nihrFundingStream or '—' }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">NIHR portfolio</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if st.portfolioStatus == 'yes' %}Yes{% elif st.portfolioStatus == 'no' %}No{% elif st.portfolioStatus == 'not-yet' %}Not yet{% else %}—{% endif %}
+              {% if st.cpmsId %}<span class="nhsuk-u-margin-left-2">CPMS: <strong>{{ st.cpmsId }}</strong></span>{% endif %}
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Ethics approval</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if ethicsYes %}Yes{% elif (st.ethicsApproval or '') | lower == 'no' %}No{% else %}—{% endif %}
+            </dd>
+          </div>
+          {% if ethicsYes or st.recNumber %}
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">REC / Ethics number</dt>
+            <dd class="nhsuk-summary-list__value">{{ st.recNumber or '—' }}</dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+      <div class="nhsuk-grid-column-one-quarter nhsuk-u-text-align-right">
+        <a href="/researcher/identify-study" class="nhsuk-link nhsuk-link--no-visited-state">Change</a>
+      </div>
     </div>
-  </details>
-  <p class="nhsuk-u-margin-top-2"><a class="nhsuk-link" href="/researcher/study-info">Change</a></p>
-</div></div>
+  </div>
+</div>
 
-{# Demographics #}
-<div class="nhsuk-card nhsuk-u-margin-bottom-4"><div class="nhsuk-card__content">
-  <h2 class="nhsuk-heading-m">Demographic requirements</h2>
-  {% set d = (vm and vm.demographics) or (data.criteria and data.criteria.demographics) or (data.feasibility and data.feasibility.demographics) or {} %}
-  <p><strong>Sex:</strong> {{ d.sex or 'any' }}</p>
-  <p>
-    <strong>Age:</strong>
-    {% if (d.ageMode or 'any') == 'custom' %}
-      {{ d.ageMin or '—' }} to {{ d.ageMax or '—' }}
-    {% elif (d.ageMode or 'any') == '18plus' %}
-      18 and over
-    {% else %}
-      Any
-    {% endif %}
-  </p>
-  <p><strong>Regions:</strong>
-    {% if d.regions and d.regions.length %}
-      {{ d.regions | join(', ') }}
-    {% else %}Any{% endif %}
-  </p>
-  <p class="nhsuk-u-margin-top-2"><a class="nhsuk-link" href="/researcher/demographics">Change</a></p>
-</div></div>
+{# ============== SECTION B: Study information ============== #}
+{% set info = (data and data.submit and data.submit.info) or {} %}
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Lay information</h2>
+        <p class="nhsuk-u-font-size-16 nhsuk-u-margin-bottom-1"><strong>Background</strong></p>
+        <p class="nhsuk-body">{{ info.background or '—' }}</p>
+        <p class="nhsuk-u-font-size-16 nhsuk-u-margin-bottom-1"><strong>Participants</strong></p>
+        <p class="nhsuk-body">{{ info.participants or '—' }}</p>
+        <p class="nhsuk-u-font-size-16 nhsuk-u-margin-bottom-1"><strong>What the study involves</strong></p>
+        <p class="nhsuk-body">{{ info.whatInvolves or '—' }}</p>
+      </div>
+      <div class="nhsuk-grid-column-one-quarter nhsuk-u-text-align-right">
+        <a href="/researcher/study-info" class="nhsuk-link nhsuk-link--no-visited-state">Change</a>
+      </div>
+    </div>
+  </div>
+</div>
 
-{# Medical #}
-<div class="nhsuk-card nhsuk-u-margin-bottom-4"><div class="nhsuk-card__content">
-  <h2 class="nhsuk-heading-m">Medical requirements</h2>
-  {% set m = (vm and vm.medical) or (data.criteria and data.criteria.medical) or (data.feasibility and data.feasibility.medical) or {} %}
-  <p><strong>Conditions / interests:</strong>
-    {% if m.conditions and m.conditions.length %}
-      {{ m.conditions | join(', ') }}
-    {% else %}None specified{% endif %}
-  </p>
-  <p><strong>Confirmation:</strong> {{ m.confirmation or 'either' }}</p>
-  <p class="nhsuk-u-margin-top-2"><a class="nhsuk-link" href="/researcher/medical">Change</a></p>
-</div></div>
+{# ============== SECTION B: Recruitment ============== #}
+{% set rec = (data and data.submit and data.submit.recruitment) or {} %}
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Recruitment</h2>
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Open to recruitment</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if rec.isOpen == 'yes' %}Yes{% elif rec.isOpen == 'no' %}No{% else %}—{% endif %}
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Recruited to date</dt>
+            <dd class="nhsuk-summary-list__value">{{ rec.recruitedToDate or '—' }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Recruitment dates</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if rec.startDate or rec.endDate %}
+                {{ rec.startDate or '—' }} to {{ rec.endDate or '—' }}
+              {% else %}—{% endif %}
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Overall target</dt>
+            <dd class="nhsuk-summary-list__value">{{ rec.overallTarget or '—' }}</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="nhsuk-grid-column-one-quarter nhsuk-u-text-align-right">
+        <a href="/researcher/recruitment" class="nhsuk-link nhsuk-link--no-visited-state">Change</a>
+      </div>
+    </div>
+  </div>
+</div>
 
-{# Sites #}
-<div class="nhsuk-card nhsuk-u-margin-bottom-4"><div class="nhsuk-card__content">
-  <h2 class="nhsuk-heading-m">Sites</h2>
-  {% set s = (vm and vm.sites) or (data.submission and data.submission.sites) or (data.feasibility and data.feasibility.sites) or {} %}
-  <p><strong>Scope:</strong> {{ s.scope or 'any' }}</p>
-  <p><strong>Site codes:</strong>
-    {% if s.codes and s.codes.length %}
-      {{ s.codes | join(', ') }}
-    {% else %}None provided{% endif %}
-  </p>
-  <p class="nhsuk-u-margin-top-2"><a class="nhsuk-link" href="/researcher/sites">Change</a></p>
-</div></div>
+{# ============== SECTION B: Study design ============== #}
+{% set des = (data and data.submit and data.submit.design) or {} %}
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Study design</h2>
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Randomised</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if des.randomised == 'yes' %}Yes{% elif des.randomised == 'no' %}No{% else %}—{% endif %}
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Interventional or observational</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if des.studyKind == 'interventional' %}Interventional
+              {% elif des.studyKind == 'observational' %}Observational
+              {% else %}—{% endif %}
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Phase</dt>
+            <dd class="nhsuk-summary-list__value">{{ des.phase or '—' }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Study type tags</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if des.typeTags and des.typeTags.length %}{{ des.typeTags | join(', ') }}{% else %}—{% endif %}
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <div class="nhsuk-grid-column-one-quarter nhsuk-u-text-align-right">
+        <a href="/researcher/study-design" class="nhsuk-link nhsuk-link--no-visited-state">Change</a>
+      </div>
+    </div>
+  </div>
+</div>
 
-{# Study type #}
-<div class="nhsuk-card nhsuk-u-margin-bottom-4"><div class="nhsuk-card__content">
-  <h2 class="nhsuk-heading-m">Study type</h2>
-  {% set st = (vm and vm.studyType) or (data.submission and data.submission.studyType) or {} %}
-  <p><strong>Type:</strong> {{ st.category or '—' }}</p>
-  <p><strong>Portfolio:</strong> {{ st.portfolio or '—' }}</p>
-  <p class="nhsuk-u-margin-top-2"><a class="nhsuk-link" href="/researcher/study-type">Change</a></p>
-</div></div>
+{# ============== SECTION B: Study sites ============== #}
+{% set bs = (data and data.submit and data.submit.sites) or {} %}
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Study sites</h2>
+        {% if bs.list and bs.list.length %}
+          <table class="nhsuk-table">
+            <thead class="nhsuk-table__head">
+              <tr class="nhsuk-table__row">
+                <th scope="col" class="nhsuk-table__header">Site name</th>
+                <th scope="col" class="nhsuk-table__header">Site contact</th>
+                <th scope="col" class="nhsuk-table__header">Contact email</th>
+              </tr>
+            </thead>
+            <tbody class="nhsuk-table__body">
+              {% for s in bs.list %}
+                <tr class="nhsuk-table__row">
+                  <td class="nhsuk-table__cell">{{ s.name or '—' }}</td>
+                  <td class="nhsuk-table__cell">{{ s.contactName or '—' }}</td>
+                  <td class="nhsuk-table__cell">{{ s.contactEmail or '—' }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="nhsuk-hint">No sites added.</p>
+        {% endif %}
+      </div>
+      <div class="nhsuk-grid-column-one-quarter nhsuk-u-text-align-right">
+        <a href="/researcher/study-sites" class="nhsuk-link nhsuk-link--no-visited-state">Change</a>
+      </div>
+    </div>
+  </div>
+</div>
 
-{# Target recruitment date #}
-<div class="nhsuk-card nhsuk-u-margin-bottom-4"><div class="nhsuk-card__content">
-  <h2 class="nhsuk-heading-m">Target recruitment date</h2>
-  {% set td = (vm and vm.targetDate) or (data.submission and data.submission.targetDate) or {} %}
-  <p><strong>Target start:</strong> {{ td.start or '—' }}</p>
-  <p class="nhsuk-u-margin-top-2"><a class="nhsuk-link" href="/researcher/target-date">Change</a></p>
-</div></div>
+{# ============== SECTION B: Matching criteria (from Section A) ============== #}
+{% set a = data and data.feasibility or {} %}
+{% set aSites = a.sites or { list: [], defaultRadius: 10 } %}
+{% set aDemo = a.demographics or {} %}
+{% set aDx = a.diagnoses or { values: [] } %}
+{% set aExt = a.demographicsExtended or { ethnicity: [], gender: [], sexAtBirth: [] } %}
+{% set aMed = a.medical or { include: [], exclude: [] } %}
+{% set aDis = a.disabilities or { include: [], exclude: [] } %}
+{% set aOther = a.other or {} %}
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Matching criteria</h2>
+        <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">Sites & coverage</h3>
+        <p class="nhsuk-body-s">Default radius: {{ aSites.defaultRadius or 10 }} miles</p>
+        {% if aSites.list and aSites.list.length %}
+          <ul class="nhsuk-list nhsuk-list--bullet nhsuk-u-margin-bottom-3">
+            {% for s in aSites.list %}
+              <li>{{ s.name or s.code or 'Site' }}{% if s.radius %} — {{ s.radius }} miles{% endif %}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="nhsuk-hint">No feasibility sites specified.</p>
+        {% endif %}
 
-{# Ethics #}
-<div class="nhsuk-card nhsuk-u-margin-bottom-4"><div class="nhsuk-card__content">
-  <h2 class="nhsuk-heading-m">Ethics approval</h2>
-  {% set e = (vm and vm.ethics) or (data.submission and data.submission.ethics) or {} %}
-  <p><strong>Has approval:</strong> {{ e.hasEthics or '—' }}</p>
-  {% if e.hasEthics == 'yes' %}
-    <p><strong>REC reference:</strong> {{ e.recRef or '—' }}</p>
-    <p><strong>Approval date:</strong> {{ e.approvalDate or '—' }}</p>
-    <p><strong>Uploaded proof:</strong> {{ e.fileName or '—' }}</p>
-  {% endif %}
-  <p class="nhsuk-u-margin-top-2"><a class="nhsuk-link" href="/researcher/ethics">Change</a></p>
-</div></div>
+        <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">Diagnoses</h3>
+        <p class="nhsuk-body-s">{% if aDx.values and aDx.values.length %}{{ aDx.values | join(', ') }}{% else %}None specified{% endif %}</p>
 
+        <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">Demographics</h3>
+        <p class="nhsuk-body-s">
+          {% if aDemo.ageMode == 'range' %}Ages {{ aDemo.ageMin or '—' }} to {{ aDemo.ageMax or '—' }}
+          {% elif aDemo.ageMode == 'min' %}Ages {{ aDemo.ageMin or '—' }} and over
+          {% else %}Any age{% endif %}
+          {% if aDemo.sex %} • Sex: {{ aDemo.sex }}{% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Final CTA #}
 <div class="nhsuk-button-group">
   <form method="post" action="/researcher/submit" class="nhsuk-u-inline">
     <button class="nhsuk-button" type="submit">Submit</button>
   </form>
-  <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
+  <a class="nhsuk-link nhsuk-link--no-visited-state nhsuk-u-margin-left-4" href="/researcher/task-list">
+    Return to task list
+  </a>
 </div>
+
 {% endblock %}

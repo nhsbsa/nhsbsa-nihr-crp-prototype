@@ -3,43 +3,39 @@
 
 {% block researcherContent %}
 <h1 class="nhsuk-heading-l">Study information</h1>
-<p class="nhsuk-body">We’ve prefilled this from your CPMS/IRAS selection if available. You can edit it.</p>
 
 {% if errors and errors.length %}
-<div class="nhsuk-error-summary" role="alert" tabindex="-1">
-  <h2 class="nhsuk-error-summary__title">There is a problem</h2>
-  <div class="nhsuk-error-summary__body">
-    <ul class="nhsuk-list nhsuk-error-summary__list">
-      {% for e in errors %}<li><a href="{{ e.href }}">{{ e.text }}</a></li>{% endfor %}
-    </ul>
+  <div class="nhsuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1">
+    <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% for e in errors %}
+          <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
-</div>
 {% endif %}
 
-<form method="post" action="/researcher/study-info" novalidate>
-  <div class="nhsuk-form-group{% for e in errors %}{% if e.href=='#title' %} nhsuk-form-group--error{% endif %}{% endfor %}">
-    <label class="nhsuk-label" for="title">Study title</label>
-    <input class="nhsuk-input" id="title" name="title" value="{{ model.title or '' }}">
-  </div>
-
-  <div class="nhsuk-form-group{% for e in errors %}{% if e.href=='#laySummary' %} nhsuk-form-group--error{% endif %}{% endfor %}">
-    <label class="nhsuk-label" for="laySummary">Lay summary</label>
-    <textarea class="nhsuk-textarea" id="laySummary" name="laySummary" rows="6">{{ model.laySummary or '' }}</textarea>
+<form method="post" action="/researcher/study-info">
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="background">Background to the research (layperson)</label>
+    <textarea class="nhsuk-textarea nhsuk-!-width-two-thirds" id="background" name="background" rows="6">{{ model.background }}</textarea>
   </div>
 
   <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="cpmsId">CPMS ID (optional)</label>
-    <input class="nhsuk-input nhsuk-input--width-20" id="cpmsId" name="cpmsId" value="{{ model.cpmsId or '' }}">
+    <label class="nhsuk-label" for="participants">Participants — who you are looking for (layperson)</label>
+    <textarea class="nhsuk-textarea nhsuk-!-width-two-thirds" id="participants" name="participants" rows="5">{{ model.participants }}</textarea>
   </div>
 
   <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="irasId">IRAS ID (optional)</label>
-    <input class="nhsuk-input nhsuk-input--width-20" id="irasId" name="irasId" value="{{ model.irasId or '' }}">
+    <label class="nhsuk-label" for="whatInvolves">What does the study involve? (layperson)</label>
+    <textarea class="nhsuk-textarea nhsuk-!-width-two-thirds" id="whatInvolves" name="whatInvolves" rows="6">{{ model.whatInvolves }}</textarea>
   </div>
 
   <div class="nhsuk-button-group">
     <button class="nhsuk-button" type="submit">Save and continue</button>
-    <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
+    <a class="nhsuk-link" href="/researcher/task-list">Return to task list</a>
   </div>
 </form>
 {% endblock %}

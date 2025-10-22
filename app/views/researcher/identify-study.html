@@ -1,131 +1,235 @@
 {% extends "researcher/layout-researcher.html" %}
-{% block pageTitle %}Identify the study (CPMS/IRAS){% endblock %}
+{% block pageTitle %}Study details{% endblock %}
 
 {% block researcherContent %}
-<h1 class="nhsuk-heading-l">Identify the study</h1>
-<p class="nhsuk-body">Provide a CPMS ID to pull details now, or enter the study title and lay summary if you don’t have CPMS to hand.</p>
+<h1 class="nhsuk-heading-l">Study details</h1>
 
-{% if errors and errors.length %}
+{# ---------- Error summary (deduped) ---------- #}
+{% if (errors and errors.length) or cpmsDuplicate %}
   <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
     <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
     <div class="nhsuk-error-summary__body">
       <ul class="nhsuk-list nhsuk-error-summary__list">
-        {% for e in errors %}
-          <li><a href="{{ e.href }}">{{ e.text }}</a></li>
-        {% endfor %}
+        {# Prefer errors[] if provided #}
+        {% if errors and errors.length %}
+          {% for e in errors %}
+            <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+          {% endfor %}
+        {% elif cpmsDuplicate %}
+          {# Only show this fallback when no explicit errors[] are passed #}
+          <li><a href="#cpmsId">A study with this CPMS ID already exists. Please contact the admin team before proceeding.</a></li>
+        {% endif %}
       </ul>
     </div>
   </div>
 {% endif %}
 
-{% if saved and (saved.title or saved.cpmsId) %}
-  <div class="nhsuk-card nhsuk-u-margin-bottom-4">
-    <div class="nhsuk-card__content">
-      <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Current selection</h2>
-      <dl class="nhsuk-summary-list">
-        {% if saved.cpmsId %}
-          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">CPMS ID</dt><dd class="nhsuk-summary-list__value">{{ saved.cpmsId }}</dd></div>
-        {% endif %}
-        {% if saved.irasId %}
-          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">IRAS ID</dt><dd class="nhsuk-summary-list__value">{{ saved.irasId }}</dd></div>
-        {% endif %}
-        {% if saved.title %}
-          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Study title</dt><dd class="nhsuk-summary-list__value">{{ saved.title }}</dd></div>
-        {% endif %}
-        {% if saved.laySummary %}
-          <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Lay summary</dt><dd class="nhsuk-summary-list__value">{{ saved.laySummary }}</dd></div>
-        {% endif %}
-      </dl>
-      <form method="post" action="/researcher/identify-study">
-        <input type="hidden" name="_action" value="clear">
-        <button class="nhsuk-button nhsuk-button--secondary" type="submit">Change selection</button>
-      </form>
+{# ---------- Informational / success banner ---------- #}
+{% if flash %}
+  <div class="nhsuk-notification-banner {% if flash.type == 'success' %}nhsuk-notification-banner--success{% endif %}" role="region" aria-label="Notice: {{ flash.type | default('info') | capitalize }}">
+    <div class="nhsuk-notification-banner__header">
+      <h2 class="nhsuk-notification-banner__title">{{ flash.heading or 'Notice' }}</h2>
+    </div>
+    <div class="nhsuk-notification-banner__content">
+      <p class="nhsuk-notification-banner__heading">{{ flash.text }}</p>
     </div>
   </div>
 {% endif %}
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-half">
+<form method="post" action="/researcher/identify-study" novalidate>
+  {% set model = model or (data and data.submit and data.submit.study) or {} %}
 
-    {% set hasCpmsErr = false %}
-    {% if errors %}{% for e in errors %}{% if e.href == '#cpmsId' %}{% set hasCpmsErr = true %}{% endif %}{% endfor %}{% endif %}
-    <form method="post" action="/researcher/identify-study" class="nhsuk-u-margin-bottom-5" novalidate>
-      <input type="hidden" name="_action" value="lookup">
-      <div class="nhsuk-form-group{% if hasCpmsErr %} nhsuk-form-group--error{% endif %}">
+  <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-6">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Has the study been submitted for inclusion on the NIHR portfolio?</legend>
+
+    <select class="nhsuk-select nhsuk-!-width-two-thirds" id="portfolioStatus" name="portfolioStatus">
+      <option value="" {% if not model.portfolioStatus %}selected{% endif %}>Select an option</option>
+      <option value="yes" {% if model.portfolioStatus == 'yes' %}selected{% endif %}>Yes</option>
+      <option value="no" {% if model.portfolioStatus == 'no' %}selected{% endif %}>No</option>
+      <option value="not-yet" {% if model.portfolioStatus == 'not-yet' %}selected{% endif %}>Not yet, but will be submitted</option>
+    </select>
+
+    {# CPMS input row; mark as error when duplicate #}
+    <div id="cpmsRow" class="nhsuk-u-margin-top-3 {% if model.portfolioStatus == 'yes' %}{% else %}nhsuk-u-visually-hidden{% endif %}">
+      <div class="nhsuk-form-group {% if cpmsDuplicate %}nhsuk-form-group--error{% endif %}">
         <label class="nhsuk-label" for="cpmsId">CPMS ID</label>
-        <span class="nhsuk-hint">Example: CPMS123456 or just 123456</span>
-        {% if hasCpmsErr %}
-          {% for e in errors %}{% if e.href == '#cpmsId' %}
-            <span class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ e.text }}</span>
-          {% endif %}{% endfor %}
+        {% if cpmsDuplicate %}
+          <span class="nhsuk-error-message" id="cpmsId-error">
+            <span class="nhsuk-u-visually-hidden">Error:</span>
+            A study with this CPMS ID already exists. Please contact the admin team before proceeding.
+          </span>
         {% endif %}
-        <input class="nhsuk-input nhsuk-input--width-20" id="cpmsId" name="cpmsId" value="{{ cpmsQuery or '' }}" autocomplete="off">
-      </div>
-      <button class="nhsuk-button" type="submit">Find study</button>
-    </form>
-
-    {% set hasTitleErr = false %}{% set hasLayErr = false %}
-    {% if errors %}{% for e in errors %}
-      {% if e.href == '#title' %}{% set hasTitleErr = true %}{% endif %}
-      {% if e.href == '#laySummary' %}{% set hasLayErr = true %}{% endif %}
-    {% endfor %}{% endif %}
-
-    <form method="post" action="/researcher/identify-study" novalidate>
-      <div class="nhsuk-form-group{% if hasTitleErr %} nhsuk-form-group--error{% endif %}">
-        <label class="nhsuk-label" for="title">Study title</label>
-        {% if hasTitleErr %}
-          {% for e in errors %}{% if e.href == '#title' %}
-            <span class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ e.text }}</span>
-          {% endif %}{% endfor %}
-        {% endif %}
-        <input class="nhsuk-input" id="title" name="title" value="{{ saved.title or '' }}">
-      </div>
-      <div class="nhsuk-form-group{% if hasLayErr %} nhsuk-form-group--error{% endif %}">
-        <label class="nhsuk-label" for="laySummary">Lay summary</label>
-        {% if hasLayErr %}
-          {% for e in errors %}{% if e.href == '#laySummary' %}
-            <span class="nhsuk-error-message"><span class="nhsuk-u-visually-hidden">Error:</span> {{ e.text }}</span>
-          {% endif %}{% endfor %}
-        {% endif %}
-        <textarea class="nhsuk-textarea" id="laySummary" name="laySummary" rows="6">{{ saved.laySummary or '' }}</textarea>
-      </div>
-      <div class="nhsuk-button-group">
-        <button class="nhsuk-button" type="submit">Save and continue</button>
-        <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
-      </div>
-    </form>
-
-  </div>
-
-  <div class="nhsuk-grid-column-one-half">
-    {% if found and lookup %}
-      <div class="nhsuk-card">
-        <div class="nhsuk-card__content">
-          <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">CPMS match</h2>
-          <dl class="nhsuk-summary-list">
-            <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">CPMS ID</dt><dd class="nhsuk-summary-list__value">{{ lookup.cpmsId }}</dd></div>
-            {% if lookup.irasId %}
-              <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">IRAS ID</dt><dd class="nhsuk-summary-list__value">{{ lookup.irasId }}</dd></div>
-            {% endif %}
-            <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Study title</dt><dd class="nhsuk-summary-list__value">{{ lookup.title }}</dd></div>
-            <div class="nhsuk-summary-list__row"><dt class="nhsuk-summary-list__key">Lay summary</dt><dd class="nhsuk-summary-list__value">{{ lookup.laySummary }}</dd></div>
-          </dl>
-          <form method="post" action="/researcher/identify-study" class="nhsuk-u-margin-top-3">
-            <input type="hidden" name="_action" value="use-found">
-            <input type="hidden" name="cpmsId" value="{{ lookup.cpmsId }}">
-            <button class="nhsuk-button" type="submit">Use these details</button>
-          </form>
+        <input class="nhsuk-input nhsuk-!-width-two-thirds {% if cpmsDuplicate %}nhsuk-input--error{% endif %}"
+               id="cpmsId"
+               name="cpmsId"
+               value="{{ model.cpmsId }}"
+               {% if cpmsDuplicate %}aria-describedby="cpmsId-error"{% endif %}
+               autocomplete="off">
+        <div class="nhsuk-button-group nhsuk-u-margin-top-3">
+          <button class="nhsuk-button nhsuk-button--secondary"
+                  type="submit"
+                  formaction="/researcher/identify-study/lookup"
+                  formmethod="post">
+            Check CPMS details
+          </button>
         </div>
+        <p class="nhsuk-hint nhsuk-u-margin-top-2">We only check whether an identical CPMS ID already exists. No other details are retrieved.</p>
       </div>
-    {% elif cpmsQuery %}
-      <div class="nhsuk-warning-text nhsuk-u-margin-top-3">
-        <span class="nhsuk-warning-text__icon" aria-hidden="true">!</span>
-        <strong class="nhsuk-warning-text__text">
-          <span class="nhsuk-warning-text__assistive">Warning</span>
-          No study found for <strong>{{ cpmsQuery }}</strong>. Check the ID or enter details manually.
-        </strong>
+    </div>
+  </fieldset>
+
+  {# ---------- NEW: Ethics approval ---------- #}
+  <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-6" aria-describedby="ethicsApproval-hint" id="ethicsApproval">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Have you got ethics approval?</legend>
+    <div class="nhsuk-hint" id="ethicsApproval-hint">If you select Yes, tell us the REC / Ethics number for your study.</div>
+
+    <div class="nhsuk-radios nhsuk-radios--inline" data-module="nhsuk-radios">
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input"
+               id="ethics-yes"
+               name="ethicsApproval"
+               type="radio"
+               value="yes"
+               {% if model.ethicsApproval == 'yes' %}checked{% endif %}
+               aria-controls="recNumberWrapper"
+               aria-expanded="{% if model.ethicsApproval == 'yes' %}true{% else %}false{% endif %}">
+        <label class="nhsuk-label nhsuk-radios__label" for="ethics-yes">Yes</label>
       </div>
-    {% endif %}
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input"
+               id="ethics-no"
+               name="ethicsApproval"
+               type="radio"
+               value="no"
+               {% if model.ethicsApproval == 'no' %}checked{% endif %}
+               aria-controls="recNumberWrapper"
+               aria-expanded="{% if model.ethicsApproval == 'no' %}true{% else %}false{% endif %}">
+        <label class="nhsuk-label nhsuk-radios__label" for="ethics-no">No</label>
+      </div>
+    </div>
+  </fieldset>
+
+  <div id="recNumberWrapper" class="nhsuk-form-group {% if not model.ethicsApproval or model.ethicsApproval != 'yes' %}nhsuk-u-visually-hidden{% endif %}">
+    <label class="nhsuk-label" for="recNumber">REC / Ethics number</label>
+    <input class="nhsuk-input nhsuk-!-width-one-half" id="recNumber" name="recNumber" value="{{ model.recNumber }}">
   </div>
-</div>
+
+  <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-6">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Core details</legend>
+
+    <label class="nhsuk-label" for="name">Study name</label>
+    <input class="nhsuk-input nhsuk-!-width-two-thirds" id="name" name="name" value="{{ model.name }}">
+
+    <label class="nhsuk-label nhsuk-u-margin-top-3" for="ciTitle">Chief investigator title</label>
+    <input class="nhsuk-input nhsuk-!-width-two-thirds" id="ciTitle" name="ciTitle" value="{{ model.ciTitle }}" placeholder="Dr, Prof, Mr, Ms">
+
+    <label class="nhsuk-label nhsuk-u-margin-top-3" for="ciName">Chief investigator name</label>
+    <input class="nhsuk-input nhsuk-!-width-two-thirds" id="ciName" name="ciName" value="{{ model.ciName }}">
+  </fieldset>
+
+  <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-6">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Study coordinator</legend>
+
+    <label class="nhsuk-label" for="coordName">Coordinator name</label>
+    <input class="nhsuk-input nhsuk-!-width-two-thirds" id="coordName" name="coordName" value="{{ model.coordinator and model.coordinator.name }}">
+
+    <label class="nhsuk-label nhsuk-u-margin-top-3" for="coordEmail">Coordinator email</label>
+    <input class="nhsuk-input nhsuk-!-width-two-thirds" id="coordEmail" name="coordEmail" value="{{ model.coordinator and model.coordinator.email }}">
+  </fieldset>
+
+  <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-7">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Organisations</legend>
+
+    <label class="nhsuk-label" for="sponsor">Study sponsor (optional)</label>
+    <select class="nhsuk-select nhsuk-!-width-two-thirds" id="sponsor" name="sponsor">
+      {% set sponsorOpts = [
+        { v: '', t: 'Select a sponsor' },
+        { v: 'Leeds Teaching Hospitals NHS Trust', t: 'Leeds Teaching Hospitals NHS Trust' },
+        { v: 'Manchester University NHS Foundation Trust', t: 'Manchester University NHS Foundation Trust' },
+        { v: 'University of Oxford', t: 'University of Oxford' },
+        { v: 'University of Manchester', t: 'University of Manchester' },
+        { v: 'AstraZeneca', t: 'AstraZeneca' },
+        { v: 'GSK', t: 'GSK' },
+        { v: 'Private sponsor (other)', t: 'Private sponsor (other)' }
+      ] %}
+      {% for o in sponsorOpts %}
+        <option value="{{ o.v }}" {% if o.v == (model.sponsor or '') %}selected{% endif %}>{{ o.t }}</option>
+      {% endfor %}
+    </select>
+
+    <label class="nhsuk-label nhsuk-u-margin-top-3" for="funder">Funder (optional)</label>
+    <select class="nhsuk-select nhsuk-!-width-two-thirds" id="funder" name="funder">
+      {% set funderOpts = [
+        { v: '', t: 'Select a funder' },
+        { v: 'NIHR', t: 'NIHR' },
+        { v: 'MRC', t: 'MRC' },
+        { v: 'Wellcome', t: 'Wellcome' },
+        { v: 'CRUK', t: 'CRUK' },
+        { v: 'Horizon Europe', t: 'Horizon Europe' },
+        { v: 'Charity (other)', t: 'Charity (other)' },
+        { v: 'Self-funded', t: 'Self-funded' }
+      ] %}
+      {% for f in funderOpts %}
+        <option value="{{ f.v }}" {% if f.v == (model.funder or '') %}selected{% endif %}>{{ f.t }}</option>
+      {% endfor %}
+    </select>
+
+    <label class="nhsuk-label nhsuk-u-margin-top-3" for="cro">CRO (optional)</label>
+    <select class="nhsuk-select nhsuk-!-width-two-thirds" id="cro" name="cro">
+      {% set croOpts = [
+        { v: '', t: 'Select a CRO' },
+        { v: 'None / Not applicable', t: 'None / Not applicable' },
+        { v: 'IQVIA', t: 'IQVIA' },
+        { v: 'ICON', t: 'ICON' },
+        { v: 'Parexel', t: 'Parexel' },
+        { v: 'Syneos Health', t: 'Syneos Health' },
+        { v: 'Other CRO', t: 'Other CRO' }
+      ] %}
+      {% for c in croOpts %}
+        <option value="{{ c.v }}" {% if c.v == (model.cro or '') %}selected{% endif %}>{{ c.t }}</option>
+      {% endfor %}
+    </select>
+
+    <label class="nhsuk-label nhsuk-u-margin-top-3" for="nihrFundingStream">NIHR funding stream or grant code (optional)</label>
+    <input class="nhsuk-input nhsuk-!-width-two-thirds" id="nihrFundingStream" name="nihrFundingStream" value="{{ model.nihrFundingStream }}">
+  </fieldset>
+
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+
+<script>
+  (function(){
+    var sel = document.getElementById('portfolioStatus');
+    var cpmsWrapper = document.getElementById('cpmsRow');
+    function toggleCpms(){
+      if (!sel || !cpmsWrapper) return;
+      if (sel.value === 'yes') {
+        cpmsWrapper.classList.remove('nhsuk-u-visually-hidden');
+      } else {
+        cpmsWrapper.classList.add('nhsuk-u-visually-hidden');
+      }
+    }
+    toggleCpms();
+    if (sel) sel.addEventListener('change', toggleCpms);
+
+    // Ethics conditional
+    function toggleEthics(){
+      var yes = document.getElementById('ethics-yes');
+      var wrap = document.getElementById('recNumberWrapper');
+      if (!wrap || !yes) return;
+      wrap.classList.toggle('nhsuk-u-visually-hidden', !yes.checked);
+    }
+    var ey = document.getElementById('ethics-yes');
+    var en = document.getElementById('ethics-no');
+    if (ey) ey.addEventListener('change', toggleEthics);
+    if (en) en.addEventListener('change', toggleEthics);
+    toggleEthics();
+
+    var es = document.querySelector('.nhsuk-error-summary');
+    if (es) { es.focus(); }
+  })();
+</script>
 {% endblock %}

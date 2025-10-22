@@ -2,275 +2,612 @@
 const express = require('express')
 const router = express.Router()
 
-// Optional multer: don’t crash if not installed
-let uploadSingle = (field) => (req, res, next) => { req.file = undefined; next() }
-try {
-  const multer = require('multer')
-  const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } })
-  uploadSingle = (field) => upload.single(field)
-} catch (e) {
-  console.warn('[submit] multer not installed, file uploads disabled (ethics still accepts ref+date).')
-}
-
-function ensure(req) {
+/* ==============================
+   Session/data scaffolding
+   ============================== */
+function ensureSubmit(req) {
   const data = req.session.data || (req.session.data = {})
+
   data.submit ||= {}
+
+  // B1: Identify study
+  data.submit.study ||= {
+    name: '',
+    ciTitle: '',
+    ciName: '',
+    sponsor: '',
+    funder: '',
+    cro: '',
+    nihrFundingStream: '',
+    portfolioStatus: '',   // 'yes' | 'no' | 'not-yet'
+    cpmsId: '',
+    coordinator: { name: '', email: '' }
+  }
+
+  // B2: Lay info
+  data.submit.info ||= { background: '', participants: '', whatInvolves: '' }
+
+  // B3: Recruitment
+  data.submit.recruitment ||= {
+    isOpen: '', recruitedToDate: '', startDate: '', endDate: '', overallTarget: ''
+  }
+
+  // B4: Study design
+  data.submit.design ||= {
+    randomised: '',       // 'yes' | 'no'
+    studyKind: '',        // 'interventional' | 'observational'
+    phase: '',            // one of STUDY_PHASES
+    typeTags: []          // multi-select tags
+  }
+
+  // B5: Study sites
+  data.submit.sites ||= { list: [] }
+
+  // B6: Feedback & contact
+  data.submit.feedback ||= {
+    source: [],
+    contactForFeedback: '',
+    contactForResearch: ''
+  }
+
+  // Utility/context
   data.status ||= {}
   data.meta ||= {}
+  data.feasibility ||= {}
+
   return data
 }
-function stampSaved(data) {
-  data.meta.lastSaved = new Date().toLocaleString('en-GB', { hour12: false })
+
+const lastSaved = d => d.meta.lastSaved = new Date().toLocaleString('en-GB', { hour12: false })
+const mark = (d, path, state = 'completed') => { d.status[path] = state; lastSaved(d) }
+const toIntOrEmpty = v => {
+  const n = parseInt(String(v || '').trim(), 10)
+  return Number.isFinite(n) ? n : ''
+}
+const toArr = v => Array.isArray(v) ? v : (v ? [v] : [])
+
+/* ---------- mock CPMS lookup (dummy data) ---------- */
+function lookupCPMS(id) {
+  const db = {
+    '123456': {
+      name: 'Cognitive Health Study',
+      ciTitle: 'Dr',
+      ciName: 'Alice Example',
+      sponsor: 'University of Oxford',
+      funder: 'NIHR',
+      cro: 'None / Not applicable',
+      nihrFundingStream: 'NIHR-ABC-2025-001',
+      info: {
+        background: 'We are studying memory and thinking in adults.',
+        participants: 'Adults aged 50 and over living in England.',
+        whatInvolves: 'Online questionnaires and a short in-person assessment.'
+      }
+    },
+    '654321': {
+      name: 'Movement Disorders Registry',
+      ciTitle: 'Prof',
+      ciName: 'Brian Example',
+      sponsor: 'Leeds Teaching Hospitals NHS Trust',
+      funder: 'CRUK',
+      cro: 'IQVIA',
+      nihrFundingStream: '',
+      info: {
+        background: 'A registry to better understand movement disorders.',
+        participants: 'People diagnosed with Parkinson’s or similar conditions.',
+        whatInvolves: 'Consent to share clinical data and optional follow-ups.'
+      }
+    }
+  }
+  return db[String(id || '').trim()] || null
 }
 
-// Non-destructive hydration (kept brief)
-function hydrate(data) {
-  const F = data.feasibility || {}
-  const S = data.submit ||= {}
-  const FeasDemo = F.demographics || F.cohort || F.filters || {}
-  const FeasMed  = F.medical || F.conditions || {}
-  const FeasSites = (F.sites && (F.sites.siteCodes || F.sites.codes)) || F.siteCodes || F.sites || []
+/* =========================================================
+   B1: Identify the study — session-safe + CPMS flow
+   ========================================================= */
+router.get('/researcher/identify-study', (req, res) => {
+  const data = ensureSubmit(req)
+  const m = { ...data.submit.study }
+  res.render('researcher/identify-study.html', {
+    activeNav: 'create-request',
+    data,
+    model: m,
+    flash: null,
+    cpmsResult: null
+  })
+})
 
-  S.studyInfo ||= (data.study && data.study.identify) ? {
-    title: data.study.identify.title || '',
-    laySummary: data.study.identify.laySummary || '',
-    cpmsId: data.study.identify.cpmsId || '',
-    irasId: data.study.identify.irasId || ''
-  } : S.studyInfo
+router.post('/researcher/identify-study', (req, res) => {
+  const data = ensureSubmit(req)
+  const b = req.body || {}
+  const m = data.submit.study
+  const action = (b._action || '').trim() // << read _action from the form
 
-  S.demographics ||= {}
-  const D = S.demographics
-  if (!D.sex && (FeasDemo.sex || FeasDemo.gender)) D.sex = FeasDemo.sex || FeasDemo.gender
-  if (!D.ageMode) D.ageMode = (FeasDemo.ageMode || (FeasDemo.ageMin || FeasDemo.ageMax ? 'custom' : 'any') || 'any')
-  if (!D.ageMin && FeasDemo.ageMin) D.ageMin = FeasDemo.ageMin
-  if (!D.ageMax && FeasDemo.ageMax) D.ageMax = FeasDemo.ageMax
-  if ((!Array.isArray(D.regions) || !D.regions.length) && (FeasDemo.regions || FeasDemo.region)) {
-    const reg = FeasDemo.regions || FeasDemo.region
-    D.regions = Array.isArray(reg) ? reg : [reg]
-  }
-  D.sex ||= 'any'; D.ageMode ||= 'any'; D.regions ||= []
-
-  S.medical ||= {}
-  const M = S.medical
-  if (!M.conditions && (FeasMed.conditions || FeasMed.interests)) M.conditions = FeasMed.conditions || FeasMed.interests
-  if (!M.requiresConfirmed && (FeasMed.requiresConfirmed || FeasMed.confirmed)) {
-    M.requiresConfirmed = (FeasMed.requiresConfirmed || FeasMed.confirmed) === 'yes' ? 'yes' : 'no'
-  }
-  M.requiresConfirmed ||= 'no'
-
-  const haveNested = S.sites && Array.isArray(S.sites.siteCodes) && S.sites.siteCodes.length
-  const haveFlat = Array.isArray(S.siteCodes) && S.siteCodes.length
-  if (!haveNested && !haveFlat && FeasSites && (Array.isArray(FeasSites) ? FeasSites.length : true)) {
-    const codes = (Array.isArray(FeasSites) ? FeasSites : [FeasSites]).map(s => String(s).trim().toUpperCase()).filter(Boolean)
-    if (codes.length) { S.sites = { siteCodes: codes }; S.siteCodes = codes }
-  } else if (haveNested && !haveFlat) {
-    S.siteCodes = S.sites.siteCodes.slice()
-  } else if (!haveNested && haveFlat) {
-    S.sites = { siteCodes: S.siteCodes.slice() }
+  // capture fields on every post
+  m.name = (b.name || '').trim()
+  m.ciTitle = (b.ciTitle || '').trim()
+  m.ciName = (b.ciName || '').trim()
+  m.sponsor = (b.sponsor || '').trim()
+  m.funder = (b.funder || '').trim()
+  m.cro = (b.cro || '').trim()
+  m.nihrFundingStream = (b.nihrFundingStream || '').trim()
+  m.portfolioStatus = (b.portfolioStatus || '').trim()
+  m.cpmsId = (b.cpmsId || '').trim()
+  m.coordinator = {
+    name: (b.coordName || '').trim(),
+    email: (b.coordEmail || '').trim()
   }
 
-  S.studyType ||= { category: '' }
-}
-
-/* ---------------------- Study information ---------------------- */
-router.get('/researcher/study-info', (req, res) => {
-  const data = ensure(req); hydrate(data)
-  res.render('researcher/study-info.html', { data, model: data.submit.studyInfo || {}, errors: [], activeNav: 'create-request' })
-})
-router.post('/researcher/study-info', (req, res) => {
-  const data = ensure(req)
-  const b = req.body || {}
-  const errors = []
-  const title = (b.title || '').trim()
-  const laySummary = (b.laySummary || '').trim()
-  if (!title) errors.push({ href: '#title', text: 'Enter a study title' })
-  if (!laySummary) errors.push({ href: '#laySummary', text: 'Enter a lay summary' })
-  if (errors.length) return res.render('researcher/study-info.html', { data, model: b, errors, activeNav: 'create-request' })
-  data.submit.studyInfo = { title, laySummary, cpmsId: (b.cpmsId || '').trim(), irasId: (b.irasId || '').trim() }
-  data.status['/researcher/study-info'] = 'completed'; stampSaved(data); res.redirect('/researcher/task-list')
-})
-
-/* ---------------------- Study type ---------------------- */
-router.get('/researcher/study-type', (req, res) => {
-  const data = ensure(req); hydrate(data)
-  res.render('researcher/study-type.html', { data, model: data.submit.studyType || {}, errors: [], activeNav: 'create-request' })
-})
-router.post('/researcher/study-type', (req, res) => {
-  const data = ensure(req)
-  const b = req.body || {}
-  const errors = []
-  const category = (b.category || '').trim()
-  if (!category) errors.push({ href: '#category', text: 'Select a study type' })
-  if (errors.length) return res.render('researcher/study-type.html', { data, model: b, errors, activeNav: 'create-request' })
-  data.submit.studyType = { category, notes: (b.notes || '').trim() }
-  data.status['/researcher/study-type'] = 'completed'; stampSaved(data); res.redirect('/researcher/task-list')
-})
-
-/* ---------------------- Demographics ---------------------- */
-router.get('/researcher/demographics', (req, res) => {
-  const data = ensure(req); hydrate(data)
-  res.render('researcher/demographics.html', { data, model: data.submit.demographics || {}, errors: [], activeNav: 'create-request' })
-})
-router.post('/researcher/demographics', (req, res) => {
-  const data = ensure(req)
-  const b = req.body || {}
-  const errors = []
-  const ageMode = b.ageMode || 'any'
-  if (ageMode === 'custom') {
-    const min = parseInt(b.ageMin || '', 10)
-    const max = parseInt(b.ageMax || '', 10)
-    if (Number.isNaN(min)) errors.push({ href: '#ageMin', text: 'Enter a minimum age' })
-    if (Number.isNaN(max)) errors.push({ href: '#ageMax', text: 'Enter a maximum age' })
-    if (!Number.isNaN(min) && !Number.isNaN(max) && min > max) errors.push({ href: '#ageMin', text: 'Minimum age must be less than maximum age' })
-  }
-  if (errors.length) return res.render('researcher/demographics.html', { data, model: b, errors, activeNav: 'create-request' })
-  data.submit.demographics = {
-    sex: b.sex || 'any',
-    ageMode,
-    ageMin: b.ageMin || '',
-    ageMax: b.ageMax || '',
-    regions: Array.isArray(b.regions) ? b.regions : (b.regions ? [b.regions] : [])
-  }
-  data.status['/researcher/demographics'] = 'completed'; stampSaved(data); res.redirect('/researcher/task-list')
-})
-
-/* ---------------------- Medical ---------------------- */
-router.get('/researcher/medical', (req, res) => {
-  const data = ensure(req); hydrate(data)
-  res.render('researcher/medical.html', { data, model: data.submit.medical || {}, errors: [], activeNav: 'create-request' })
-})
-router.post('/researcher/medical', (req, res) => {
-  const data = ensure(req)
-  const b = req.body || {}
-  const errors = []
-  const conditions = (b.conditions || '').trim()
-  if (!conditions) errors.push({ href: '#conditions', text: 'Enter one or more conditions or interests' })
-  const requiresConfirmed = b.requiresConfirmed === 'yes' ? 'yes' : 'no'
-  if (errors.length) return res.render('researcher/medical.html', { data, model: b, errors, activeNav: 'create-request' })
-  data.submit.medical = { conditions, requiresConfirmed }
-  data.status['/researcher/medical'] = 'completed'; stampSaved(data); res.redirect('/researcher/task-list')
-})
-
-/* ---------------------- Sites ---------------------- */
-router.get('/researcher/sites', (req, res) => {
-  const data = ensure(req); hydrate(data)
-  res.render('researcher/sites.html', { data, model: data.submit.sites || {}, errors: [], activeNav: 'create-request' })
-})
-router.post('/researcher/sites', (req, res) => {
-  const data = ensure(req)
-  const b = req.body || {}
-  const errors = []
-  const codesRaw = (b.siteCodes || '').trim()
-  if (!codesRaw) errors.push({ href: '#siteCodes', text: 'Enter at least one site code' })
-  const codes = codesRaw ? Array.from(new Set(codesRaw.split(/[\s,]+/).filter(Boolean).map(s => s.toUpperCase()))) : []
-  if (errors.length) return res.render('researcher/sites.html', { data, model: b, errors, activeNav: 'create-request' })
-  data.submit.sites = { siteCodes: codes }
-  data.submit.siteCodes = codes
-  data.status['/researcher/sites'] = 'completed'; stampSaved(data); res.redirect('/researcher/task-list')
-})
-
-/* ---------------------- Ethics (dropdown + optional upload) ---------------------- */
-router.get('/researcher/ethics', (req, res) => {
-  const data = ensure(req)
-  // ensure defaults for toggles so the template behaves on first load
-  const model = Object.assign({ hasApproval: '', proofMethod: 'ref' }, data.submit.ethics || {})
-  res.render('researcher/ethics.html', { data, model, errors: [], activeNav: 'create-request' })
-})
-router.post('/researcher/ethics', uploadSingle('approvalFile'), (req, res) => {
-  const data = ensure(req)
-  const b = req.body || {}
-  const file = req.file // undefined if no multer
-  const errors = []
-
-  const hasApproval = b.hasApproval === 'yes' ? 'yes' : (b.hasApproval === 'no' ? 'no' : '')
-  if (!hasApproval) {
-    errors.push({ href: '#hasApproval-yes', text: 'Select whether you have ethics approval' })
+  const saveThen = fn => {
+    // Prototype Kit cookie sessions don’t have save()
+    if (typeof req.session.save === 'function') req.session.save(fn)
+    else fn()
   }
 
-  if (hasApproval === 'yes') {
-    const proofMethod = (b.proofMethod === 'upload') ? 'upload' : 'ref'
-    const reference = (b.reference || '').trim()
-    const approvalDate = (b.approvalDate || '').trim()
-    const hasRefAndDate = !!(reference && approvalDate)
-    const hasUpload = !!file
+  // Check CPMS: show a summary only, do not mutate fields
+  if (action === 'lookup') {
+    let flash = null
+    let cpmsResult = null
 
-    // Require the chosen method; allow both if they provided both
-    if (proofMethod === 'ref' && !hasRefAndDate && !hasUpload) {
-      errors.push({ href: '#reference', text: 'Provide a REC reference and approval date or switch to Upload approval letter' })
-    }
-    if (proofMethod === 'upload' && !hasUpload && !hasRefAndDate) {
-      errors.push({ href: '#approvalFile', text: 'Upload the approval letter or switch to REC reference + date' })
-    }
-    if (approvalDate && !/^\d{4}-\d{2}-\d{2}$/.test(approvalDate)) {
-      errors.push({ href: '#approvalDate', text: 'Enter approval date in the format YYYY-MM-DD' })
-    }
-
-    if (errors.length) {
-      const model = Object.assign({}, b)
-      if (data.submit.ethics && data.submit.ethics.file) model.file = data.submit.ethics.file
-      model.proofMethod = proofMethod
-      return res.render('researcher/ethics.html', { data, model, errors, activeNav: 'create-request' })
-    }
-
-    data.submit.ethics = {
-      hasApproval: 'yes',
-      proofMethod,
-      reference,
-      approvalDate,
-      expectedDate: '',
-      notes: (b.notes || '').trim()
-    }
-
-    if (file) {
-      data.submit.ethics.file = {
-        originalname: file.originalname,
-        mimetype: file.mimetype,
-        size: file.size,
-        uploadedAt: new Date().toISOString()
+    if (m.portfolioStatus !== 'yes') {
+      flash = { type: 'warning', heading: 'Check CPMS', text: 'Select “Yes” before entering a CPMS ID.' }
+    } else if (!m.cpmsId) {
+      flash = { type: 'warning', heading: 'Check CPMS', text: 'Enter a CPMS ID to check.' }
+    } else {
+      const rec = lookupCPMS(m.cpmsId)
+      if (rec) {
+        flash = { type: 'success', heading: 'CPMS record found', text: 'Review the summary below or click “Use these CPMS details”.' }
+        cpmsResult = {
+          name: rec.name,
+          ci: `${rec.ciTitle} ${rec.ciName}`,
+          sponsor: rec.sponsor,
+          funder: rec.funder,
+          cro: rec.cro,
+          nihrFundingStream: rec.nihrFundingStream,
+          info: rec.info
+        }
+      } else {
+        flash = { type: 'warning', heading: 'No record found', text: 'Nothing matched that CPMS ID. You can continue and complete details manually.' }
       }
     }
 
-    data.submit.ethics.fileUploaded = !!(data.submit.ethics.file && data.submit.ethics.file.originalname)
-
-  } else if (hasApproval === 'no') {
-    const expectedDate = (b.expectedDate || '').trim()
-    if (expectedDate && !/^\d{4}-\d{2}-\d{2}$/.test(expectedDate)) {
-      errors.push({ href: '#expectedDate', text: 'Enter expected approval date in the format YYYY-MM-DD' })
-    }
-    if (errors.length) {
-      return res.render('researcher/ethics.html', { data, model: b, errors, activeNav: 'create-request' })
-    }
-    data.submit.ethics = {
-      hasApproval: 'no',
-      proofMethod: '',
-      reference: '',
-      approvalDate: '',
-      expectedDate,
-      notes: (b.notes || '').trim(),
-      file: data.submit.ethics && data.submit.ethics.file ? data.submit.ethics.file : undefined,
-      fileUploaded: !!(data.submit.ethics && data.submit.ethics.file && data.submit.ethics.file.originalname)
-    }
+    lastSaved(data)
+    return saveThen(() => {
+      res.render('researcher/identify-study.html', {
+        activeNav: 'create-request',
+        data,
+        model: { ...m },
+        flash,
+        cpmsResult
+      })
+    })
   }
 
-  data.status['/researcher/ethics'] = 'completed'
-  stampSaved(data)
-  res.redirect('/researcher/task-list')
+  // Apply CPMS: hard copy dummy data into the form fields
+  if (action === 'applyCpms') {
+    let flash = null
+    const rec = m.cpmsId ? lookupCPMS(m.cpmsId) : null
+    if (rec) {
+      m.name = rec.name
+      m.ciTitle = rec.ciTitle
+      m.ciName = rec.ciName
+      m.sponsor = rec.sponsor
+      m.funder = rec.funder
+      m.cro = rec.cro
+      m.nihrFundingStream = rec.nihrFundingStream
+      // also prefill study info
+      data.submit.info.background = rec.info.background
+      data.submit.info.participants = rec.info.participants
+      data.submit.info.whatInvolves = rec.info.whatInvolves
+      flash = { type: 'success', heading: 'Applied', text: 'CPMS details applied to the form.' }
+    } else {
+      flash = { type: 'warning', heading: 'Nothing to apply', text: 'No CPMS record to apply.' }
+    }
+
+    lastSaved(data)
+    return saveThen(() => {
+      res.render('researcher/identify-study.html', {
+        activeNav: 'create-request',
+        data,
+        model: { ...m },
+        flash,
+        cpmsResult: null
+      })
+    })
+  }
+
+  // Primary CTA: Save and continue (no blocking validation here)
+  mark(data, '/researcher/identify-study')
+  return res.redirect('/researcher/study-info')
 })
 
-/* ---------------------- Target date ---------------------- */
-router.get('/researcher/target-date', (req, res) => {
-  const data = ensure(req); hydrate(data)
-  res.render('researcher/target-date.html', { data, model: data.submit.targetDate || {}, errors: [], activeNav: 'create-request' })
+/* =========================================================
+   B2: Study information (layperson)
+   ========================================================= */
+router.get('/researcher/study-info', (req, res) => {
+  const data = ensureSubmit(req)
+  res.render('researcher/study-info.html', {
+    activeNav: 'create-request',
+    data,
+    model: data.submit.info,
+    errors: []
+  })
 })
-router.post('/researcher/target-date', (req, res) => {
-  const data = ensure(req)
-  const b = req.body || {}
+
+router.post('/researcher/study-info', (req, res) => {
+  const data = ensureSubmit(req)
+  const m = data.submit.info
+  m.background = (req.body.background || '').trim()
+  m.participants = (req.body.participants || '').trim()
+  m.whatInvolves = (req.body.whatInvolves || '').trim()
+
   const errors = []
-  const target = (b.targetDate || '').trim()
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(target)) errors.push({ href: '#targetDate', text: 'Enter a target date in the format YYYY-MM-DD' })
-  if (errors.length) return res.render('researcher/target-date.html', { data, model: b, errors, activeNav: 'create-request' })
-  data.submit.targetDate = { targetDate: target }
-  data.status['/researcher/target-date'] = 'completed'; stampSaved(data); res.redirect('/researcher/task-list')
+  if (!m.background) errors.push({ href: '#background', text: 'Provide a short background in plain English' })
+  if (!m.participants) errors.push({ href: '#participants', text: 'Describe who you are looking for' })
+  if (!m.whatInvolves) errors.push({ href: '#whatInvolves', text: 'Explain what the study involves' })
+
+  if (errors.length) {
+    return res.render('researcher/study-info.html', {
+      activeNav: 'create-request',
+      data,
+      model: m,
+      errors
+    })
+  }
+
+  mark(data, '/researcher/study-info')
+  res.redirect('/researcher/recruitment')
 })
+
+/* =========================================================
+   B3: Recruitment criteria
+   ========================================================= */
+router.get('/researcher/recruitment', (req, res) => {
+  const data = ensureSubmit(req)
+  res.render('researcher/recruitment.html', {
+    activeNav: 'create-request',
+    data,
+    model: data.submit.recruitment,
+    errors: []
+  })
+})
+
+router.post('/researcher/recruitment', (req, res) => {
+  const data = ensureSubmit(req)
+  const m = data.submit.recruitment
+  const b = req.body || {}
+
+  m.isOpen = (b.isOpen || '').trim()
+  m.recruitedToDate = toIntOrEmpty(b.recruitedToDate)
+  m.startDate = (b.startDate || '').trim()
+  m.endDate = (b.endDate || '').trim()
+  m.overallTarget = toIntOrEmpty(b.overallTarget)
+
+  const errors = []
+  if (!m.isOpen) errors.push({ href: '#isOpen-yes', text: 'Select if the study is already open to recruitment' })
+  if (m.isOpen === 'yes' && m.recruitedToDate === '') {
+    errors.push({ href: '#recruitedToDate', text: 'Enter the number recruited to date' })
+  }
+  if (!m.startDate) errors.push({ href: '#startDate', text: 'Enter a recruitment start date' })
+  if (!m.endDate) errors.push({ href: '#endDate', text: 'Enter a recruitment end date' })
+  if (m.overallTarget === '') errors.push({ href: '#overallTarget', text: 'Enter an overall recruitment target' })
+
+  if (errors.length) {
+    return res.render('researcher/recruitment.html', {
+      activeNav: 'create-request',
+      data,
+      model: m,
+      errors
+    })
+  }
+
+  mark(data, '/researcher/recruitment')
+  res.redirect('/researcher/study-design')
+})
+
+/* =========================================================
+   B4: Study design
+   ========================================================= */
+const STUDY_PHASES = ['Phase 1', 'Phase 2', 'Phase 3', 'Phase 4', 'Not applicable']
+const STUDY_TYPE_TAGS = [
+  'Blood donation',
+  'Blood tests/sample',
+  'Brain scan',
+  'Community programme',
+  'Computer based testing',
+  'Dementia risk factors',
+  'Drug/medication trial',
+  'Face to face interview',
+  'Focus group',
+  'Genetics',
+  'Investigating dementia causes',
+  'Lifestyle programme',
+  'Lumbar puncture',
+  'Offline questionnaire',
+  'Online questionnaire',
+  'Online study',
+  'Other',
+  'Phone app testing',
+  'Physical tests/assessments',
+  'Physical therapy',
+  'Talking therapy',
+  'Telephone/online interview',
+  'Thinking and memory tests',
+  'Trying new technologies and devices',
+  'Vaccine trial'
+]
+
+router.get('/researcher/study-design', (req, res) => {
+  const data = ensureSubmit(req)
+  res.render('researcher/study-design.html', {
+    activeNav: 'create-request',
+    data,
+    model: data.submit.design,
+    phases: STUDY_PHASES,
+    typeTags: STUDY_TYPE_TAGS,
+    errors: []
+  })
+})
+
+router.post('/researcher/study-design', (req, res) => {
+  const data = ensureSubmit(req)
+  const m = data.submit.design
+  m.randomised = (req.body.randomised || '').trim()
+  m.studyKind = (req.body.studyKind || '').trim()
+  m.phase = (req.body.phase || '').trim()
+  m.typeTags = toArr(req.body.typeTags)
+
+  const errors = []
+  if (!m.randomised) errors.push({ href: '#randomised-yes', text: 'Select if the study is randomised' })
+  if (!m.studyKind) errors.push({ href: '#kind-interventional', text: 'Select interventional or observational' })
+  if (!m.phase) errors.push({ href: '#phase', text: 'Select a study phase' })
+
+  if (errors.length) {
+    return res.render('researcher/study-design.html', {
+      activeNav: 'create-request',
+      data,
+      model: m,
+      phases: STUDY_PHASES,
+      typeTags: STUDY_TYPE_TAGS,
+      errors
+    })
+  }
+
+  mark(data, '/researcher/study-design')
+  res.redirect('/researcher/study-sites')
+})
+
+/* =========================================================
+   B5: Study sites (prefill from Feasibility)
+   ========================================================= */
+router.get('/researcher/study-sites', (req, res) => {
+  const data = ensureSubmit(req)
+
+  // Prefill only if Section B has no sites yet, but Feasibility has sites
+  const bSites = data.submit.sites
+  const aSites = (data.feasibility && data.feasibility.sites && data.feasibility.sites.list) || []
+
+  if ((!bSites.list || bSites.list.length === 0) && Array.isArray(aSites) && aSites.length > 0) {
+    bSites.list = aSites
+      .filter(s => s && (s.name || s.code))
+      .map(s => ({
+        name: s.name || s.code || 'Unnamed site',
+        piName: '',
+        piEmail: '',
+        contactName: '',
+        contactEmail: ''
+      }))
+    data.status['/researcher/study-sites'] = 'in-progress'
+    lastSaved(data)
+  }
+
+  res.render('researcher/study-sites.html', {
+    activeNav: 'create-request',
+    data,
+    model: data.submit.sites,
+    errors: []
+  })
+})
+
+router.post('/researcher/study-sites', (req, res) => {
+  const data = ensureSubmit(req)
+  const sites = data.submit.sites
+  const b = req.body || {}
+
+  if (b.list && Array.isArray(b.list)) {
+    sites.list = b.list.map((row, idx) => {
+      const existing = (sites.list && sites.list[idx]) || {}
+      return {
+        name: (row.name && row.name.trim()) || existing.name || 'Unnamed site',
+        piName: (row.piName || '').trim(),
+        piEmail: (row.piEmail || '').trim(),
+        contactName: (row.contactName || '').trim(),
+        contactEmail: (row.contactEmail || '').trim()
+      }
+    })
+  }
+
+  if (b.addSite === 'yes') {
+    const item = {
+      name: (b.name || '').trim(),
+      piName: (b.piName || '').trim(),
+      piEmail: (b.piEmail || '').trim(),
+      contactName: (b.contactName || '').trim(),
+      contactEmail: (b.contactEmail || '').trim()
+    }
+    if (item.name || item.piName || item.piEmail || item.contactName || item.contactEmail) {
+      sites.list = sites.list || []
+      sites.list.push(item)
+      data.status['/researcher/study-sites'] = 'in-progress'
+      lastSaved(data)
+    }
+    return res.redirect('/researcher/study-sites')
+  }
+
+  if (typeof b.removeIndex !== 'undefined' && b.removeIndex !== '') {
+    const idx = parseInt(b.removeIndex, 10)
+    if (Number.isInteger(idx) && sites.list && sites.list[idx]) {
+      sites.list.splice(idx, 1)
+      lastSaved(data)
+    }
+    return res.redirect('/researcher/study-sites')
+  }
+
+  const errors = []
+  if (!sites.list || sites.list.length === 0) {
+    errors.push({ href: '#add-site-block', text: 'Add at least one study site' })
+  } else {
+    sites.list.forEach((s, i) => {
+      if (!s.name) errors.push({ href: `#row-${i}`, text: `Site ${i + 1}: missing site name` })
+    //  if (!s.piName) errors.push({ href: `#row-${i}-piName`, text: `Site ${i + 1}: enter a PI name` })
+    //  if (!s.piEmail) errors.push({ href: `#row-${i}-piEmail`, text: `Site ${i + 1}: enter a PI email` })
+    })
+  }
+
+  if (errors.length) {
+    return res.render('researcher/study-sites.html', {
+      activeNav: 'create-request',
+      data,
+      model: sites,
+      errors
+    })
+  }
+
+  mark(data, '/researcher/study-sites')
+  res.redirect('/researcher/feedback')
+})
+
+/* =========================================================
+   B6: Feedback & contact
+   ========================================================= */
+const FEEDBACK_SOURCES = [
+  'NIHR newsletter',
+  'Colleague/word of mouth',
+  'Conference or event',
+  'Search engine',
+  'Social media',
+  'Be Part of Research website',
+  'Other'
+]
+
+router.get('/researcher/feedback', (req, res) => {
+  const data = ensureSubmit(req)
+  res.render('researcher/feedback.html', {
+    activeNav: 'create-request',
+    data,
+    model: data.submit.feedback,
+    sources: FEEDBACK_SOURCES,
+    errors: []
+  })
+})
+
+router.post('/researcher/feedback', (req, res) => {
+  const data = ensureSubmit(req)
+  const m = data.submit.feedback
+  m.source = toArr(req.body.source)
+  m.contactForFeedback = (req.body.contactForFeedback || '').trim()
+  m.contactForResearch = (req.body.contactForResearch || '').trim()
+
+  const errors = []
+  if (!m.contactForFeedback) errors.push({ href: '#contactForFeedback-yes', text: 'Tell us if we can contact you for feedback' })
+  if (!m.contactForResearch) errors.push({ href: '#contactForResearch-yes', text: 'Tell us if we can contact you about user research' })
+
+  if (errors.length) {
+    return res.render('researcher/feedback.html', {
+      activeNav: 'create-request',
+      data,
+      model: m,
+      sources: FEEDBACK_SOURCES,
+      errors
+    })
+  }
+
+  mark(data, '/researcher/feedback')
+  res.redirect('/researcher/matching-criteria')
+})
+
+/* =========================================================
+   B7: Matching criteria (from Section A)
+   ========================================================= */
+router.get('/researcher/matching-criteria', (req, res) => {
+  const data = ensureSubmit(req)
+
+  const feas = data.feasibility || {}
+  const feasResultsState = data.status && data.status['/researcher/feasibility/results']
+  const feasDone =
+    !!feas.completed ||
+    !!feas.totalEstimate ||
+    feasResultsState === 'completed' ||
+    feasResultsState === 'in-progress'
+
+  data.status['/researcher/matching-criteria'] = feasDone ? 'completed' : 'cannot-start'
+  data.meta.lastSaved = new Date().toLocaleString('en-GB', { hour12: false })
+
+  const s  = feas.sites || { list: [], defaultRadius: 10 }
+  const d  = feas.demographics || {}
+  const dx = feas.diagnoses || { values: [] }
+  const de = feas.demographicsExtended || { ethnicity: [], gender: [], sexAtBirth: [] }
+  const med = feas.medical || { include: [], exclude: [] }
+  const dis = feas.disabilities || { include: [], exclude: [] }
+  const other = feas.other || {}
+
+  const model = {
+    sites: s,
+    diagnoses: dx.values,
+    demographics: d,
+    demographicsExtended: de,
+    medical: med,
+    disabilities: dis,
+    other
+  }
+
+  res.render('researcher/matching-criteria.html', {
+    activeNav: 'create-request',
+    data,
+    model
+  })
+})
+
+// ===== Submission confirmation =====
+function makeSubmissionRef() {
+  const now = new Date()
+  const y = now.getFullYear()
+  const m = String(now.getMonth() + 1).padStart(2, '0')
+  const d = String(now.getDate()).padStart(2, '0')
+  const rand = Math.floor(1000 + Math.random() * 9000) // 4 digits
+  return `SR-${y}${m}${d}-${rand}`
+}
+
+router.post('/researcher/submit', (req, res) => {
+  const data = (req.session && req.session.data) || {}
+  data.submit ||= {}
+  data.submit.submission ||= {}
+
+  // store a simple submission record
+  const ref = makeSubmissionRef()
+  data.submit.submission.reference = ref
+  data.submit.submission.submittedAt = new Date().toLocaleString('en-GB', { hour12: false })
+
+  // mark a handy status flag for the task list, if you care to show it
+  data.status ||= {}
+  data.status['/researcher/submitted'] = 'completed'
+  data.meta ||= {}
+  data.meta.lastSaved = new Date().toLocaleString('en-GB', { hour12: false })
+
+  // if your session store needs an explicit save, try it; otherwise just render
+  if (typeof req.session.save === 'function') {
+    return req.session.save(() => res.redirect('/researcher/submitted'))
+  }
+  return res.redirect('/researcher/submitted')
+})
+
+router.get('/researcher/submitted', (req, res) => {
+  const data = (req.session && req.session.data) || {}
+  res.render('researcher/submitted.html', {
+    activeNav: 'create-request',
+    data,
+    submission: (data.submit && data.submit.submission) || {}
+  })
+})
+
 
 module.exports = router

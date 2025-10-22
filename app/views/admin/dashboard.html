@@ -1,71 +1,52 @@
-<!-- app/views/admin/dashboard.html -->
-{% extends "layout.html" %}
-{% block pageTitle %}Admin dashboard{% endblock %}
+{% extends "admin/layout-admin.html" %}
+{% block pageTitle %}Admin — studies queue{% endblock %}
 
-{% block content %}
-<div class="nhsuk-width-container">
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Admin dashboard</h1>
 
-  {% include "admin/_signed-in-header.html" %}
-
-  <div class="nhsuk-grid-row">
-    {% include "admin/_side-nav.html" %}
-
-    <div class="nhsuk-grid-column-three-quarters">
-      <!-- H1: Admin name + 'dashboard' -->
-      <h1 class="nhsuk-heading-xl">{{ user.name }}'s dashboard</h1>
-
-      <div class="nhsuk-grid-row nhsuk-u-margin-top-2">
-
-        <!-- Account requests -->
-        <div class="nhsuk-grid-column-one-half">
-          <div class="nhsuk-card nhsuk-card--clickable nhsuk-u-margin-bottom-4">
-            <div class="nhsuk-card__content">
-              <h2 class="nhsuk-card__heading nhsuk-heading-m">
-                <a class="nhsuk-card__link" href="/admin/requests">Account requests</a>
-              </h2>
-              <p class="nhsuk-body-s nhsuk-u-margin-bottom-2">
-                <span class="nhsuk-tag nhsuk-tag--red">{{ accountRequestsNew | default(0) }} new</span>
-              </p>
-              <p class="nhsuk-body">Approve new requests for a {{ serviceName | lower }} account.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Administrator account requests / management -->
-        <div class="nhsuk-grid-column-one-half">
-          <div class="nhsuk-card nhsuk-card--clickable nhsuk-u-margin-bottom-4">
-            <div class="nhsuk-card__content">
-              <h2 class="nhsuk-card__heading nhsuk-heading-m">
-                <a class="nhsuk-card__link" href="/admin/users">Administrator account requests</a>
-              </h2>
-              {% if adminAccountNew is defined and adminAccountNew > 0 %}
-                <p class="nhsuk-body-s nhsuk-u-margin-bottom-2">
-                  <span class="nhsuk-tag nhsuk-tag--red">{{ adminAccountNew }} new</span>
-                </p>
-              {% endif %}
-              <p class="nhsuk-body">Approve administrator accounts or add rights to existing accounts.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pre-screener approvals -->
-        <div class="nhsuk-grid-column-one-half">
-          <div class="nhsuk-card nhsuk-card--clickable nhsuk-u-margin-bottom-4">
-            <div class="nhsuk-card__content">
-              <h2 class="nhsuk-card__heading nhsuk-heading-m">
-                <a class="nhsuk-card__link" href="/admin/studies">Pre-screener approvals</a>
-              </h2>
-              <p class="nhsuk-body-s nhsuk-u-margin-bottom-2">
-                <span class="nhsuk-tag nhsuk-tag--red">{{ preScreenerNew | default(0) }} new</span>
-              </p>
-              <p class="nhsuk-body">Review new pre-screener requests from researchers.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
+{% if isEmpty %}
+  <div class="nhsuk-inset-text">
+    <p>No studies in the session yet.</p>
+    <p class="nhsuk-u-margin-bottom-0">
+      For this prototype you can <a class="nhsuk-link" href="/admin?seed=1">seed an example study</a>.
+      To skip seeding, add <code>?seed=0</code> to the URL.
+    </p>
   </div>
-</div>
+{% else %}
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-heading-m">Studies</h2>
+      <table class="nhsuk-table">
+        <thead class="nhsuk-table__head">
+          <tr class="nhsuk-table__row">
+            <th scope="col" class="nhsuk-table__header">Study</th>
+            <th scope="col" class="nhsuk-table__header">Platform</th>
+            <th scope="col" class="nhsuk-table__header">Decision</th>
+            <th scope="col" class="nhsuk-table__header">Last updated</th>
+            <th scope="col" class="nhsuk-table__header">Action</th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+          <tr class="nhsuk-table__row">
+            <td class="nhsuk-table__cell">{{ item.name }}</td>
+            <td class="nhsuk-table__cell">{{ item.platform | upper }}</td>
+            <td class="nhsuk-table__cell">
+              {% if item.decision == 'eligible' %}
+                <span class="nhsuk-tag">Eligible</span>
+              {% elif item.decision == 'follow-up' %}
+                <span class="nhsuk-tag nhsuk-tag--yellow">Needs follow-up</span>
+              {% elif item.decision == 'not-eligible' %}
+                <span class="nhsuk-tag nhsuk-tag--red">Not eligible</span>
+              {% else %}
+                <span class="nhsuk-tag nhsuk-tag--grey">Not decided</span>
+              {% endif %}
+            </td>
+            <td class="nhsuk-table__cell">{{ item.updated }}</td>
+            <td class="nhsuk-table__cell"><a class="nhsuk-link" href="/admin/study/review/overview">Open</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
 {% endblock %}

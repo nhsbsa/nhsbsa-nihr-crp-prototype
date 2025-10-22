@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block pageTitle %}Start your study setup{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-xl">Start your study setup</h1>
+
+      <p class="nhsuk-body">
+        Complete each section to provide details about your study. You can save and return at any time.
+      </p>
+
+      <div class="nhsuk-inset-text">
+        <span class="nhsuk-u-visually-hidden">Information: </span>
+        <p>
+          This is a prototype. Do not enter real patient information.
+        </p>
+      </div>
+
+      <a href="/researcher/task-list" role="button" draggable="false" class="nhsuk-button" data-module="nhsuk-button">
+        Continue
+      </a>
+
+      <p class="nhsuk-body-s nhsuk-u-secondary-text-color">
+        Last saved: {{ data.meta and data.meta.lastSaved or 'Not yet saved' }}
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

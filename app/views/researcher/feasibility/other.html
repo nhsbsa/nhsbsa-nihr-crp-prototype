@@ -1,0 +1,105 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Feasibility: other criteria{% endblock %}
+{% block researcherContent %}
+
+<style>
+  .fe-panel{border:1px solid #d8dde0;border-radius:2px;padding:12px 16px;background:#fff;margin:12px 0 24px}
+  .fe-panel__label{font-size:19px;line-height:1.4}
+  .fe-panel__value{font-weight:700}
+</style>
+
+<h1 class="nhsuk-heading-l">Other criteria</h1>
+
+<div class="fe-panel" data-fe-panel data-path="/researcher/feasibility/other">
+  <div class="fe-panel__label">
+    Estimated participants:
+    <span class="fe-panel__value" id="fe-est-matched">—</span>
+    of
+    <span class="fe-panel__value" id="fe-est-available">—</span>
+  </div>
+</div>
+
+<form method="post" action="/researcher/feasibility/other">
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label">Volunteer cares or supports a person with dementia?</label>
+    {% set v = (model and model.caresForPwD) or '' %}
+    {% for o in ['Yes','No','Prefer not to say'] %}
+    <div class="nhsuk-radios__item">
+      <input class="nhsuk-radios__input" id="c-{{ loop.index }}" name="caresForPwD" type="radio" value="{{ o }}" {% if v==o %}checked{% endif %}>
+      <label class="nhsuk-label nhsuk-radios__label" for="c-{{ loop.index }}">{{ o }}</label>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label">Carer experience</label>
+    {% set ce = (model and model.carerExperience) or [] %}
+    {% for o in ['Current carer/supporter for someone with dementia','Former carer/support to someone with dementia','Professional carer','Prefer not to say'] %}
+    <div class="nhsuk-checkboxes__item">
+      <input class="nhsuk-checkboxes__input" id="ce-{{ loop.index }}" type="checkbox" name="carerExperience" value="{{ o }}" {% if o in ce %}checked{% endif %}>
+      <label class="nhsuk-label nhsuk-checkboxes__label" for="ce-{{ loop.index }}">{{ o }}</label>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label">Do you live in a care / nursing home?</label>
+    {% set lch = (model and model.livesInCareHome) or '' %}
+    {% for o in ['Yes','No','Prefer not to say'] %}
+    <div class="nhsuk-radios__item">
+      <input class="nhsuk-radios__input" id="lch-{{ loop.index }}" name="livesInCareHome" type="radio" value="{{ o }}" {% if lch==o %}checked{% endif %}>
+      <label class="nhsuk-label nhsuk-radios__label" for="lch-{{ loop.index }}">{{ o }}</label>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label">Has a carer?</label>
+    {% set hc = (model and model.hasCarer) or '' %}
+    {% for o in ['Yes','No','Prefer not to say'] %}
+    <div class="nhsuk-radios__item">
+      <input class="nhsuk-radios__input" id="hc-{{ loop.index }}" name="hasCarer" type="radio" value="{{ o }}" {% if hc==o %}checked{% endif %}>
+      <label class="nhsuk-label nhsuk-radios__label" for="hc-{{ loop.index }}">{{ o }}</label>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="mmse">MMSE score (1–30)</label>
+    <input class="nhsuk-input nhsuk-input--width-5" id="mmse" name="mmse" value="{{ (model and model.mmse) or '' }}">
+    <span class="nhsuk-hint">Leave blank if not relevant.</span>
+  </div>
+
+  <div class="nhsuk-button-group nhsuk-u-margin-top-4">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+
+<script>
+(function(){
+  function serialize(form){
+    const out={
+      caresForPwD:(form.querySelector('input[name="caresForPwD"]:checked')||{}).value||'',
+      carerExperience:[], livesInCareHome:(form.querySelector('input[name="livesInCareHome"]:checked')||{}).value||'',
+      hasCarer:(form.querySelector('input[name="hasCarer"]:checked')||{}).value||'',
+      mmse:form.mmse?.value||''
+    };
+    form.querySelectorAll('input[name="carerExperience"]:checked').forEach(x=>out.carerExperience.push(x.value));
+    return out;
+  }
+  function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}}
+  const panel=document.querySelector('[data-fe-panel]'); if(!panel) return;
+  const form=document.querySelector('form'); const path=panel.getAttribute('data-path');
+  const avail=panel.querySelector('#fe-est-available'); const match=panel.querySelector('#fe-est-matched');
+  const send=debounce(function(){
+    fetch('/researcher/feasibility/estimate',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({overrides:{path,values:serialize(form)}})})
+      .then(r=>r.json()).then(j=>{if(avail)avail.textContent=j.available;if(match)match.textContent=j.matched;}).catch(()=>{});
+  },250);
+  document.addEventListener('input',e=>{if(form.contains(e.target))send()});
+  document.addEventListener('change',e=>{if(form.contains(e.target))send()});
+  send();
+})();
+</script>
+{% endblock %}

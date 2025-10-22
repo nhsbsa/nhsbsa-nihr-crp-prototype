@@ -2,62 +2,92 @@
 const express = require('express')
 const router = express.Router()
 
-// Explicit map of pages we track
+// Map each route path to a section bucket
 const SECTION = {
-  // A — Feasibility
-  '/researcher/feasibility/intro':        'feasibility',
-  '/researcher/feasibility/demographics': 'feasibility',
-  '/researcher/feasibility/medical':      'feasibility',
-  '/researcher/feasibility/sites':        'feasibility',
-  '/researcher/feasibility/results':      'feasibility',
+  // -------- Phase A — Feasibility --------
+  '/researcher/feasibility/platform':             'feasibility', // NEW
+  '/researcher/feasibility/target':               'feasibility', // NEW
+  '/researcher/feasibility/intro':                'feasibility',
+  '/researcher/feasibility/sites':                'feasibility',
+  '/researcher/feasibility/diagnoses':            'feasibility',
+  '/researcher/feasibility/demographics':         'feasibility',
+  '/researcher/feasibility/demographics-extended':'feasibility',
+  '/researcher/feasibility/medical':              'feasibility',
+  '/researcher/feasibility/disabilities':         'feasibility',
+  '/researcher/feasibility/other':                'feasibility',
+  '/researcher/feasibility/results':              'feasibility',
 
-  // B — Submit a study (8)
-  '/researcher/identify-study':           'submit',
-  '/researcher/study-info':               'submit',
-  '/researcher/study-type':               'submit',
-  '/researcher/demographics':             'submit',
-  '/researcher/medical':                  'submit',
-  '/researcher/sites':                    'submit',
-  '/researcher/ethics':                   'submit',
-  '/researcher/target-date':              'submit'
+  // -------- Phase B — Submit a study --------
+  '/researcher/identify-study':                   'submit',
+  '/researcher/study-info':                       'submit',
+  '/researcher/study-type':                       'submit',
+  '/researcher/demographics':                     'submit',
+  '/researcher/medical':                          'submit',
+  '/researcher/sites':                            'submit',
+  '/researcher/ethics':                           'submit',
+  '/researcher/volunteer-criteria':               'submit',
+  '/researcher/target-date':                      'submit'
 }
 
-const TOTALS = { feasibility: 5, submit: 8 }
+// Totals reflect the items you actually show in the task list
+const SECTION_TOTALS = {
+  feasibility: 11, // platform + target + 9 existing steps (intro optional but mapped)
+  submit: 8
+}
 
 function ensure(req) {
   const data = req.session.data || (req.session.data = {})
   data.status ||= {}
-  const s = (data.progress ||= { sections: {} }).sections
-  s.feasibility ||= { completed: 0, total: TOTALS.feasibility }
-  s.submit      ||= { completed: 0, total: TOTALS.submit }
+  data.meta ||= {}
+  data.progress ||= { sections: {} }
+  data.progress.sections.feasibility ||= { completed: 0, total: SECTION_TOTALS.feasibility }
+  data.progress.sections.submit      ||= { completed: 0, total: SECTION_TOTALS.submit }
   return data
 }
 
-// Safer than '*' on Express v5's path-to-regexp: run on all requests
-router.use((req, res, next) => {
+// Mark GET as in-progress unless already completed
+router.get('*', (req, res, next) => {
   const data = ensure(req)
   const path = req.path
   const bucket = SECTION[path]
   if (!bucket) return next()
-  if (req.method === 'GET') {
-    const cur = (data.status[path] || '').toLowerCase()
-    if (!cur || cur === 'not-started') data.status[path] = 'in-progress'
-  } else if (req.method === 'POST') {
-    data.status[path] = 'completed'
-  }
-  recompute(data)
+
+  const current = data.status[path]
+  if (!current || current === 'not-started') data.status[path] = 'in-progress'
+  recomputeCounters(data)
   next()
 })
 
-function recompute(data) {
-  const done = { feasibility: 0, submit: 0 }
+// Mark POST as completed and stamp lastSaved
+router.post('*', (req, res, next) => {
+  const data = ensure(req)
+  const path = req.path
+  const bucket = SECTION[path]
+  if (!bucket) return next()
+
+  data.status[path] = 'completed'
+  data.meta.lastSaved = new Date().toLocaleString('en-GB', { hour12: false })
+  recomputeCounters(data)
+  next()
+})
+
+function recomputeCounters(data) {
+  const bySection = { feasibility: 0, submit: 0 }
   for (const [path, state] of Object.entries(data.status)) {
     const bucket = SECTION[path]
     if (!bucket) continue
-    if (String(state).toLowerCase() === 'completed') done[bucket]++
+    if (String(state).toLowerCase() === 'completed') bySection[bucket]++
   }
-  data.progress.sections.feasibility = { completed: done.feasibility, total: TOTALS.feasibility }
-  data.progress.sections.submit      = { completed: done.submit,      total: TOTALS.submit }
+
+  const sec = data.progress.sections
+  if (sec.feasibility) {
+    sec.feasibility.total = SECTION_TOTALS.feasibility
+    sec.feasibility.completed = bySection.feasibility
+  }
+  if (sec.submit) {
+    sec.submit.total = SECTION_TOTALS.submit
+    sec.submit.completed = bySection.submit
+  }
 }
 
 module.exports = router

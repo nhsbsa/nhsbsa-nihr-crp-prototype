@@ -2,107 +2,139 @@
 const express = require('express')
 const router = express.Router()
 
-function ensure(req) {
+// Prototype-only “taken” IDs to trigger the duplicate UI
+const DUPES = new Set(['123456', 'CPMS-0001', '999999'])
+
+function ensureSubmit(req) {
   const data = req.session.data || (req.session.data = {})
-  data.study ||= {}
-  data.study.identify ||= {}
+  data.submit ||= {}
+  data.submit.study ||= {
+    portfolioStatus: '',
+    cpmsId: '',
+    name: '',
+    ciTitle: '',
+    ciName: '',
+    coordinator: { name: '', email: '' },
+    sponsor: '',
+    funder: '',
+    cro: '',
+    nihrFundingStream: '',
+    // ethics
+    ethicsApproval: '',
+    recNumber: ''
+  }
   data.status ||= {}
   data.meta ||= {}
   return data
 }
-function stampSaved(data) {
-  data.meta.lastSaved = new Date().toLocaleString('en-GB', { hour12: false })
+
+function nowGB() {
+  return new Date().toLocaleString('en-GB', { hour12: false })
 }
 
-// Tiny inline CPMS mock
-const CPMS_FIXTURE = [
-  { cpmsId: '123456', irasId: 'IRAS-8888', title: 'Diabetes Remission Trial', sponsor: 'NHS Trust A',
-    laySummary: 'Testing lifestyle changes for type 2 diabetes.', sites: ['RBA','RDZ'] },
-  { cpmsId: '654321', irasId: 'IRAS-7777', title: 'Cardio Better Hearts', sponsor: 'University B',
-    laySummary: 'Evaluating a new home BP monitor.', sites: ['R1H','RQ6','RTK'] }
-]
-function findByCpms(id) {
-  const s = String(id || '').trim()
-  if (!s) return null
-  return CPMS_FIXTURE.find(x => x.cpmsId === s) || null
+function lookupCPMS(id) {
+  const db = {
+    '123456': { name: 'Cognitive Health Study', ciTitle: 'Dr', ciName: 'Alice Example', sponsor: 'University of Oxford', funder: 'NIHR', cro: '', nihrFundingStream: 'HTA' }
+  }
+  return db[id] || null
 }
 
 router.get('/researcher/identify-study', (req, res) => {
-  const data = ensure(req)
-  const model = data.study.identify
+  const data = ensureSubmit(req)
   res.render('researcher/identify-study.html', {
+    activeNav: 'create-request',
     data,
-    model,
-    errors: [],
-    result: null,
-    activeNav: 'create-request'
+    model: data.submit.study
   })
 })
 
+// Persist ethics fields even when using the CPMS lookup button
+router.post('/researcher/identify-study/lookup', (req, res) => {
+  const data = ensureSubmit(req)
+  const m = data.submit.study
+  const b = req.body || {}
+
+  // Persist current selections
+  m.portfolioStatus = (b.portfolioStatus || '').trim()
+  m.cpmsId = (b.cpmsId || '').trim()
+
+  // Persist ethics fields during lookup so they aren’t lost
+  const ea = String(b.ethicsApproval || m.ethicsApproval || '').trim().toLowerCase()
+  m.ethicsApproval = ea === 'yes' ? 'yes' : ea === 'no' ? 'no' : ''
+  m.recNumber = m.ethicsApproval === 'yes' ? String(b.recNumber || m.recNumber || '').trim() : ''
+
+  if (m.portfolioStatus === 'yes') {
+    if (!m.cpmsId) {
+      data.meta.lastSaved = nowGB()
+      return res.render('researcher/identify-study.html', {
+        activeNav: 'create-request',
+        data,
+        model: m,
+        errors: [{ href: '#cpmsId', text: 'Enter your CPMS ID' }]
+      })
+    }
+    if (DUPES.has(m.cpmsId)) {
+      data.meta.lastSaved = nowGB()
+      return res.render('researcher/identify-study.html', {
+        activeNav: 'create-request',
+        data,
+        model: m,
+        cpmsDuplicate: true
+      })
+    }
+    const found = lookupCPMS(m.cpmsId)
+    if (found) Object.assign(m, found)
+  }
+
+  data.meta.lastSaved = nowGB()
+  return res.redirect('/researcher/identify-study')
+})
+
 router.post('/researcher/identify-study', (req, res) => {
-  const data = ensure(req)
+  const data = ensureSubmit(req)
+  const m = data.submit.study
   const b = req.body || {}
   const errors = []
 
-  const cpmsId = (b.cpmsId || '').trim()
-  const useManual = (b.useManual === 'yes')
+  // Map fields
+  m.portfolioStatus = (b.portfolioStatus || '').trim()
+  m.cpmsId = (b.cpmsId || '').trim()
+  m.name = (b.name || '').trim()
+  m.ciTitle = (b.ciTitle || '').trim()
+  m.ciName = (b.ciName || '').trim()
+  m.coordinator ||= { name: '', email: '' }
+  m.coordinator.name = (b.coordName || '').trim()
+  m.coordinator.email = (b.coordEmail || '').trim()
+  m.sponsor = (b.sponsor || '').trim()
+  m.funder = (b.funder || '').trim()
+  m.cro = (b.cro || '').trim()
+  m.nihrFundingStream = (b.nihrFundingStream || '').trim()
 
-  let result = null
+  // Ethics: normalise and conditionally persist recNumber
+  const ea = String(b.ethicsApproval || '').trim().toLowerCase()
+  m.ethicsApproval = ea === 'yes' ? 'yes' : ea === 'no' ? 'no' : ''
+  m.recNumber = m.ethicsApproval === 'yes' ? String(b.recNumber || '').trim() : ''
 
-  if (!useManual) {
-    // CPMS path
-    if (!cpmsId) errors.push({ href: '#cpmsId', text: 'Enter a CPMS ID or select “Enter details manually”.' })
-    if (!errors.length) {
-      result = findByCpms(cpmsId)
-      if (!result) errors.push({ href: '#cpmsId', text: 'No study found for that CPMS ID.' })
-    }
-    if (errors.length) {
-      return res.render('researcher/identify-study.html', {
-        data, model: b, errors, result: null, activeNav: 'create-request'
-      })
-    }
-    // Prefill identify block
-    data.study.identify = {
-      cpmsId: result.cpmsId,
-      irasId: result.irasId,
-      title: result.title,
-      laySummary: result.laySummary,
-      sponsor: result.sponsor,
-      sites: result.sites
-    }
-  } else {
-    // Manual path
-    const title = (b.title || '').trim()
-    const laySummary = (b.laySummary || '').trim()
-    if (!title) errors.push({ href: '#title', text: 'Enter a study title' })
-    if (!laySummary) errors.push({ href: '#laySummary', text: 'Enter a lay summary' })
-    if (errors.length) {
-      return res.render('researcher/identify-study.html', {
-        data, model: b, errors, result: null, activeNav: 'create-request'
-      })
-    }
-    data.study.identify = {
-      cpmsId: cpmsId || '',
-      irasId: (b.irasId || '').trim(),
-      title,
-      laySummary,
-      sponsor: (b.sponsor || '').trim(),
-      sites: []
-    }
+  // Minimal validation for ethics
+  if (!m.ethicsApproval) {
+    errors.push({ href: '#ethicsApproval', text: 'Select if you have ethics approval' })
+  } else if (m.ethicsApproval === 'yes' && !m.recNumber) {
+    errors.push({ href: '#recNumber', text: 'Enter your REC / Ethics number' })
   }
 
-  // Mark step done and save
-  data.status['/researcher/identify-study'] = 'completed'
-  stampSaved(data)
+  if (errors.length) {
+    data.meta.lastSaved = nowGB()
+    return res.render('researcher/identify-study.html', {
+      activeNav: 'create-request',
+      data,
+      model: m,
+      errors
+    })
+  }
 
-  // Show confirmation inline
-  res.render('researcher/identify-study.html', {
-    data,
-    model: data.study.identify,
-    errors: [],
-    result: data.study.identify,
-    activeNav: 'create-request'
-  })
+  data.status['/researcher/identify-study'] = 'completed'
+  data.meta.lastSaved = nowGB()
+  return res.redirect('/researcher/study-info')
 })
 
 module.exports = router

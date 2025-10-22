@@ -1,5 +1,5 @@
 {% extends "researcher/layout-researcher.html" %}
-{% block pageTitle %}Feasibility: medical conditions{% endblock %}
+{% block pageTitle %}Feasibility: disabilities{% endblock %}
 {% block researcherContent %}
 
 <style>
@@ -8,9 +8,9 @@
   .fe-panel__value{font-weight:700}
 </style>
 
-<h1 class="nhsuk-heading-l">Medical conditions</h1>
+<h1 class="nhsuk-heading-l">Disabilities</h1>
 
-<div class="fe-panel" data-fe-panel data-path="/researcher/feasibility/medical">
+<div class="fe-panel" data-fe-panel data-path="/researcher/feasibility/disabilities">
   <div class="fe-panel__label">
     Estimated participants:
     <span class="fe-panel__value" id="fe-est-matched">—</span>
@@ -19,11 +19,11 @@
   </div>
 </div>
 
-<p class="nhsuk-hint">Choose which conditions to include and which to exclude.</p>
+<p class="nhsuk-hint">Choose which disabilities to include and which to exclude.</p>
 
-{% set options = [ "Down's Syndrome","Diagnosed sleep disorders","Cancer (in the last 5 years)","Significant cardiac problems", "Pacemaker fitted","Stroke","High blood pressure","Diabetes","Depression / Anxiety","Other mental health issues", "Traumatic brain injury","Epilepsy","None","Prefer not to say" ] %}
+{% set options = [ "Hearing impairment","Visual impairment","Mobility problems","Learning difficulties","Communication problems", "None","Prefer not to say" ] %}
 
-<form method="post" action="/researcher/feasibility/medical">
+<form method="post" action="/researcher/feasibility/disabilities">
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-half">
       <fieldset class="nhsuk-fieldset">
@@ -32,8 +32,8 @@
         <div class="nhsuk-checkboxes">
           {% for o in options %}
           <div class="nhsuk-checkboxes__item">
-            <input class="nhsuk-checkboxes__input" id="inc-{{ loop.index }}" name="include" type="checkbox" value="{{ o }}" {% if o in inc %}checked{% endif %}>
-            <label class="nhsuk-label nhsuk-checkboxes__label" for="inc-{{ loop.index }}">{{ o }}</label>
+            <input class="nhsuk-checkboxes__input" id="dinc-{{ loop.index }}" name="include" type="checkbox" value="{{ o }}" {% if o in inc %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="dinc-{{ loop.index }}">{{ o }}</label>
           </div>
           {% endfor %}
         </div>
@@ -46,8 +46,8 @@
         <div class="nhsuk-checkboxes">
           {% for o in options %}
           <div class="nhsuk-checkboxes__item">
-            <input class="nhsuk-checkboxes__input" id="exc-{{ loop.index }}" name="exclude" type="checkbox" value="{{ o }}" {% if o in exc %}checked{% endif %}>
-            <label class="nhsuk-label nhsuk-checkboxes__label" for="exc-{{ loop.index }}">{{ o }}</label>
+            <input class="nhsuk-checkboxes__input" id="dexc-{{ loop.index }}" name="exclude" type="checkbox" value="{{ o }}" {% if o in exc %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="dexc-{{ loop.index }}">{{ o }}</label>
           </div>
           {% endfor %}
         </div>

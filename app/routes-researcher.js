@@ -125,61 +125,19 @@ router.post('/researcher/task-list/reset', (req, res) => {
 })
 
 /* ---------------- Identify your study ---------------- */
+
 router.get('/researcher/identify', (req, res) => {
-  const data = req.session?.studyIdentify || {}
-  res.render('researcher/identify-study', { data, errors: {} })
+  return res.redirect('/researcher/identify-study')
 })
 
 router.post('/researcher/identify', (req, res) => {
-  const { hasCpms, cpmsId = '', title = '', sponsor = '' } = req.body || {}
-  const errors = {}
-  const data = { hasCpms, cpmsId, title, sponsor }
-
-  if (!hasCpms) {
-    errors.hasCpms = 'Select if you have a CPMS ID'
-  } else if (hasCpms === 'yes') {
-    const ok = /^CPMS?\d{5,7}$/i.test((cpmsId || '').trim())
-    if (!ok) errors.cpmsId = 'Enter a CPMS ID in the correct format, for example CPMS123456'
-  } else if (hasCpms === 'no') {
-    if (!title.trim()) errors.title = 'Enter the study title'
-    if (!sponsor.trim()) errors.sponsor = 'Enter the study sponsor'
-  }
-
-  if (Object.keys(errors).length) {
-    return res.status(400).render('researcher/identify-study', { errors, data })
-  }
-
-  req.session.studyIdentify = data
-  saveStamp(req)
-
-  if (hasCpms === 'yes') {
-    const result = fetchFromCPMS(cpmsId)
-    if (!result) {
-      return res.status(404).render('researcher/identify-study', {
-        data,
-        errors: { cpmsId: 'We could not find a study with that CPMS ID. Check the ID and try again.' }
-      })
-    }
-    req.session.cpmsResult = result
-    return res.redirect('/researcher/cpms-confirm')
-  }
-  return res.redirect('/researcher/study-details')
+  // If someone posts here (old forms, bookmarks), forward to the real endpoint.
+  // Preserve the body via query string for a best-effort UX in the prototype.
+  const b = req.body || {}
+  const params = new URLSearchParams(b).toString()
+  return res.redirect(`/researcher/identify-study${params ? '?' + params : ''}`)
 })
 
-router.get('/researcher/cpms-confirm', (req, res) => {
-  const result = req.session?.cpmsResult
-  if (!result) return res.redirect('/researcher/identify')
-  res.render('researcher/cpms-confirm', { result })
-})
-
-router.post('/researcher/cpms-confirm', (req, res) => {
-  const result = req.session?.cpmsResult
-  if (result) {
-    req.session.studyMeta = { title: result.title, sponsor: result.sponsor, cpmsId: result.cpmsId }
-  }
-  saveStamp(req)
-  return res.redirect('/researcher/task-list')
-})
 
 /* ---------------- Study details ---------------- */
 router.get('/researcher/study-details', (req, res) => {

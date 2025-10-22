@@ -1,0 +1,45 @@
+{% extends "admin/layout-admin.html" %}
+{% set title = "Study review" %}
+{% block adminContent %}
+<a class="nhsuk-back-link" href="/admin">Back to admin</a>
+<h1 class="nhsuk-heading-l">Review: {{ study.identify.shortName or 'Untitled study' }}</h1>
+
+<p class="nhsuk-body-s nhsuk-u-margin-bottom-4">CPMS/IRAS: <strong>{{ study.identify.cpms or '—' }}</strong></p>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-half">
+    <h2 class="nhsuk-heading-m">Sections</h2>
+    <ol class="nhsuk-task-list">
+      {% for section in sections %}
+      <li class="nhsuk-task-list__item">
+        <a href="/admin/review/{{ id }}/section/{{ section.id }}" class="nhsuk-link">{{ section.title }}</a>
+        {% if section.state == 'Reviewed' %}
+          <span class="nhsuk-tag nhsuk-tag--green nhsuk-u-margin-left-2">Reviewed</span>
+        {% elif section.state == 'Changes requested' %}
+          <span class="nhsuk-tag nhsuk-tag--yellow nhsuk-u-margin-left-2">Changes requested</span>
+        {% else %}
+          <span class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-left-2">Not started</span>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+
+  <div class="nhsuk-grid-column-one-half">
+    <h2 class="nhsuk-heading-m">Issues</h2>
+    {% if issues | length == 0 %}
+      <p>No issues recorded yet.</p>
+    {% else %}
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        {% for i in issues %}
+          <li><strong>{{ i.sectionTitle }}:</strong> {{ i.text }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <h2 class="nhsuk-heading-m nhsuk-u-margin-top-6">Decision</h2>
+    <p class="nhsuk-body">Current status: <strong>{{ decision or 'Not decided' }}</strong></p>
+    <a href="/admin/review/{{ id }}/decision" class="nhsuk-button">Record decision</a>
+  </div>
+</div>
+{% endblock %}

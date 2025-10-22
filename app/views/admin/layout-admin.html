@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block pageTitle %}{% if title %}{{ title }} — {% endif %}Admin{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+    <div class="nhsuk-grid-row">
+      {# Only include the admin nav. If it's missing, don't die. #}
+      {% include "admin/_side-nav.html" ignore missing %}
+
+      <div class="nhsuk-grid-column-three-quarters">
+        {% block adminContent %}{% endblock %}
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

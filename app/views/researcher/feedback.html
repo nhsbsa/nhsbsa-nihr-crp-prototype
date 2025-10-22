@@ -1,0 +1,70 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Feedback and contact{% endblock %}
+
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Feedback and contact</h1>
+
+{% if errors and errors.length %}
+  <div class="nhsuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1">
+    <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% for e in errors %}<li><a href="{{ e.href }}">{{ e.text }}</a></li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+<form method="post" action="/researcher/feedback" novalidate>
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Where did you hear about us?</legend>
+      <div class="nhsuk-checkboxes">
+        {% for s in sources %}
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="src-{{ loop.index }}" type="checkbox" name="source" value="{{ s }}" {% if model.source and (s in model.source) %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="src-{{ loop.index }}">{{ s }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Can we contact you to ask for feedback on this service?</legend>
+      <div class="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="contactForFeedback-yes" name="contactForFeedback" type="radio" value="yes" {% if model.contactForFeedback == 'yes' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="contactForFeedback-yes">Yes</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="contactForFeedback-no" name="contactForFeedback" type="radio" value="no" {% if model.contactForFeedback == 'no' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="contactForFeedback-no">No</label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Can we contact you about user research into new features?</legend>
+      <div class="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="contactForResearch-yes" name="contactForResearch" type="radio" value="yes" {% if model.contactForResearch == 'yes' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="contactForResearch-yes">Yes</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="contactForResearch-no" name="contactForResearch" type="radio" value="no" {% if model.contactForResearch == 'no' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="contactForResearch-no">No</label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+{% endblock %}
