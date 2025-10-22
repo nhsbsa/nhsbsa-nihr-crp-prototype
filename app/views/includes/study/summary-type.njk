@@ -1,0 +1,11 @@
+{% set s = data.type or {} %}
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Category</dt>
+    <dd class="nhsuk-summary-list__value">{{ s.category or '—' }}</dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Intervention</dt>
+    <dd class="nhsuk-summary-list__value">{{ s.intervention or '—' }}</dd>
+  </div>
+</dl>

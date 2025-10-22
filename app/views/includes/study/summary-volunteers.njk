@@ -1,0 +1,11 @@
+{% set s = data.feasibility or {} %}
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Estimated volunteers</dt>
+    <dd class="nhsuk-summary-list__value">{{ s.totalEstimate or '—' }}</dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Matched volunteers</dt>
+    <dd class="nhsuk-summary-list__value">{{ (data.derived and data.derived.matchedEstimate) or '—' }}</dd>
+  </div>
+</dl>

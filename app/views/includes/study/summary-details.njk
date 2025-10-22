@@ -1,0 +1,15 @@
+{% set s = data.details or {} %}
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Lay summary</dt>
+    <dd class="nhsuk-summary-list__value">{{ s.laySummary or '—' }}</dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Start date</dt>
+    <dd class="nhsuk-summary-list__value">{{ s.startDate or '—' }}</dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">End date</dt>
+    <dd class="nhsuk-summary-list__value">{{ s.endDate or '—' }}</dd>
+  </div>
+</dl>

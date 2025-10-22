@@ -1,0 +1,35 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Set recruitment target{% endblock %}
+
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/researcher/feasibility/platform">Back</a>
+<h1 class="nhsuk-heading-l">Target recruitment number</h1>
+<p class="nhsuk-body">How many participants do you aim to recruit for this study?</p>
+
+{% if errors and errors.length %}
+<div class="nhsuk-error-summary" role="alert" tabindex="-1">
+  <h2 class="nhsuk-error-summary__title">There is a problem</h2>
+  <div class="nhsuk-error-summary__body">
+    <ul class="nhsuk-list nhsuk-error-summary__list">
+      {% for e in errors %}
+        <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+<form method="post" action="/researcher/feasibility/target" novalidate>
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="targetRecruitment">Number of participants</label>
+    <span class="nhsuk-hint">Enter a whole number greater than 0.</span>
+    <input class="nhsuk-input nhsuk-input--width-10" id="targetRecruitment" name="targetRecruitment" type="number" step="1" min="1" value="{{ model.targetRecruitment or '' }}">
+  </div>
+
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+
+{% endblock %}

@@ -1,38 +1,10 @@
 {% extends "researcher/layout-researcher.html" %}
-{% block pageTitle %}Feasibility: introduction{% endblock %}
+{% block pageTitle %}Feasibility: start{% endblock %}
 {% block researcherContent %}
 <h1 class="nhsuk-heading-l">Check study feasibility</h1>
-<p class="nhsuk-body">Enter cohort criteria to estimate how many volunteers could match before creating a study request.</p>
-
-<form method="post" action="/researcher/feasibility/intro" novalidate>
-  <div class="nhsuk-form-group">
-    <fieldset class="nhsuk-fieldset">
-      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Platform</legend>
-      {% set platform = data.feasibility and data.feasibility.platform or 'BPOR' %}
-      <div class="nhsuk-radios">
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="plat-bpor" name="platform" type="radio" value="BPOR" {{ 'checked' if platform=='BPOR' }}>
-          <label class="nhsuk-label nhsuk-radios__label" for="plat-bpor">BPOR (general registry)</label>
-        </div>
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="plat-jdr" name="platform" type="radio" value="JDR" {{ 'checked' if platform=='JDR' }}>
-          <label class="nhsuk-label nhsuk-radios__label" for="plat-jdr">Join Dementia Research (JDR)</label>
-        </div>
-      </div>
-      <span class="nhsuk-hint">If you choose JDR, confirmed diagnosis will be required later.</span>
-    </fieldset>
-  </div>
-
-  <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="targetRecruitment">Target recruitment number</label>
-    <input class="nhsuk-input nhsuk-input--width-10" id="targetRecruitment" name="targetRecruitment" type="number" min="1"
-           value="{{ data.feasibility and data.feasibility.targetRecruitment or '' }}">
-    <span class="nhsuk-hint">How many participants you intend to recruit.</span>
-  </div>
-
-  <div class="nhsuk-button-group">
-    <button class="nhsuk-button" type="submit">Start feasibility</button>
-    <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Skip to submit a study</a>
-  </div>
-</form>
+<p class="nhsuk-body">We’ll estimate how many volunteers match your criteria. You can change criteria at any time.</p>
+<div class="nhsuk-button-group">
+  <a class="nhsuk-button" href="/researcher/feasibility/sites">Start now</a>
+  <a class="nhsuk-link" href="/researcher/task-list">Back to task list</a>
+</div>
 {% endblock %}

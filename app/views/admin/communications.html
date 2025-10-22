@@ -1,0 +1,21 @@
+{% extends "admin/layout-admin.html" %}
+{% block pageTitle %}Communications log{% endblock %}
+
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/admin/study/review/overview">Back to overview</a>
+<h1 class="nhsuk-heading-l">Communications log</h1>
+
+{% if history and history.length %}
+  <ul class="nhsuk-list">
+    {% for h in history | reverse %}
+      <li class="nhsuk-u-margin-bottom-2">
+        <strong>{{ h.action | capitalize }}</strong>
+        <div class="nhsuk-body">{{ h.value }}</div>
+        <div class="nhsuk-hint">On {{ h.at }} by {{ h.by }}</div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="nhsuk-hint">No communications recorded yet.</p>
+{% endif %}
+{% endblock %}

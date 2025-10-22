@@ -1,11 +1,181 @@
 {% extends "researcher/layout-researcher.html" %}
-{% block pageTitle %}Feasibility: sites{% endblock %}
+{% set pageTitle = "Feasibility: Sites and coverage" %}
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
 {% block researcherContent %}
-<a class="nhsuk-back-link" href="/researcher/feasibility/medical">Back</a>
-<h1 class="nhsuk-heading-l">Sites</h1>
+<h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">{{ pageTitle }}</h1>
+<p class="nhsuk-body-l nhsuk-u-margin-bottom-6">
+  Add a site, then review its coverage below. Site name, ODS code and postcode lists are fixed once added.
+</p>
 
-{% set partialAction = "/researcher/feasibility/sites" %}
-{% set partialModel = data.feasibility and data.feasibility.sites %}
+{% if errors and errors.length %}
+  <div class="nhsuk-error-summary nhsuk-u-margin-bottom-6" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+    <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% for e in errors %}
+          <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
 
-{% include "researcher/partials/sites-form.html" %}
+<form method="post" action="/researcher/feasibility/sites" novalidate>
+
+  {# ---------- Add site form (single column, left aligned) ---------- #}
+  <section class="nhsuk-card nhsuk-u-margin-bottom-6">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Add a site</h2>
+      <p class="nhsuk-hint nhsuk-u-margin-bottom-5">You can edit <b>radius</b> later. To change a postcode list, remove the site and add it again.</p>
+
+      <div class="nhsuk-form-group nhsuk-u-margin-bottom-3">
+        <label class="nhsuk-label" for="siteName">Site name</label>
+        <input class="nhsuk-input nhsuk-u-width-two-thirds" id="siteName" name="siteName" autocomplete="organization" value="">
+      </div>
+
+      <div class="nhsuk-form-group nhsuk-u-margin-bottom-4">
+        <label class="nhsuk-label" for="siteCode">ODS / code</label>
+        <input class="nhsuk-input nhsuk-input--width-10" id="siteCode" name="siteCode" value="">
+      </div>
+
+      <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-3">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">Coverage type</legend>
+        <div class="nhsuk-radios nhsuk-radios--inline">
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input" id="cover-radius" name="coverageType" type="radio" value="radius" checked>
+            <label class="nhsuk-label nhsuk-radios__label" for="cover-radius">Radius from site</label>
+          </div>
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input" id="cover-postcode" name="coverageType" type="radio" value="postcode">
+            <label class="nhsuk-label nhsuk-radios__label" for="cover-postcode">Postcode districts</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="nhsuk-form-group" id="add-radius-wrap">
+        <label class="nhsuk-label" for="radius">Distance (miles)</label>
+        <input class="nhsuk-input nhsuk-input--width-5" id="radius" name="radius" inputmode="numeric" value="">
+        <span class="nhsuk-hint nhsuk-u-margin-top-1">Whole number, e.g. 10 or 25.</span>
+      </div>
+
+      <div class="nhsuk-form-group nhsuk-u-visually-hidden" id="add-postcode-wrap">
+        <label class="nhsuk-label" for="districts">Postcode districts</label>
+        <span class="nhsuk-hint">Separate with commas, e.g. <b>LS1, LS2, LS6</b></span>
+        <input class="nhsuk-input nhsuk-input--width-20" id="districts" name="districts" value="">
+      </div>
+
+      <div class="nhsuk-button-group nhsuk-u-margin-top-3">
+        <button class="nhsuk-button nhsuk-button--secondary" name="addSite" value="yes" type="submit">Add site</button>
+      </div>
+    </div>
+  </section>
+
+  {# ---------- Current sites table (read-only; radius editable; remove link) ---------- #}
+  {% set rows = model.list or [] %}
+  <section aria-label="Current sites">
+    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-3">Sites added</h2>
+
+    {% if rows.length == 0 %}
+      <p class="nhsuk-body">No sites added yet.</p>
+    {% else %}
+      <table class="nhsuk-table nhsuk-u-margin-bottom-6">
+        <thead class="nhsuk-table__head">
+          <tr class="nhsuk-table__row">
+            <th scope="col" class="nhsuk-table__header">Site name</th>
+            <th scope="col" class="nhsuk-table__header">ODS / code</th>
+            <th scope="col" class="nhsuk-table__header">Coverage</th>
+            <th scope="col" class="nhsuk-table__header nhsuk-u-visually-hidden">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+          {% for s in rows %}
+            {% set i = loop.index0 %}
+
+            {% set type = 'radius' %}
+            {% if s.coverage and s.coverage.type %}
+              {% set type = s.coverage.type %}
+            {% elif s.districts or s.districtsText %}
+              {% set type = 'postcode' %}
+            {% endif %}
+
+            {% set miles = '' %}
+            {% if s.coverage and s.coverage.type == 'radius' and s.coverage.miles is defined %}
+              {% set miles = s.coverage.miles %}
+            {% elif s.radius is defined %}
+              {% set miles = s.radius %}
+            {% endif %}
+
+            {% set districtsText = '' %}
+            {% if s.coverage and s.coverage.type == 'postcode' and s.coverage.districts %}
+              {% set districtsText = s.coverage.districts | join(', ') %}
+            {% elif s.districtsText %}
+              {% set districtsText = s.districtsText %}
+            {% endif %}
+
+            <tr class="nhsuk-table__row">
+              <td class="nhsuk-table__cell">
+                {{ s.name or '' }}
+                <input type="hidden" name="list[{{ i }}][name]" value="{{ s.name or '' }}">
+              </td>
+
+              <td class="nhsuk-table__cell">
+                {{ s.code or '' }}
+                <input type="hidden" name="list[{{ i }}][code]" value="{{ s.code or '' }}">
+              </td>
+
+              <td class="nhsuk-table__cell">
+                {% if type == 'radius' %}
+                  <input type="hidden" name="list[{{ i }}][coverageType]" value="radius">
+                  <label class="nhsuk-u-visually-hidden" for="row-{{ i }}-miles">Distance (miles)</label>
+                  <input class="nhsuk-input nhsuk-input--width-5" id="row-{{ i }}-miles" name="list[{{ i }}][radius]" inputmode="numeric" value="{{ miles }}">
+                  <span class="nhsuk-hint nhsuk-u-margin-left-1 nhsuk-u-display-inline-block">miles</span>
+                {% else %}
+                  <input type="hidden" name="list[{{ i }}][coverageType]" value="postcode">
+                  <input type="hidden" name="list[{{ i }}][districts]" value="{{ districtsText }}">
+                  <span>{{ districtsText or 'No districts set' }}</span>
+                  <!-- <span class="nhsuk-hint nhsuk-u-display-block nhsuk-u-margin-top-1">Postcode coverage can’t be edited here.</span> -->
+                {% endif %}
+              </td>
+
+              <td class="nhsuk-table__cell nhsuk-u-text-align-right">
+                <button class="nhsuk-link nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-1" name="removeIndex" value="{{ i }}" type="submit" style="background:none;border:none;color:#005eb8;cursor:pointer;">Remove site</button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </section>
+
+  <div class="nhsuk-button-group nhsuk-u-margin-top-6">
+    <button class="nhsuk-button" name="proceed" value="yes" type="submit">Save and continue</button>
+    <a class="nhsuk-link" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+
+<script>
+  (function(){
+    // Toggle add form coverage fields
+    var addRadios = document.querySelectorAll('input[name="coverageType"]')
+    var addRadius = document.getElementById('add-radius-wrap')
+    var addPost   = document.getElementById('add-postcode-wrap')
+    function toggleAdd(){
+      var chosen = document.querySelector('input[name="coverageType"]:checked')
+      if (!chosen) return
+      if (chosen.value === 'radius') {
+        addRadius.classList.remove('nhsuk-u-visually-hidden')
+        addPost.classList.add('nhsuk-u-visually-hidden')
+      } else {
+        addRadius.classList.add('nhsuk-u-visually-hidden')
+        addPost.classList.remove('nhsuk-u-visually-hidden')
+      }
+    }
+    addRadios.forEach(function(r){ r.addEventListener('change', toggleAdd) })
+    toggleAdd()
+
+    var es = document.querySelector('.nhsuk-error-summary')
+    if (es) es.focus()
+  })();
+</script>
 {% endblock %}

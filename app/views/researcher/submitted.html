@@ -1,0 +1,194 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Study request submitted{% endblock %}
+
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/researcher/task-list">Back to task list</a>
+
+<div class="nhsuk-notification-banner nhsuk-notification-banner--success" role="region" aria-label="Success">
+  <div class="nhsuk-notification-banner__header">
+    <h2 class="nhsuk-notification-banner__title">Study request submitted</h2>
+  </div>
+  <div class="nhsuk-notification-banner__content">
+    {% set ref = (submission and submission.reference) or 'SR-REF' %}
+    <p class="nhsuk-notification-banner__heading">
+      Your request has been sent for review. Reference: <strong>{{ ref }}</strong>
+    </p>
+    {% if submission and submission.submittedAt %}
+      <p class="nhsuk-body-s nhsuk-u-margin-bottom-0">Submitted on {{ submission.submittedAt }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<h1 class="nhsuk-heading-l">What happens next</h1>
+
+<ol class="nhsuk-list nhsuk-list--number">
+  <li>We’ll do a quick validation check on your study details and feasibility outputs.</li>
+  <li>Our team may contact you for clarifications, typically within 2 working days.</li>
+  <li>Once approved, your study will be queued for publishing on the selected platform.</li>
+  <li>You’ll receive an email confirmation including your reference <strong>{{ (submission and submission.reference) or 'SR-REF' }}</strong>.</li>
+</ol>
+
+<h2 class="nhsuk-heading-m">What you submitted</h2>
+
+{# Snapshot of key details so the researcher can sanity-check #}
+{% set st = (data and data.submit and data.submit.study) or {} %}
+{% set info = (data and data.submit and data.submit.info) or {} %}
+{% set rec = (data and data.submit and data.submit.recruitment) or {} %}
+{% set des = (data and data.submit and data.submit.design) or {} %}
+{% set sites = (data and data.submit and data.submit.sites and data.submit.sites.list) or [] %}
+{% set matched = (data and data.derived and data.derived.matchedEstimate) or '—' %}
+{% set total = (data and data.feasibility and data.feasibility.totalEstimate) or '' %}
+
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Study summary</h3>
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Study name</dt>
+        <dd class="nhsuk-summary-list__value">{{ st.name or '—' }}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Chief investigator</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if st.ciTitle or st.ciName %}
+            {{ [st.ciTitle, st.ciName] | reject('equalto','') | join(' ') }}
+          {% else %}—{% endif %}
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Sponsor</dt>
+        <dd class="nhsuk-summary-list__value">{{ st.sponsor or '—' }}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Funder</dt>
+        <dd class="nhsuk-summary-list__value">{{ st.funder or '—' }}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">CRO</dt>
+        <dd class="nhsuk-summary-list__value">{{ st.cro or '—' }}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Portfolio</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if st.portfolioStatus == 'yes' %}Yes{% elif st.portfolioStatus == 'no' %}No{% elif st.portfolioStatus == 'not-yet' %}Not yet{% else %}—{% endif %}
+          {% if st.cpmsId %}<span class="nhsuk-u-margin-left-2">CPMS: <strong>{{ st.cpmsId }}</strong></span>{% endif %}
+        </dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Lay information</h3>
+    <p class="nhsuk-u-font-size-16 nhsuk-u-margin-bottom-1"><strong>Background</strong></p>
+    <p class="nhsuk-body">{{ info.background or '—' }}</p>
+    <p class="nhsuk-u-font-size-16 nhsuk-u-margin-bottom-1"><strong>Participants</strong></p>
+    <p class="nhsuk-body">{{ info.participants or '—' }}</p>
+    <p class="nhsuk-u-font-size-16 nhsuk-u-margin-bottom-1"><strong>What the study involves</strong></p>
+    <p class="nhsuk-body">{{ info.whatInvolves or '—' }}</p>
+  </div>
+</div>
+
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Recruitment</h3>
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Open to recruitment</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if rec.isOpen == 'yes' %}Yes{% elif rec.isOpen == 'no' %}No{% else %}—{% endif %}
+          {% if rec.isOpen == 'yes' and rec.recruitedToDate != '' %}<span class="nhsuk-u-margin-left-2">Recruited to date: <strong>{{ rec.recruitedToDate }}</strong></span>{% endif %}
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Start date</dt>
+        <dd class="nhsuk-summary-list__value">{{ rec.startDate or '—' }}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">End date</dt>
+        <dd class="nhsuk-summary-list__value">{{ rec.endDate or '—' }}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Overall target</dt>
+        <dd class="nhsuk-summary-list__value">{{ rec.overallTarget or '—' }}</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Study design</h3>
+    {% set des = (data and data.submit and data.submit.design) or {} %}
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Randomised</dt>
+        <dd class="nhsuk-summary-list__value">{% if des.randomised == 'yes' %}Yes{% elif des.randomised == 'no' %}No{% else %}—{% endif %}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Type</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if des.studyKind == 'interventional' %}Interventional{% elif des.studyKind == 'observational' %}Observational{% else %}—{% endif %}
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Phase</dt>
+        <dd class="nhsuk-summary-list__value">{{ des.phase or '—' }}</dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Study type tags</dt>
+        <dd class="nhsuk-summary-list__value">
+          {% if des.typeTags and des.typeTags.length %}{{ des.typeTags | join(', ') }}{% else %}—{% endif %}
+        </dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<div class="nhsuk-card nhsuk-u-margin-bottom-4">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Study sites</h3>
+    {% if sites and sites.length %}
+      <table class="nhsuk-table">
+        <thead class="nhsuk-table__head">
+          <tr class="nhsuk-table__row">
+            <th scope="col" class="nhsuk-table__header">Site name</th>
+            <th scope="col" class="nhsuk-table__header">PI</th>
+            <th scope="col" class="nhsuk-table__header">PI email</th>
+            <th scope="col" class="nhsuk-table__header">Site contact</th>
+            <th scope="col" class="nhsuk-table__header">Contact email</th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+          {% for s in sites %}
+            <tr class="nhsuk-table__row">
+              <td class="nhsuk-table__cell">{{ s.name or '—' }}</td>
+              <td class="nhsuk-table__cell">{{ s.piName or '—' }}</td>
+              <td class="nhsuk-table__cell">{{ s.piEmail or '—' }}</td>
+              <td class="nhsuk-table__cell">{{ s.contactName or '—' }}</td>
+              <td class="nhsuk-table__cell">{{ s.contactEmail or '—' }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="nhsuk-hint">No sites added.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="nhsuk-card nhsuk-u-margin-bottom-5">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Feasibility snapshot</h3>
+    <p class="nhsuk-body-s">
+      Volunteers: <strong>{{ matched }}</strong>{% if total %} matched of <strong>{{ total }}</strong> estimated{% endif %}
+    </p>
+  </div>
+</div>
+
+<div class="nhsuk-button-group">
+  <a class="nhsuk-button" href="/researcher/task-list">Return to task list</a>
+  <a class="nhsuk-link nhsuk-link--no-visited-state nhsuk-u-margin-left-4" href="/researcher">Back to study management</a>
+</div>
+{% endblock %}

@@ -4,48 +4,61 @@
 {% extends "layout.html" %}
 {% block pageTitle %}Study detail{% endblock %}
 
-
 {% block content %}
 <div class="nhsuk-width-container">
-<a class="nhsuk-back-link" href="/admin/studies">Back to studies</a>
-<h1 class="nhsuk-heading-l">Study details</h1>
+  <a class="nhsuk-back-link" href="/admin/studies">Back to studies</a>
+  <h1 class="nhsuk-heading-l">Study details</h1>
 
+  {# Quick actions #}
+  <div class="nhsuk-button-group nhsuk-u-margin-bottom-4">
+    <a href="/admin/review/{{ item.id }}" class="nhsuk-button">Open review workspace</a>
+    <a href="/admin/studies" class="nhsuk-button nhsuk-button--secondary">Back to list</a>
+  </div>
 
-{% set feas = data and data.feasibility and data.feasibility.totalEstimate %}
-{% set matched = data and data.derived and data.derived.matchedEstimate %}
-{% set target = data and data.targetSampleSize or 0 %}
-{% set risk = 'green' %}
-{% if target and matched %}
-{% if matched < target %}
-{% set risk = 'red' %}
-{% elseif matched < (target * 1.2) %}
-{% set risk = 'amber' %}
-{% endif %}
-{% endif %}
+  {# Risk snapshot (existing content preserved) #}
+  {% set feas = data and data.feasibility and data.feasibility.totalEstimate %}
+  {% set matched = data and data.derived and data.derived.matchedEstimate %}
+  {% set target = data and data.targetSampleSize or 0 %}
+  {% set risk = 'green' %}
+  {% if target and matched %}
+    {% if matched < target %}
+      {% set risk = 'red' %}
+    {% elseif matched < (target * 1.2) %}
+      {% set risk = 'amber' %}
+    {% endif %}
+  {% endif %}
 
+  <div class="nhsuk-card nhsuk-u-margin-bottom-5">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Recruitment snapshot</h2>
+      <p class="nhsuk-body">
+        Feasibility available: <strong>{{ feas or '—' }}</strong><br>
+        Matched population: <strong>{{ matched or '—' }}</strong><br>
+        Target sample size: <strong>{{ target or '—' }}</strong><br>
+        Risk: <strong class="nhsuk-tag nhsuk-tag--{{ risk }}">{{ risk | upper }}</strong>
+      </p>
+    </div>
+  </div>
 
-<div class="nhsuk-card nhsuk-u-margin-bottom-5">
-<div class="nhsuk-card__content">
-<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Recruitment snapshot</h2>
-<p class="nhsuk-body">
-Feasibility available: <strong>{{ feas or '—' }}</strong><br>
-Estimated matched: <strong>{{ matched or '—' }}</strong>
-{% if target %}<br>Target sample size: <strong>{{ target }}</strong>{% endif %}
-</p>
-{% if matched %}
-{% if risk == 'red' %}
-<strong class="nhsuk-tag nhsuk-tag--red">Risk: Low match vs target</strong>
-{% elseif risk == 'amber' %}
-<strong class="nhsuk-tag nhsuk-tag--orange">Risk: Tight margin</strong>
-{% else %}
-<strong class="nhsuk-tag nhsuk-tag--green">Risk: Acceptable</strong>
-{% endif %}
-{% endif %}
-</div>
-</div>
-
-
-<!-- Replace with your existing admin study detail template content -->
-<p class="nhsuk-body">Admin view content continues…</p>
+  {# Study meta (you already had more content; keep as is) #}
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-heading-m">Metadata</h2>
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">ID</dt>
+          <dd class="nhsuk-summary-list__value">{{ item.id }}</dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Title</dt>
+          <dd class="nhsuk-summary-list__value">{{ item.meta and item.meta.title or item.details and item.details.shortName or 'Untitled' }}</dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Status</dt>
+          <dd class="nhsuk-summary-list__value">{{ item.adminStatus or 'Submitted' }}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
 </div>
 {% endblock %}

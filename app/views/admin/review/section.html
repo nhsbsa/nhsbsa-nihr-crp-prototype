@@ -1,0 +1,49 @@
+{% extends "admin/layout-admin.html" %}
+{% set title = section.title %}
+{% block adminContent %}
+<a class="nhsuk-back-link" href="/admin/review/{{ id }}">Back to review</a>
+<h1 class="nhsuk-heading-l">{{ section.title }}</h1>
+
+{# Read-only submitted content #}
+{% if section.id == 'identify' %}{% include "includes/study/summary-identify.njk" with { data: study } %}
+{% elif section.id == 'details' %}{% include "includes/study/summary-details.njk" with { data: study } %}
+{% elif section.id == 'type' %}{% include "includes/study/summary-type.njk" with { data: study } %}
+{% elif section.id == 'sites' %}{% include "includes/study/summary-sites.njk" with { data: study } %}
+{% elif section.id == 'ethics' %}{% include "includes/study/summary-ethics.njk" with { data: study } %}
+{% elif section.id == 'volunteers' %}{% include "includes/study/summary-volunteers.njk" with { data: study } %}
+{% endif %}
+
+<hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">
+
+<h2 class="nhsuk-heading-m">Feedback</h2>
+
+{% if errorSummary and errorSummary.length %}
+  <div class="nhsuk-error-summary" role="alert" tabindex="-1" aria-labelledby="err-title">
+    <h2 class="nhsuk-error-summary__title" id="err-title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% for e in errorSummary %}
+          <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+{% include "includes/admin/comment-panel.njk" with {
+  postAction: '/admin/review/' + id + '/section/' + section.id,
+  values: values,
+  errors: errors
+} %}
+
+{% if previous and previous | length %}
+  <details class="nhsuk-details nhsuk-u-margin-top-6">
+    <summary class="nhsuk-details__summary"><span class="nhsuk-details__summary-text">Previous feedback on this section</span></summary>
+    <div class="nhsuk-details__text">
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        {% for p in previous %}<li>{{ p.text }} <span class="nhsuk-u-visually-hidden">on</span> <span class="nhsuk-hint">{{ p.when }}</span></li>{% endfor %}
+      </ul>
+    </div>
+  </details>
+{% endif %}
+{% endblock %}

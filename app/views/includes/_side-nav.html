@@ -1,0 +1,141 @@
+{# _side-nav.html
+   Robust dual-purpose side navigation.
+
+   Admin mode triggers if ANY of:
+   - res.locals.navContext == 'admin'  (explicit override)
+   - res.locals.isAdmin == true        (role middleware)
+   - user.role == 'admin'              (legacy)
+   - request.path starts with /admin   (URL fallback)
+
+   activeNav can be passed from routes to highlight the current item.
+#}
+
+{% set path = (request and request.path) or '' %}
+{% set roleFromUser = (user and user.role) or '' %}
+{% set adminFlag =
+  (navContext == 'admin') or
+  (isAdmin) or
+  (roleFromUser == 'admin') or
+  (path and path.startswith('/admin'))
+%}
+
+<nav class="nhsuk-navigation-side" aria-label="{{ adminFlag ? 'Admin navigation' : 'Researcher navigation' }}">
+  {% if adminFlag %}
+    {# ---------------- ADMIN ---------------- #}
+    <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Heading</h2>
+
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Account management</h3>
+    <ul class="nhsuk-list">
+      {% set items = [
+        { 'text':'Manage requests', 'href':'/admin/requests', 'key':'admin-requests' },
+        { 'text':'User account management', 'href':'/admin/users', 'key':'admin-users' },
+        { 'text':'Create administrator accounts', 'href':'/admin/users/new-admin', 'key':'admin-create-admin' }
+      ] %}
+      {% for it in items %}
+        {% set current = (activeNav == it.key) or (path == it.href) %}
+        <li>
+          {% if current %}
+            <span aria-current="page" class="nhsuk-u-font-weight-bold">{{ it.text }}</span>
+          {% else %}
+            <a class="nhsuk-link nhsuk-link--no-visited-state" href="{{ it.href }}">{{ it.text }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-2">Study management</h3>
+    <ul class="nhsuk-list">
+      {% set items = [
+        { 'text':'Manage pending pre-screeners', 'href':'/admin/pre-screeners/pending', 'key':'admin-prescreen-pending' },
+        { 'text':'Approved pre-screeners', 'href':'/admin/pre-screeners/approved', 'key':'admin-prescreen-approved' }
+      ] %}
+      {% for it in items %}
+        {% set current = (activeNav == it.key) or (path == it.href) %}
+        <li>
+          {% if current %}
+            <span aria-current="page" class="nhsuk-u-font-weight-bold">{{ it.text }}</span>
+          {% else %}
+            <a class="nhsuk-link nhsuk-link--no-visited-state" href="{{ it.href }}">{{ it.text }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-2">Support</h3>
+    <ul class="nhsuk-list">
+      {% set items = [
+        { 'text':'Help', 'href':'/help', 'key':'admin-help' }
+      ] %}
+      {% for it in items %}
+        {% set current = (activeNav == it.key) or (path == it.href) %}
+        <li>
+          {% if current %}
+            <span aria-current="page" class="nhsuk-u-font-weight-bold">{{ it.text }}</span>
+          {% else %}
+            <a class="nhsuk-link nhsuk-link--no-visited-state" href="{{ it.href }}">{{ it.text }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+  {% else %}
+    {# ---------------- RESEARCHER ---------------- #}
+    <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Heading</h2>
+
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Study management</h3>
+    <ul class="nhsuk-list">
+      {% set items = [
+        { 'text':'Study management', 'href':'/researcher/studies', 'key':'res-studies' },
+        { 'text':'Create study request', 'href':'/researcher/create', 'key':'res-create' },
+        { 'text':'Study search', 'href':'/researcher/search', 'key':'res-search' },
+        { 'text':'Create pre-screener', 'href':'/researcher/pre-screeners/new', 'key':'res-prescreen-new' },
+        { 'text':'Manage pre-screeners', 'href':'/researcher/pre-screeners', 'key':'res-prescreen-manage' }
+      ] %}
+      {% for it in items %}
+        {% set current = (activeNav == it.key) or (path == it.href) %}
+        <li>
+          {% if current %}
+            <span aria-current="page" class="nhsuk-u-font-weight-bold">{{ it.text }}</span>
+          {% else %}
+            <a class="nhsuk-link nhsuk-link--no-visited-state" href="{{ it.href }}">{{ it.text }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-2">Communication</h3>
+    <ul class="nhsuk-list">
+      {% set items = [
+        { 'text':'View mailing lists', 'href':'/researcher/mailing-lists', 'key':'res-mailing' },
+        { 'text':'Reporting', 'href':'/researcher/reporting', 'key':'res-reporting' }
+      ] %}
+      {% for it in items %}
+        {% set current = (activeNav == it.key) or (path == it.href) %}
+        <li>
+          {% if current %}
+            <span aria-current="page" class="nhsuk-u-font-weight-bold">{{ it.text }}</span>
+          {% else %}
+            <a class="nhsuk-link nhsuk-link--no-visited-state" href="{{ it.href }}">{{ it.text }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-2">Support</h3>
+    <ul class="nhsuk-list">
+      {% set items = [
+        { 'text':'Help', 'href':'/help', 'key':'res-help' }
+      ] %}
+      {% for it in items %}
+        {% set current = (activeNav == it.key) or (path == it.href) %}
+        <li>
+          {% if current %}
+            <span aria-current="page" class="nhsuk-u-font-weight-bold">{{ it.text }}</span>
+          {% else %}
+            <a class="nhsuk-link nhsuk-link--no-visited-state" href="{{ it.href }}">{{ it.text }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</nav>

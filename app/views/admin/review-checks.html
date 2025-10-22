@@ -1,0 +1,112 @@
+{% extends "admin/layout-admin.html" %}
+{% block pageTitle %}Eligibility checks — admin review{% endblock %}
+
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/admin/study/review">Back to study overview</a>
+<h1 class="nhsuk-heading-l">Eligibility checks</h1>
+
+{% if flash %}
+  <div class="nhsuk-notification-banner {% if flash.type == 'success' %}nhsuk-notification-banner--success{% endif %}" role="region" aria-label="Notice">
+    <div class="nhsuk-notification-banner__header">
+      <h2 class="nhsuk-notification-banner__title">{{ flash.heading or 'Notice' }}</h2>
+    </div>
+    <div class="nhsuk-notification-banner__content">
+      <p class="nhsuk-notification-banner__heading">{{ flash.text }}</p>
+    </div>
+  </div>
+{% endif %}
+
+<form method="post" action="/admin/study/checks" novalidate>
+  {% for r in rules %}
+    <input type="hidden" name="ruleId[]" value="{{ r.id }}">
+    <input type="hidden" name="ruleLabel[]" value="{{ r.label }}">
+    <input type="hidden" name="ruleMessage[]" value="{{ r.message }}">
+
+    <details class="nhsuk-details nhsuk-u-margin-bottom-3" open>
+      <summary class="nhsuk-details__summary">
+        <span class="nhsuk-details__summary-text">
+          {{ r.label }}
+          {% if r.status == 'pass' %}
+            <span class="nhsuk-tag nhsuk-u-margin-left-2">Pass</span>
+          {% elif r.status == 'warn' %}
+            <span class="nhsuk-tag nhsuk-tag--yellow nhsuk-u-margin-left-2">Needs attention</span>
+          {% else %}
+            <span class="nhsuk-tag nhsuk-tag--red nhsuk-u-margin-left-2">Fail</span>
+          {% endif %}
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-2">{{ r.message }}</p>
+
+        <div class="nhsuk-radios nhsuk-radios--inline nhsuk-u-margin-bottom-2">
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input" id="{{ r.id }}-pass" type="radio" name="ruleStatus[]" value="pass" {% if r.status == 'pass' %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-radios__label" for="{{ r.id }}-pass">Pass</label>
+          </div>
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input" id="{{ r.id }}-warn" type="radio" name="ruleStatus[]" value="warn" {% if r.status == 'warn' %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-radios__label" for="{{ r.id }}-warn">Needs attention</label>
+          </div>
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input" id="{{ r.id }}-fail" type="radio" name="ruleStatus[]" value="fail" {% if r.status == 'fail' %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-radios__label" for="{{ r.id }}-fail">Fail</label>
+          </div>
+        </div>
+
+        <label class="nhsuk-label" for="note-{{ r.id }}">Notes</label>
+        <textarea class="nhsuk-textarea" id="note-{{ r.id }}" name="ruleNote[]" rows="2">{{ r.note or '' }}</textarea>
+      </div>
+    </details>
+  {% endfor %}
+
+  <hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">
+
+  <fieldset class="nhsuk-fieldset">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Overall decision</legend>
+    <div class="nhsuk-radios nhsuk-radios--inline">
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="d-eligible" type="radio" name="decision" value="eligible" {% if decision == 'eligible' %}checked{% endif %}>
+        <label class="nhsuk-label nhsuk-radios__label" for="d-eligible">Eligible</label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="d-follow" type="radio" name="decision" value="follow-up" {% if decision == 'follow-up' %}checked{% endif %}>
+        <label class="nhsuk-label nhsuk-radios__label" for="d-follow">Needs follow-up</label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="d-not" type="radio" name="decision" value="not-eligible" {% if decision == 'not-eligible' %}checked{% endif %}>
+        <label class="nhsuk-label nhsuk-radios__label" for="d-not">Not eligible</label>
+      </div>
+    </div>
+  </fieldset>
+
+  <label class="nhsuk-label nhsuk-u-margin-top-3" for="notesOverall">Summary notes</label>
+  <textarea id="notesOverall" name="notesOverall" class="nhsuk-textarea" rows="3">{{ notesOverall or '' }}</textarea>
+
+  <div class="admin-sticky-toolbar">
+    <div class="admin-sticky-toolbar__inner">
+      <button class="nhsuk-button" type="submit">Save decision</button>
+      <a class="nhsuk-link nhsuk-link--no-visited-state nhsuk-u-margin-left-4" href="/admin">Back to dashboard</a>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    .admin-sticky-toolbar {
+      position: sticky;
+      bottom: 0;
+      background: #f8f8f8;
+      border-top: 1px solid #b1b4b6;
+      margin-top: 24px;
+      padding: 12px 0;
+      z-index: 10;
+    }
+    .admin-sticky-toolbar__inner {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+  </style>
+{% endblock %}

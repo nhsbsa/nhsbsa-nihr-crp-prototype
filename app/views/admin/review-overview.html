@@ -1,0 +1,101 @@
+{% extends "admin/layout-admin.html" %}
+{% block pageTitle %}Study overview — admin review{% endblock %}
+
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/admin">Back to admin</a>
+<h1 class="nhsuk-heading-l">Study overview</h1>
+
+{% if flash %}
+  <div class="nhsuk-notification-banner {% if flash.type == 'success' %}nhsuk-notification-banner--success{% endif %}" role="region" aria-labelledby="notice-title">
+    <div class="nhsuk-notification-banner__header">
+      <h2 class="nhsuk-notification-banner__title" id="notice-title">{{ flash.heading or 'Notice' }}</h2>
+    </div>
+    <div class="nhsuk-notification-banner__content">
+      <p class="nhsuk-notification-banner__heading">{{ flash.text }}</p>
+    </div>
+  </div>
+{% endif %}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-card nhsuk-u-margin-bottom-4">
+      <div class="nhsuk-card__content">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Decision</h2>
+        {% if decision == 'eligible' %}
+          <span class="nhsuk-tag">Eligible</span>
+        {% elif decision == 'follow-up' %}
+          <span class="nhsuk-tag nhsuk-tag--yellow">Needs follow-up</span>
+        {% elif decision == 'not-eligible' %}
+          <span class="nhsuk-tag nhsuk-tag--red">Not eligible</span>
+        {% else %}
+          <span class="nhsuk-tag nhsuk-tag--grey">Not decided</span>
+        {% endif %}
+
+        {% if notesForResearcher %}
+          <div class="nhsuk-inset-text nhsuk-u-margin-top-3">
+            <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Message to researcher</p>
+            <p class="nhsuk-body">{{ notesForResearcher }}</p>
+          </div>
+        {% endif %}
+
+        <p class="nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-0">
+          <a class="nhsuk-link" href="/admin/study/checks">Edit eligibility checks and decision</a>
+          &nbsp;|&nbsp;
+          <a class="nhsuk-link" href="/admin/study/communications">View communications log</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="nhsuk-card nhsuk-u-margin-bottom-4">
+      <div class="nhsuk-card__content">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Automated checks</h2>
+        {% if rules and rules.length %}
+          <table class="nhsuk-table">
+            <thead class="nhsuk-table__head">
+              <tr class="nhsuk-table__row">
+                <th scope="col" class="nhsuk-table__header">Check</th>
+                <th scope="col" class="nhsuk-table__header">Status</th>
+                <th scope="col" class="nhsuk-table__header">Detail</th>
+              </tr>
+            </thead>
+            <tbody class="nhsuk-table__body">
+              {% for r in rules %}
+                <tr class="nhsuk-table__row">
+                  <td class="nhsuk-table__cell">{{ r.label }}</td>
+                  <td class="nhsuk-table__cell">
+                    {% if r.status == 'pass' %}
+                      <span class="nhsuk-tag">Pass</span>
+                    {% elif r.status == 'warn' %}
+                      <span class="nhsuk-tag nhsuk-tag--yellow">Needs attention</span>
+                    {% else %}
+                      <span class="nhsuk-tag nhsuk-tag--red">Fail</span>
+                    {% endif %}
+                  </td>
+                  <td class="nhsuk-table__cell">{{ r.message }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="nhsuk-hint">No checks available.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if history and history.length %}
+      <div class="nhsuk-card nhsuk-u-margin-bottom-4">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Recent activity</h2>
+          <ul class="nhsuk-list">
+            {% for h in history | reverse %}
+              <li class="nhsuk-u-margin-bottom-1">
+                <strong>{{ h.action | capitalize }}</strong> — {{ h.value }} <span class="nhsuk-u-secondary-text-color">({{ h.at }} by {{ h.by }})</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
