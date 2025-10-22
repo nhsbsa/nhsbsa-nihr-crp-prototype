@@ -1,6 +1,8 @@
 // Import NHS.UK frontend library
 @import "nhsuk-frontend/dist/nhsuk";
 
+
+
 // Add your custom CSS/Sass styles below.
 
 /* --- Simulated GOV.UK One Login visuals (kept within page content) --- */
@@ -82,3 +84,9 @@
 .nhsuk-tag--blue { background:#1d70b8; color:#fff; }
 .nhsuk-tag--yellow { background:#ffbf47; color:#212b32; }
 .nhsuk-tag--red { background:#d5281b; color:#fff; }
+
+.nhs-button--custom {
+  background-color: #193E72;
+}
+
+@import "bpor.scss";

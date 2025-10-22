@@ -1,0 +1,47 @@
+{% extends "bpor-layout.html" %}
+{% block pageTitle %}Review your details{% endblock %}
+
+{% block content %}
+<form action="/volunteer-iteration-v1/condition" method="post" novalidate>
+
+<a class="nhsuk-back-link" href="/volunteer-iteration-v1/start">Go back</a>
+
+<div class="nhsuk-width-container">
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-xl">Review your details</h1>
+      <table class="nhsuk-table">
+  
+  <tbody class="nhsuk-table__body">
+    <tr class="nhsuk-table__row">
+      <th scope="row" class="nhsuk-table__header">Full name</th>
+      <td class="nhsuk-table__cell nhsuk-table__cell--numeric">John Smith</td>
+    </tr>
+    <tr class="nhsuk-table__row">
+      <th scope="row" class="nhsuk-table__header">Email address</th>
+      <td class="nhsuk-table__cell nhsuk-table__cell--numeric">john.smith@gmail.com</td>
+    </tr>
+   
+  </tbody>
+</table>
+
+<p class="nhsuk-body">This information came from your Be Part Of Research account. Please check it is correct. If anything is wrong, you can update your details in your account.</p>
+
+ <h1 class="nhsuk-heading-l">Add your phone number</h1>
+
+
+ 
+ <p class="nhsuk-body"> Your phone number will only be used to contact you if you are successful. If you do not pass the screening, it will be deleted immediately.</p>
+ <div class="nhsuk-form-group">
+ <input class="nhsuk-input" id="volunteerphonenumber" name="phoneNumber" type="number" inputmode="numeric">
+</div>
+
+<button class="nhsuk-button" data-module="nhsuk-button" type="submit">
+            Save and continue
+          </button>
+      
+</div>
+</form>
+
+{% endblock %}
