@@ -46,6 +46,9 @@ const port = parseInt(process.env.PORT || config.port, 10) || 2000
 const app = express()
 const exampleTemplatesApp = express()
 
+// IMPORTANT: trust Heroku’s proxy so req.protocol and x-forwarded-* are respected
+app.set('trust proxy', 1)
+
 // Set up configuration variables
 const useAutoStoreData =
   process.env.USE_AUTO_STORE_DATA || config.useAutoStoreData
