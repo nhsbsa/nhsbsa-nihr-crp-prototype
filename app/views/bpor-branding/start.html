@@ -1,0 +1,31 @@
+{% extends "bpor-layout.html" %}
+{% block pageTitle %}Pre-screener start{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-xl">Check if you're eligible to take part in [study name]</h1>
+      <p class="nhsuk-body">Before you can sign up to take part in a study, we need to ask you a short set of questions to about your health. You'll find out if you can take part as soon as you've answered these questions.
+
+      <p class="nhsuk-body"><b>We need to check that you:</b></p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>live in the UK</li>
+        <li>are 18 or over</li>
+        <li>have a diagnosis of type 2 diabetes</li>
+        <li>do not currently take Metformin</li>
+    </ul>
+
+    <p class="nhsuk-body"><b>How we handle your data:</b></p>
+
+    <p class="nhsuk-body">We'll only use your data to check if you're eligible to take part in this study. If you are not eligible to take part in this study, we'll delete your data immediately. </p>
+
+    <p class="nhsuk-body">Your data will only be stored if you successfully pass the pre-screening questions. If you are unsuccessful, your data will be instantly deleted. If you are successful, your data will only be kept for as long as it is needed for the research study.</p>
+
+
+     <p class="nhsuk-body nhsuk-body--custom">
+        <a class="nhsuk-button nhsuk-button--primary nhsuk-button--custom" href="/volunteer-iteration-v1/review-details">Start now</a>
+      </p>
+      
+</div>
+{% endblock %}

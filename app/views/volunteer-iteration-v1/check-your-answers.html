@@ -1,0 +1,108 @@
+{% extends "bpor-layout.html" %}
+{% block pageTitle %}Check your answers{% endblock %}
+
+{% block content %}
+
+<a class="nhsuk-back-link" href="/volunteer-iteration-v1/hospital">Go back</a>
+
+
+<div class="nhsuk-width-container">
+  <main class="nhsuk-main-wrapper" id="maincontent">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+
+        <h1 class="nhsuk-heading-l">Check your answers</h1>
+
+        <h2 class="nhsuk-heading-m">
+          Personal details
+        </h2>
+
+       <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Add your phone number
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+             {{ data.phoneNumber}}
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a href="/volunteer-iteration-v1/review-details">
+                Change<span class="nhsuk-u-visually-hidden"> Phone number</span>
+              </a>
+            </dd>
+          </div>
+        </dl>
+
+        <h2 class="nhsuk-heading-m">
+         Pre-screener questions
+        </h2>
+
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Do you have type 2 diabetes?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              {{ data.Condition}}
+            <dd class="nhsuk-summary-list__actions">
+              <a href="#">
+                Change<span class="nhsuk-u-visually-hidden"> allergies</span>
+              </a>
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Are you taking Metformin?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                {{ data.Medication}}
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a href="#">
+                Change<span class="nhsuk-u-visually-hidden"> conditions</span>
+              </a>
+            </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Did you receive this diagnosis in the last 6 months?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                {{ data.Diagnosis}}
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a href="#">
+                Change<span class="nhsuk-u-visually-hidden"> conditions</span>
+              </a>
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+             Have you had in-patient hospital treatment in the last 6 months?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                {{ data.Hospital}}
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a href="#">
+                Change<span class="nhsuk-u-visually-hidden"> conditions</span>
+              </a>
+            </dd>
+          </div>
+        </dl>
+        
+        <form action="/volunteer-iteration-v1/match" method="post" novalidate>
+
+          <button class="nhsuk-button" data-module="nhsuk-button" type="submit">
+            Complete
+          </button>
+
+        </form>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+
+{% endblock %}
