@@ -1,47 +1,18 @@
 {% extends "researcher/layout-researcher.html" %}
-{% block pageTitle %}Create a study request — start{% endblock %}
+{% block pageTitle %}Create a study request{% endblock %}
 
 {% block researcherContent %}
 <h1 class="nhsuk-heading-l">Create a study request</h1>
 
 <p class="nhsuk-body">
-  This guided process helps you check feasibility and submit a study for recruitment on the platform.
-  You can save and return at any time.
+  First you’ll run a feasibility check, a quick way to see if there are enough suitable volunteers
+  who match your study’s criteria. After that, you’ll add the study details for review and publishing.
 </p>
 
-<div class="nhsuk-inset-text">
-  <p class="nhsuk-body">
-    First, you’ll check whether there are enough potential volunteers (feasibility). Then you’ll provide
-    your study details for admin review and publishing.
-  </p>
-</div>
-
-<h2 class="nhsuk-heading-m">What you’ll do</h2>
-<ol class="nhsuk-list nhsuk-list--number">
-  <li>Check feasibility: demographics, medical criteria, and sites.</li>
-  <li>Identify the study with CPMS/IRAS or enter details manually.</li>
-  <li>Provide study information and study type.</li>
-  <li>Confirm requirements (demographics, medical, sites) and target recruitment date.</li>
-  <li>Tell us about ethics approval. You can upload proof now or add it later.</li>
-</ol>
-
-<h2 class="nhsuk-heading-m">What you’ll need</h2>
-<ul class="nhsuk-list nhsuk-list--bullet">
-  <li>Study title and lay summary (or CPMS/IRAS IDs)</li>
-  <li>Eligibility criteria (age, sex, relevant regions) and medical conditions of interest</li>
-  <li>Participating site codes (ODS/Trust/organisation codes if known)</li>
-  <li>Target recruitment date</li>
-  <li>Ethics approval reference/date or approval letter (optional for now)</li>
-</ul>
-
-<form action="/researcher/request/new" method="post" class="nhsuk-u-margin-top-4">
+<form action="/researcher/feasibility/platform" method="post" class="nhsuk-u-margin-top-4">
   <div class="nhsuk-button-group">
-    <button type="submit" class="nhsuk-button">Start now</button>
+    <button type="submit" class="nhsuk-button" data-module="nhsuk-button">Start now</button>
     <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher">Back to study management</a>
   </div>
 </form>
-
-<!-- <p class="nhsuk-u-secondary-text-color nhsuk-body-s nhsuk-u-margin-top-3">
-  You can return to your <a href="/researcher/task-list" class="nhsuk-link">task list</a> at any time.
-</p> -->
 {% endblock %}

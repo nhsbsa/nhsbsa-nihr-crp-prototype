@@ -1,0 +1,102 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Recruitment details{% endblock %}
+
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Recruitment details</h1>
+
+{% if errors and errors.length %}
+  <div class="nhsuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1">
+    <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% for e in errors %}
+          <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+{# Prefill from feasibility/target.html if present #}
+{% set suggestedTarget = (data and data.feasibility and data.feasibility.targetRecruitment) or '' %}
+{% set targetValue = (model and (model.overallTarget | default(''))) or suggestedTarget %}
+
+<form method="post" action="/researcher/recruitment">
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Is the study already open to recruitment?</legend>
+      <div class="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="isOpen-yes" name="isOpen" type="radio" value="yes" {% if model.isOpen == 'yes' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="isOpen-yes">Yes</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="isOpen-no" name="isOpen" type="radio" value="no" {% if model.isOpen == 'no' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="isOpen-no">No</label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-one-third">
+      <div class="nhsuk-form-group" id="recruitedRow" {% if model.isOpen != 'yes' %}style="display:none"{% endif %}>
+        <label class="nhsuk-label" for="recruitedToDate">Number recruited to date</label>
+        <input class="nhsuk-input" id="recruitedToDate" name="recruitedToDate" inputmode="numeric" value="{{ model.recruitedToDate }}">
+      </div>
+    </div>
+  </div>
+
+  {# Dates on one row #}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-one-half">
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="startDate">Start date</label>
+        <input class="nhsuk-input" id="startDate" name="startDate" type="date" value="{{ model.startDate }}">
+      </div>
+    </div>
+    <div class="nhsuk-grid-column-one-half">
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="endDate">End date</label>
+        <input class="nhsuk-input" id="endDate" name="endDate" type="date" value="{{ model.endDate }}">
+      </div>
+    </div>
+  </div>
+
+  {# Target directly underneath, READ-ONLY #}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-one-half">
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="overallTarget">Recruitment target</label>
+        {% if suggestedTarget and not model.overallTarget %}
+          <div class="nhsuk-hint">From feasibility target</div>
+        {% endif %}
+        <input class="nhsuk-input"
+               id="overallTarget"
+               name="overallTarget"
+               inputmode="numeric"
+               value="{{ targetValue }}"
+               readonly
+               aria-readonly="true"
+               tabindex="-1">
+      </div>
+    </div>
+  </div>
+
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+
+<script>
+  (function(){
+    const yes = document.getElementById('isOpen-yes')
+    const no = document.getElementById('isOpen-no')
+    const row = document.getElementById('recruitedRow')
+    function sync(){ row && (row.style.display = (yes && yes.checked) ? '' : 'none') }
+    ;[yes,no].forEach(r => r && r.addEventListener('change', sync))
+    sync()
+  })()
+</script>
+{% endblock %}

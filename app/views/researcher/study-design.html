@@ -1,0 +1,80 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Study design{% endblock %}
+
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">Study design</h1>
+
+{% if errors and errors.length %}
+  <div class="nhsuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1">
+    <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% for e in errors %}<li><a href="{{ e.href }}">{{ e.text }}</a></li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+<form method="post" action="/researcher/study-design" novalidate>
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Is this a randomised study?</legend>
+      <div class="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="randomised-yes" name="randomised" type="radio" value="yes" {% if model.randomised == 'yes' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="randomised-yes">Yes</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="randomised-no" name="randomised" type="radio" value="no" {% if model.randomised == 'no' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="randomised-no">No</label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Is this study interventional or observational?</legend>
+      <div class="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="kind-interventional" name="studyKind" type="radio" value="Interventional" {% if model.studyKind == 'Interventional' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="kind-interventional">Interventional</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="kind-observational" name="studyKind" type="radio" value="Observational" {% if model.studyKind == 'Observational' %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="kind-observational">Observational</label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="phase">What phase is this study?</label>
+    <select class="nhsuk-select nhsuk-!-width-one-half" id="phase" name="phase">
+      <option value="">Select a phase</option>
+      {% for p in phases %}
+        <option value="{{ p }}" {% if p == model.phase %}selected{% endif %}>{{ p }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Study type (tags)</legend>
+      <div class="nhsuk-checkboxes">
+        {% for t in typeTags %}
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="tag-{{ loop.index }}" type="checkbox" name="typeTags" value="{{ t }}" {% if model.typeTags and (t in model.typeTags) %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="tag-{{ loop.index }}">{{ t }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-button-group">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+{% endblock %}

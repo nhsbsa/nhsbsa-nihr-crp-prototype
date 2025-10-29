@@ -1,0 +1,35 @@
+{# Prototype-only: admin comments per section #}
+<form method="post" action="{{ postAction or '' }}">
+  <input type="hidden" name="_csrf" value="{{ csrfToken or '' }}">
+  {% if errors and errors.text %}
+    <div class="nhsuk-form-group nhsuk-form-group--error">
+      <label class="nhsuk-label" for="text">Feedback for researcher</label>
+      <span class="nhsuk-error-message" id="text-error">Enter feedback</span>
+      <textarea class="nhsuk-textarea nhsuk-textarea--error" id="text" name="text" rows="5">{{ values and values.text }}</textarea>
+    </div>
+  {% else %}
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="text">Feedback for researcher</label>
+      <textarea class="nhsuk-textarea" id="text" name="text" rows="5">{{ values and values.text }}</textarea>
+    </div>
+  {% endif %}
+
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">Mark this section as</legend>
+      {% set state = values and values.state %}
+      <div class="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="state-reviewed" name="state" type="radio" value="Reviewed" {{ state == 'Reviewed' ? 'checked' : '' }}>
+          <label class="nhsuk-label nhsuk-radios__label" for="state-reviewed">Reviewed</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="state-changes" name="state" type="radio" value="Changes requested" {{ state == 'Changes requested' ? 'checked' : '' }}>
+          <label class="nhsuk-label nhsuk-radios__label" for="state-changes">Changes requested</label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <button class="nhsuk-button" type="submit">Save feedback</button>
+</form>

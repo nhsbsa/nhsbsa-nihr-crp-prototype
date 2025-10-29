@@ -1,0 +1,110 @@
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}Feasibility: demographics (extended){% endblock %}
+{% block researcherContent %}
+
+<style>
+  .fe-panel{border:1px solid #d8dde0;border-radius:2px;padding:12px 16px;background:#fff;margin:12px 0 24px}
+  .fe-panel__label{font-size:19px;line-height:1.4}
+  .fe-panel__value{font-weight:700}
+</style>
+
+<h1 class="nhsuk-heading-l">Ethnicity, gender and sex at birth</h1>
+
+<div class="fe-panel" data-fe-panel data-path="/researcher/feasibility/demographics-extended">
+  <div class="fe-panel__label">
+    Estimated participants:
+    <span class="fe-panel__value" id="fe-est-matched">—</span>
+    of
+    <span class="fe-panel__value" id="fe-est-available">—</span>
+  </div>
+</div>
+
+<form method="post" action="/researcher/feasibility/demographics-extended">
+
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset" aria-describedby="ethnicity-hint">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Ethnic group</legend>
+      <span class="nhsuk-hint" id="ethnicity-hint">Select all that apply.</span>
+      <div class="nhsuk-checkboxes">
+        {% set selected = (model and model.ethnicity) or [] %}
+        {% set groups = [
+          'British (White)','Irish (White)','Any other White background (White)',
+          'White and Black Caribbean (Mixed)','White and Black African (Mixed)','White and Asian (Mixed)','Any other mixed background (Mixed)',
+          'Indian (Asian or Asian British)','Pakistani (Asian or Asian British)','Bangladeshi (Asian or Asian British)','Any other Asian background (Asian or Asian British)',
+          'Caribbean (Black or Black British)','African (Black or Black British)','Any other Black background (Black or Black British)',
+          'Chinese or South East Asian','Any other ethnic group (Other Ethnic Groups)'
+        ] %}
+        {% for r in groups %}
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input"
+                 id="ethnicity-{{ loop.index }}"
+                 name="ethnicity"
+                 type="checkbox"
+                 value="{{ r }}"
+                 {% if r in selected %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="ethnicity-{{ loop.index }}">{{ r }}</label>
+        </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Gender</legend>
+      <div class="nhsuk-checkboxes">
+        {% set gsel = (model and model.gender) or [] %}
+        {% for g in ['Woman','Man','Non-binary'] %}
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input" id="g-{{ loop.index }}" type="checkbox" name="gender" value="{{ g }}" {% if g in gsel %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="g-{{ loop.index }}">{{ g }}</label>
+        </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Sex at birth</legend>
+      <div class="nhsuk-checkboxes">
+        {% set ssel = (model and model.sexAtBirth) or [] %}
+        {% for s in ['Male','Female'] %}
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input" id="s-{{ loop.index }}" type="checkbox" name="sexAtBirth" value="{{ s }}" {% if s in ssel %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="s-{{ loop.index }}">{{ s }}</label>
+        </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-button-group nhsuk-u-margin-top-4">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+
+<script>
+(function(){
+  function serialize(form){
+    const out={ethnicity:[],gender:[],sexAtBirth:[]};
+    form.querySelectorAll('input[name="ethnicity"]:checked').forEach(x=>out.ethnicity.push(x.value));
+    form.querySelectorAll('input[name="gender"]:checked').forEach(x=>out.gender.push(x.value));
+    form.querySelectorAll('input[name="sexAtBirth"]:checked').forEach(x=>out.sexAtBirth.push(x.value));
+    return out;
+  }
+  function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}}
+  const panel=document.querySelector('[data-fe-panel]'); if(!panel) return;
+  const form=document.querySelector('form'); const path=panel.getAttribute('data-path');
+  const avail=panel.querySelector('#fe-est-available'); const match=panel.querySelector('#fe-est-matched');
+  const send=debounce(function(){
+    fetch('/researcher/feasibility/estimate',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({overrides:{path,values:serialize(form)}})})
+      .then(r=>r.json()).then(j=>{if(avail)avail.textContent=j.available;if(match)match.textContent=j.matched;}).catch(()=>{});
+  },250);
+  document.addEventListener('change',e=>{if(form.contains(e.target))send()});
+  send();
+})();
+</script>
+{% endblock %}

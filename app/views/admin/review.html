@@ -1,0 +1,148 @@
+{% extends "admin/layout-admin.html" %}
+{% block pageTitle %}Admin review — eligibility checks{% endblock %}
+
+{% block researcherContent %}
+<a class="nhsuk-back-link" href="/admin/study/review/overview">Back to overview</a>
+<h1 class="nhsuk-heading-l">Study request review</h1>
+
+{% if errors and errors.length %}
+  <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+    <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% for e in errors %}
+          <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+{% if flash %}
+  <div class="nhsuk-notification-banner {% if flash.type == 'success' %}nhsuk-notification-banner--success{% endif %}" role="region" aria-labelledby="notice-title">
+    <div class="nhsuk-notification-banner__header">
+      <h2 class="nhsuk-notification-banner__title" id="notice-title">{{ flash.heading or 'Notice' }}</h2>
+    </div>
+    <div class="nhsuk-notification-banner__content">
+      <p class="nhsuk-notification-banner__heading">{{ flash.text }}</p>
+    </div>
+  </div>
+{% endif %}
+
+{# context #}
+{% set st = (data and data.submit and data.submit.study) or {} %}
+{% set sites = (data and data.submit and data.submit.sites and data.submit.sites.list) or [] %}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <section class="nhsuk-card nhsuk-u-margin-bottom-4" id="summary" aria-labelledby="summary-title" role="region">
+      <div class="nhsuk-card__content">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2" id="summary-title">Study summary</h2>
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Platform</dt>
+            <dd class="nhsuk-summary-list__value">{{ (data.feasibility.platform or 'JDR') | upper }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Study name</dt>
+            <dd class="nhsuk-summary-list__value">{{ st.name or '—' }}</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Study sites</dt>
+            <dd class="nhsuk-summary-list__value">
+              {% if sites and sites.length %}
+                <span class="nhsuk-tag">{{ sites.length }}</span>
+              {% else %}
+                <span class="nhsuk-tag nhsuk-tag--grey">None</span>
+              {% endif %}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="nhsuk-card nhsuk-u-margin-bottom-4" id="eligibility" aria-labelledby="eligibility-title" role="region">
+      <div class="nhsuk-card__content">
+        <form method="post" action="/admin/study/checks" novalidate>
+          <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2" id="eligibility-title">Eligibility checks</h2>
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-color">
+            Platform: <strong>{{ platform | upper }}</strong>
+          </p>
+
+          {% if rules and rules.length %}
+            {% for r in rules %}
+              <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-4">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">
+                  {{ r.label }}
+                  {% if r.status == 'pass' %}
+                    <span class="nhsuk-tag nhsuk-u-margin-left-2">Pass</span>
+                  {% elif r.status == 'warn' %}
+                    <span class="nhsuk-tag nhsuk-tag--yellow nhsuk-u-margin-left-2">Needs attention</span>
+                  {% else %}
+                    <span class="nhsuk-tag nhsuk-tag--red nhsuk-u-margin-left-2">Fail</span>
+                  {% endif %}
+                </legend>
+                <div class="nhsuk-hint nhsuk-u-margin-bottom-2">{{ r.message }}</div>
+
+                <div class="nhsuk-radios nhsuk-radios--inline">
+                  <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" id="r-{{ r.id }}-pass" name="ruleStatus_{{ r.id }}" type="radio" value="pass" {% if r.status == 'pass' %}checked{% endif %}>
+                    <label class="nhsuk-label nhsuk-radios__label" for="r-{{ r.id }}-pass">Pass</label>
+                  </div>
+                  <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" id="r-{{ r.id }}-warn" name="ruleStatus_{{ r.id }}" type="radio" value="warn" {% if r.status == 'warn' %}checked{% endif %}>
+                    <label class="nhsuk-label nhsuk-radios__label" for="r-{{ r.id }}-warn">Needs attention</label>
+                  </div>
+                  <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" id="r-{{ r.id }}-fail" name="ruleStatus_{{ r.id }}" type="radio" value="fail" {% if r.status == 'fail' %}checked{% endif %}>
+                    <label class="nhsuk-label nhsuk-radios__label" for="r-{{ r.id }}-fail">Fail</label>
+                  </div>
+                </div>
+              </fieldset>
+            {% endfor %}
+          {% else %}
+            <p class="nhsuk-hint">No automated checks available.</p>
+          {% endif %}
+
+          <hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible" aria-hidden="true">
+
+          <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-2" id="decision">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Overall decision</legend>
+            <div class="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="d-eligible" name="decision" type="radio" value="eligible" {% if decision == 'eligible' %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="d-eligible">Eligible</label>
+              </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="d-follow" name="decision" type="radio" value="follow-up" {% if decision == 'follow-up' %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="d-follow">Needs follow-up</label>
+              </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="d-not" name="decision" type="radio" value="not-eligible" {% if decision == 'not-eligible' %}checked{% endif %}>
+                <label class="nhsuk-label nhsuk-radios__label" for="d-not">Not eligible</label>
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="nhsuk-form-group nhsuk-u-margin-top-4">
+            <label class="nhsuk-label" for="notesInternal">Internal notes (not shared)</label>
+            <textarea id="notesInternal" name="notesInternal" class="nhsuk-textarea" rows="5">{{ notesInternal or '' }}</textarea>
+          </div>
+
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="notesForResearcher">Message to researcher (shared)</label>
+            <textarea id="notesForResearcher" name="notesForResearcher" class="nhsuk-textarea" rows="5">{{ notesForResearcher or '' }}</textarea>
+          </div>
+
+          <div class="nhsuk-button-group nhsuk-u-margin-top-2">
+            <button class="nhsuk-button" type="submit">Save</button>
+            <a class="nhsuk-link nhsuk-link--no-visited-state nhsuk-u-margin-left-4" href="/admin">Back to dashboard</a>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </div>
+</div>
+{% endblock %}

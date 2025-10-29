@@ -1,0 +1,15 @@
+{% set s = data.identify or {} %}
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">CPMS/IRAS ID</dt>
+    <dd class="nhsuk-summary-list__value">{{ s.cpms or '—' }}</dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Short title</dt>
+    <dd class="nhsuk-summary-list__value">{{ s.shortName or '—' }}</dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Study type</dt>
+    <dd class="nhsuk-summary-list__value">{{ (data.type and data.type.category) or '—' }}</dd>
+  </div>
+</dl>

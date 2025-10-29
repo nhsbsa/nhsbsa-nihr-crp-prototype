@@ -3,6 +3,10 @@ const express = require('express')
 const path = require('path')
 const router = express.Router()
 
+/**
+ * Mount a child router or middleware exported from a local file.
+ * Accepts either an Express router (function) or a plain middleware function.
+ */
 function safeMount(relPath, label = relPath) {
   const abs = path.join(__dirname, relPath.replace(/^\.\//, ''))
   try {
@@ -14,23 +18,22 @@ function safeMount(relPath, label = relPath) {
       console.warn(`[routes] skipped (not a function export): ${label}`)
     }
   } catch (err) {
-    console.warn(`[routes] FAILED to mount: ${label}\n -> ${err.name}: ${err.message}`)
+    console.warn(`[routes] mount failed: ${label} -> ${err && err.message}`)
   }
 }
 
+/* ---------------- Core pages ---------------- */
 safeMount('./home', 'home')
 safeMount('./home-auto', 'home-auto')
-
-
-// Hydrate Section B from feasibility/identify before anything renders
-safeMount('./mw-hydrate-submit', 'mw-hydrate-submit')
-
-// Public/epic
 safeMount('./routes-auth', 'routes-auth')
-safeMount('./routes-epics', 'routes-epics')
 
-router.use(require('./mw-criteria-bridge'))
-router.use(require('./researcher-preview'))
+/* ---------------- Researcher: legacy bits kept safe ---------------- */
+safeMount('./mw-criteria-bridge', 'mw-criteria-bridge')
+
+// Older feature files retained for compatibility if present
+try { router.use(require('./researcher-bpor')) ; console.log('[routes] mounted: researcher-bpor') } catch (e) { /* optional */ }
+try { router.use(require('./researcher-preview')) ; console.log('[routes] mounted: researcher-preview') } catch (e) { /* optional */ }
+try { router.use(require('./researcher-study-sites')) ; console.log('[routes] mounted: researcher-study-sites') } catch (e) { /* optional */ }
 
 // Researcher scaffolding
 safeMount('./researcher-nav-middleware', 'researcher-nav-middleware')
@@ -45,9 +48,28 @@ safeMount('./researcher-submit', 'researcher-submit')
 safeMount('./researcher-volunteer-criteria', 'researcher-volunteer-criteria') // harmless if still around
 safeMount('./routes-researcher', 'routes-researcher')
 
-// Admin support (needs back-compat first)
+// NEW: catch orphaned placeholder POSTs
+safeMount('./routes-researcher-orphans', 'routes-researcher-orphans')
+
+/* ---------------- Admin: mount new flow FIRST so it wins /admin ----------------
+   If legacy routers also register GET /admin, they would steal the route if mounted first.
+   Order here ensures our dashboard/overview/review are the handlers users see. */
+safeMount('./admin-eligibility', 'admin-eligibility')
+
+// Legacy admin routers (mounted AFTER to avoid shadowing)
 safeMount('./mw-ethics-backcompat', 'mw-ethics-backcompat')
 safeMount('./routes-admin', 'routes-admin')
 safeMount('./routes-admin-studies', 'routes-admin-studies')
+
+/* ---------------- Admin: NEW review workspace ---------------- */
+safeMount('./routes-admin-review', 'routes-admin-review')
+
+/* ---------------- Convenience: home redirect if nothing else claimed '/' ---------------- */
+router.get('/', (req, res, next) => {
+  // If something already wrote a response, skip
+  if (res.headersSent) return next()
+  // Gentle nudge to admin dashboard for this prototype
+  return res.redirect('/admin')
+})
 
 module.exports = router

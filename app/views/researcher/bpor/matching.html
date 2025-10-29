@@ -1,0 +1,103 @@
+{# app/views/researcher/bpor/matching.html #}
+{% extends "researcher/layout-researcher.html" %}
+{% block pageTitle %}BPOR: matching criteria{% endblock %}
+
+{% block researcherContent %}
+<h1 class="nhsuk-heading-l">BPOR matching criteria</h1>
+<p class="nhsuk-body">Tell us who you’re looking for so we can find suitable volunteers.</p>
+
+<form method="post" action="/researcher/bpor/matching">
+  {# Age range #}
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset" aria-describedby="age-hint">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Age range</legend>
+      <span class="nhsuk-hint" id="age-hint">Enter a minimum and maximum age.</span>
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-quarter">
+          <label class="nhsuk-label" for="ageMin">Minimum age</label>
+          <input class="nhsuk-input" id="ageMin" name="ageMin" type="number" min="0" max="120" value="{{ (model and model.ageMin) or '' }}">
+        </div>
+        <div class="nhsuk-grid-column-one-quarter">
+          <label class="nhsuk-label" for="ageMax">Maximum age</label>
+          <input class="nhsuk-input" id="ageMax" name="ageMax" type="number" min="0" max="120" value="{{ (model and model.ageMax) or '' }}">
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  {# Ethnic group (reuse your fixed checkbox pattern) #}
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset" aria-describedby="ethnicity-hint">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Ethnic group</legend>
+      <span class="nhsuk-hint" id="ethnicity-hint">Select all that apply.</span>
+      <div class="nhsuk-checkboxes">
+        {% set selectedEth = (model and model.ethnicity) or [] %}
+        {% set groups = [
+          'British (White)','Irish (White)','Any other White background (White)',
+          'White and Black Caribbean (Mixed)','White and Black African (Mixed)','White and Asian (Mixed)','Any other mixed background (Mixed)',
+          'Indian (Asian or Asian British)','Pakistani (Asian or Asian British)','Bangladeshi (Asian or Asian British)','Any other Asian background (Asian or Asian British)',
+          'Caribbean (Black or Black British)','African (Black or Black British)','Any other Black background (Black or Black British)',
+          'Chinese or South East Asian','Any other ethnic group (Other Ethnic Groups)','Not stated','Prefer not to say'
+        ] %}
+        {% for r in groups %}
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="eth-{{ loop.index }}" name="ethnicity" type="checkbox" value="{{ r }}" {% if r in selectedEth %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="eth-{{ loop.index }}">{{ r }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </div>
+
+  {# Location #}
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset" aria-describedby="loc-hint">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Location</legend>
+      <span class="nhsuk-hint" id="loc-hint">Describe where participants should be based, for example “Greater Manchester” or a postcode radius like “LS1 within 20 miles”. Keep it simple for now.</span>
+      <input class="nhsuk-input nhsuk-!-width-two-thirds" id="locations" name="locations" type="text" value="{{ (model and model.locations) or '' }}">
+    </fieldset>
+  </div>
+
+  {# Sex registered at birth #}
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Sex registered at birth</legend>
+      <div class="nhsuk-checkboxes">
+        {% set ssel = (model and model.sexAtBirth) or [] %}
+        {% for s in ['Male','Female'] %}
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="s-{{ loop.index }}" type="checkbox" name="sexAtBirth" value="{{ s }}" {% if s in ssel %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="s-{{ loop.index }}">{{ s }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </div>
+
+  {# Areas of research volunteers are interested in #}
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset" aria-describedby="areas-hint">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Areas of research interest</legend>
+      <span class="nhsuk-hint" id="areas-hint">Select all that apply.</span>
+      <div class="nhsuk-checkboxes">
+        {% set rsel = (model and model.researchAreas) or [] %}
+        {% set areas = [
+          'Cancer','Cardiovascular','Mental health','Diabetes and endocrine','Respiratory','Neurology','Musculoskeletal',
+          'Infectious diseases','Women’s health','Children and young people','Healthy volunteers','Other'
+        ] %}
+        {% for a in areas %}
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="ra-{{ loop.index }}" type="checkbox" name="researchAreas" value="{{ a }}" {% if a in rsel %}checked{% endif %}>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="ra-{{ loop.index }}">{{ a }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-button-group nhsuk-u-margin-top-4">
+    <button class="nhsuk-button" type="submit" data-module="nhsuk-button">Save and continue</button>
+    <a class="nhsuk-link" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+{% endblock %}

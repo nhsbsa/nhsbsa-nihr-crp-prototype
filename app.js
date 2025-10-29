@@ -32,12 +32,22 @@ const prototypeAdminRoutes = require('./lib/middleware/prototype-admin-routes')
 const utils = require('./lib/utils')
 const packageInfo = require('./package.json')
 
+// Routers (make sure these files exist)
+const researcherEntry = require('./app/researcher-entry')
+const researcherFeasibility = require('./app/researcher-feasibility')
+const researcherSubmit = require('./app/researcher-submit')
+const researcherIdentifyStudy = require('./app/researcher-identify-study')
+const researcherStudySites = require('./app/researcher-study-sites') // ← NEW
+
 // Set configuration variables
 const port = parseInt(process.env.PORT || config.port, 10) || 2000
 
 // Initialise applications
 const app = express()
 const exampleTemplatesApp = express()
+
+// IMPORTANT: trust Heroku’s proxy so req.protocol and x-forwarded-* are respected
+app.set('trust proxy', 1)
 
 // Set up configuration variables
 const useAutoStoreData =
@@ -67,14 +77,13 @@ const appViews = [
 ]
 
 /**
- * @type {ConfigureOptions}
+ * @type {import('nunjucks').ConfigureOptions}
  */
 const nunjucksConfig = {
   autoescape: true,
-  noCache: true
+  noCache: true,
+  express: app
 }
-
-nunjucksConfig.express = app
 
 let nunjucksAppEnv = nunjucks.configure(appViews, nunjucksConfig)
 nunjucksAppEnv.addGlobal('version', packageInfo.version)
@@ -86,9 +95,7 @@ utils.addNunjucksFilters(nunjucksAppEnv)
 const sessionName = `nhsuk-prototype-kit-${Buffer.from(config.serviceName, 'utf8').toString('hex')}`
 const sessionOptions = {
   secret: sessionName,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 4 // 4 hours
-  }
+  cookie: { maxAge: 1000 * 60 * 60 * 4 } // 4 hours
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -97,7 +104,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Support session data in cookie or memory
-if (useCookieSessionStore === 'true') {
+const useCookie = useCookieSessionStore === 'true'
+if (useCookie) {
   app.use(
     sessionInCookie(
       Object.assign(sessionOptions, {
@@ -121,11 +129,7 @@ if (useCookieSessionStore === 'true') {
 
 // Support for parsing data in POSTs
 app.use(bodyParser.json())
-app.use(
-  bodyParser.urlencoded({
-    extended: true
-  })
-)
+app.use(bodyParser.urlencoded({ extended: true }))
 
 // Automatically store all data users enter
 if (useAutoStoreData === 'true') {
@@ -135,16 +139,12 @@ if (useAutoStoreData === 'true') {
 
 app.use(utils.setLocals)
 
-// Warn if node_modules folder doesn't exist
+// initial checks
 function checkFiles() {
   const nodeModulesExists = existsSync(join(__dirname, '/node_modules'))
   if (!nodeModulesExists) {
-    throw new Error(
-      'ERROR: Node module folder missing. Try running `npm install`'
-    )
+    throw new Error('ERROR: Node module folder missing. Try running `npm install`')
   }
-
-  // Create template .env file if it doesn't exist
   const envExists = existsSync(join(__dirname, '/.env'))
   if (!envExists) {
     createReadStream(join(__dirname, '/lib/template.env')).pipe(
@@ -152,216 +152,86 @@ function checkFiles() {
     )
   }
 }
-
-// initial checks
 checkFiles()
 
 // Create template session data defaults file if it doesn't exist
 const dataDirectory = join(__dirname, '/app/data')
 const sessionDataDefaultsFile = join(dataDirectory, '/session-data-defaults.js')
 const sessionDataDefaultsFileExists = existsSync(sessionDataDefaultsFile)
-
 if (!sessionDataDefaultsFileExists) {
   console.log('Creating session data defaults file')
-  if (!existsSync(dataDirectory)) {
-    mkdirSync(dataDirectory)
-  }
-
-  createReadStream(
-    join(__dirname, '/lib/template.session-data-defaults.js')
-  ).pipe(createWriteStream(sessionDataDefaultsFile))
+  if (!existsSync(dataDirectory)) mkdirSync(dataDirectory)
+  createReadStream(join(__dirname, '/lib/template.session-data-defaults.js'))
+    .pipe(createWriteStream(sessionDataDefaultsFile))
 }
 
 // Local variables
-app.use(locals(config))
+app.use(require('./app/locals')(config))
 
-// View engine
+// View engines
 app.set('view engine', 'html')
-exampleTemplatesApp.set('view engine', 'html')
-
-// This setting trusts the X-Forwarded headers set by a proxy
-app.set('trust proxy', 1)
+const exampleTemplatesAppEnv = nunjucks.configure(appViews, {
+  autoescape: true,
+  express: exampleTemplatesApp
+})
+exampleTemplatesAppEnv.addGlobal('version', packageInfo.version)
+utils.addNunjucksFilters(exampleTemplatesAppEnv)
 
 // Use public folder for static assets
 app.use(express.static(join(__dirname, 'public')))
-
-// Use assets from NHS frontend
 app.use(
   '/nhsuk-frontend',
   express.static(join(__dirname, 'node_modules/nhsuk-frontend/dist/nhsuk'))
 )
 
 /* ------------------------------------------------------------------
-   HARD-WIRED: Identify Study page (immune to greedy routers/auto-router)
+   MOUNT YOUR REAL APP ROUTERS HERE — BEFORE generic routes/redirects
    ------------------------------------------------------------------ */
-let CPMS = {}
-try {
-  CPMS = require('./app/lib/cpms')
-  if (!CPMS || typeof CPMS.getById !== 'function' || typeof CPMS.normalize !== 'function') {
-    throw new Error('cpms helper missing exports')
-  }
-  console.log('[app] cpms helper loaded from app/lib/cpms.js')
-} catch (e) {
-  console.warn('[app] cpms helper not found, using inline fallback:', e.message)
-  CPMS = {
-    normalize(id) {
-      if (!id) return ''
-      const raw = String(id).trim().toUpperCase().replace(/[\s-]+/g, '')
-      const m = raw.match(/^CPMS?(\d{4,})$/) || raw.match(/^(\d{4,})$/)
-      if (m) return 'CPMS' + (m[1] || m[0])
-      if (/^CPMS\d{4,}$/.test(raw)) return raw
-      return ''
-    },
-    getById(id) {
-      const key = this.normalize(id)
-      if (!key) return null
-      const demo = {
-        'CPMS123456': {
-          cpmsId: 'CPMS123456',
-          irasId: 'IRAS-21/NE/0001',
-          title: 'Randomised evaluation of Widgetumab in adults with Condition X',
-          laySummary: 'Evaluates whether Widgetumab improves daily functioning for adults with Condition X.'
-        },
-        'CPMS654321': {
-          cpmsId: 'CPMS654321',
-          irasId: 'IRAS-22/LON/0007',
-          title: 'Observational registry of sleep patterns after remote working',
-          laySummary: 'Observes sleep patterns of adults working remotely to understand lifestyle effects.'
-        }
-      }
-      return demo[key] || {
-        cpmsId: key,
-        irasId: '',
-        title: `Study ${key}`,
-        laySummary: 'Summary to be confirmed. Populate from CPMS or edit manually.'
-      }
-    }
-  }
-}
+app.use(researcherEntry)
+app.use(researcherFeasibility)
+app.use(researcherSubmit)
+app.use(researcherIdentifyStudy)
+app.use(researcherStudySites) // ← NEW: serves /researcher/study-sites
 
-function ensureData(req) {
-  const data = req.session.data || (req.session.data = {})
-  if (!data.study) data.study = {}
-  return data
-}
-function renderIdentify(res, locals) {
-  res.render('researcher/identify-study.html', {
-    errors: locals.errors || [],
-    cpmsQuery: locals.cpmsQuery || '',
-    found: !!locals.found,
-    lookup: locals.lookup || null,
-    saved: locals.saved || {},
-    activeNav: 'create-request'
-  })
-}
-
-app.get('/researcher/identify-study', (req, res) => {
-  console.log('[identify-study] GET')
-  const data = ensureData(req)
-  renderIdentify(res, {
-    errors: [],
-    cpmsQuery: '',
-    found: false,
-    lookup: null,
-    saved: data.study.identify || {}
-  })
-})
-
-app.post('/researcher/identify-study', (req, res) => {
-  const data = ensureData(req)
-  const body = req.body || {}
-  const action = body._action || 'save'
-  const errors = []
-
-  if (action === 'lookup') {
-    const raw = (body.cpmsId || '').trim()
-    const norm = CPMS.normalize(raw)
-    console.log('[identify-study] POST lookup', raw, '=>', norm || '(invalid)')
-    if (!norm) {
-      errors.push({ href: '#cpmsId', text: 'Enter a CPMS ID in the correct format' })
-      return renderIdentify(res, {
-        errors, cpmsQuery: raw, found: false, lookup: null, saved: data.study.identify || {}
-      })
-    }
-    const hit = CPMS.getById(norm)
-    return renderIdentify(res, {
-      errors: [], cpmsQuery: norm, found: !!hit, lookup: hit, saved: data.study.identify || {}
-    })
-  }
-
-  if (action === 'use-found') {
-    const raw = (body.cpmsId || '').trim()
-    const hit = CPMS.getById(raw)
-    console.log('[identify-study] POST use-found', raw, '=>', hit ? 'hit' : 'miss')
-    if (!hit) {
-      errors.push({ href: '#cpmsId', text: 'That CPMS record is not available. Try searching again.' })
-      return renderIdentify(res, {
-        errors, cpmsQuery: raw, found: false, lookup: null, saved: data.study.identify || {}
-      })
-    }
-    data.study.identify = {
-      mode: 'cpms',
-      cpmsId: hit.cpmsId,
-      irasId: hit.irasId || '',
-      title: hit.title || '',
-      laySummary: hit.laySummary || ''
-    }
-    if (!data.status) data.status = {}
-    data.status['/researcher/identify-study'] = 'completed'
-    return res.redirect('/researcher/task-list')
-  }
-
-  if (action === 'clear') {
-    console.log('[identify-study] POST clear')
-    if (data.study) delete data.study.identify
-    return res.redirect('/researcher/identify-study')
-  }
-
-  console.log('[identify-study] POST save manual')
-  const title = (body.title || '').trim()
-  const laySummary = (body.laySummary || '').trim()
-  if (!title && !laySummary) {
-    errors.push({ href: '#title', text: 'Enter a study title or use CPMS' })
-    errors.push({ href: '#laySummary', text: 'Enter a lay summary or use CPMS' })
-    return renderIdentify(res, {
-      errors, cpmsQuery: '', found: false, lookup: null, saved: { title: '', laySummary: '' }
-    })
-  }
-
-  data.study.identify = { mode: 'manual', title, laySummary, cpmsId: '', irasId: '' }
-  if (!data.status) data.status = {}
-  data.status['/researcher/identify-study'] = 'completed'
-  return res.redirect('/researcher/task-list')
-})
-
-/* ------------------------------------------------------------------ */
-
-// Example template routes
+/* ------------------------------------------------------------------
+   Example template routes (kit defaults)
+   ------------------------------------------------------------------ */
 app.use('/example-templates', exampleTemplatesApp)
-
-nunjucksAppEnv = nunjucks.configure(appViews, {
-  autoescape: true,
-  express: exampleTemplatesApp
-})
-nunjucksAppEnv.addGlobal('version', packageInfo.version)
-
-// Add Nunjucks filters
-utils.addNunjucksFilters(nunjucksAppEnv)
-
 exampleTemplatesApp.use('/', exampleTemplatesRoutes)
-
-// Automatically route example template pages
 exampleTemplatesApp.get(/^([^.]+)$/, (req, res, next) => {
   automaticRouting.matchRoutes(req, res, next)
 })
 
-// Use custom application routes (MUST be before auto-routing)
+/* ------------------------------------------------------------------
+   Use custom application routes (MUST be before auto-routing)
+   ------------------------------------------------------------------ */
 app.use('/', routes)
 
 // Prototype admin
 app.use('/prototype-admin', prototypeAdminRoutes)
 
-// Redirect all POSTs to GETs - allows POST for autoStoreData
+/* ------------------------------------------------------------------
+   TEMP: soak up links to unbuilt /prototypes/* pages so logs stop 404ing
+   ------------------------------------------------------------------ */
+const prototypeHolders = [
+  '/prototypes/approve-requests',
+  '/prototypes/study-matching',
+  '/prototypes/submit-study',
+  '/prototypes/manage-requests'
+]
+app.get(prototypeHolders, (req, res) => {
+  res.status(501).send(
+    `<div style="font:16px/1.4 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:24px">
+      <h1 style="margin:0 0 8px">Coming soon</h1>
+      <p>This placeholder exists so you can click around without blowing up the logs.</p>
+      <p>Build a template at <code>app/views${req.path}.html</code> or wire a real route.</p>
+    </div>`
+  )
+})
+
+/* ------------------------------------------------------------------
+   Redirect all unmatched POSTs to GETs (Prototype Kit behaviour)
+   ------------------------------------------------------------------ */
 app.post(/^\/([^.]+)$/, (req, res) => {
   res.redirect(
     urlFormat({
@@ -393,21 +263,11 @@ app.use((err, req, res) => {
 
 // Run the application
 app.listen(port)
-
-if (
-  process.env.WATCH !== 'true' &&
-  process.env.NODE_ENV !== 'production'
-) {
+if (process.env.WATCH !== 'true' && process.env.NODE_ENV !== 'production') {
   console.info(`Running at http://localhost:${port}/`)
   console.info('')
-  console.warn(
-    'Warning: It looks like you may have run the command `npm start` locally.'
-  )
-  console.warn('Press `Ctrl+C` and then run `npm run watch` instead')
+  console.warn('Warning: It looks like you may have run the command \`npm start\` locally.')
+  console.warn('Press \`Ctrl+C\` and then run \`npm run watch\` instead')
 }
 
 module.exports = app
-
-/**
- * @import { ConfigureOptions } from 'nunjucks'
- */

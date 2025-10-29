@@ -1,9 +1,101 @@
 {% extends "researcher/layout-researcher.html" %}
-{% block pageTitle %}Feasibility: demographics{% endblock %}
+{% block pageTitle %}Feasibility: age & symptoms{% endblock %}
 {% block researcherContent %}
-<a class="nhsuk-back-link" href="/researcher/feasibility/intro">Back</a>
-<h1 class="nhsuk-heading-l">Demographic criteria</h1>
 
-{% set partialAction = "/researcher/feasibility/demographics" %}
-{% include "researcher/partials/demographics-form.html" %}
+<style>
+  .fe-panel{border:1px solid #d8dde0;border-radius:2px;padding:12px 16px;background:#fff;margin:12px 0 24px}
+  .fe-panel__label{font-size:19px;line-height:1.4}
+  .fe-panel__value{font-weight:700}
+</style>
+
+<h1 class="nhsuk-heading-l">Age & symptoms</h1>
+
+<div class="fe-panel" data-fe-panel data-path="/researcher/feasibility/demographics">
+  <div class="fe-panel__label">
+    Estimated participants:
+    <span class="fe-panel__value" id="fe-est-matched">—</span>
+    of
+    <span class="fe-panel__value" id="fe-est-available">—</span>
+  </div>
+</div>
+
+<form method="post" action="/researcher/feasibility/demographics">
+  <fieldset class="nhsuk-fieldset">
+    <legend class="nhsuk-fieldset__legend">Age range</legend>
+    {% set mode = (model and model.ageMode) or 'any' %}
+    <div class="nhsuk-radios" data-module="nhsuk-radios">
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="age-any" name="ageMode" type="radio" value="any" {% if mode=='any' %}checked{% endif %}>
+        <label class="nhsuk-label nhsuk-radios__label" for="age-any">Any</label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="age-18plus" name="ageMode" type="radio" value="18plus" {% if mode=='18plus' %}checked{% endif %}>
+        <label class="nhsuk-label nhsuk-radios__label" for="age-18plus">18 and over</label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="age-custom" name="ageMode" type="radio" value="custom" {% if mode=='custom' %}checked{% endif %} aria-controls="age-custom-fields">
+        <label class="nhsuk-label nhsuk-radios__label" for="age-custom">Custom</label>
+      </div>
+    </div>
+    <div id="age-custom-fields" class="nhsuk-u-margin-top-3" {% if mode!='custom' %}hidden{% endif %}>
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-quarter">
+          <label class="nhsuk-label" for="ageMin">Min</label>
+          <input class="nhsuk-input nhsuk-input--width-5" id="ageMin" name="ageMin" value="{{ (model and model.ageMin) or '' }}">
+        </div>
+        <div class="nhsuk-grid-column-one-quarter">
+          <label class="nhsuk-label" for="ageMax">Max</label>
+          <input class="nhsuk-input nhsuk-input--width-5" id="ageMax" name="ageMax" value="{{ (model and model.ageMax) or '' }}">
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="nhsuk-form-group nhsuk-u-margin-top-4">
+    <label class="nhsuk-label">Symptoms</label>
+    {% set sym = (model and model.symptoms) or [] %}
+    {% for o in ['Mild','Moderate','Severe','Not Known'] %}
+    <div class="nhsuk-checkboxes__item">
+      <input class="nhsuk-checkboxes__input" id="sym-{{ loop.index }}" type="checkbox" name="symptoms" value="{{ o }}" {% if o in sym %}checked{% endif %}>
+      <label class="nhsuk-label nhsuk-checkboxes__label" for="sym-{{ loop.index }}">{{ o }}</label>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="nhsuk-button-group nhsuk-u-margin-top-4">
+    <button class="nhsuk-button" type="submit">Save and continue</button>
+    <a class="nhsuk-link" href="/researcher/task-list">Return to task list</a>
+  </div>
+</form>
+
+<script>
+document.addEventListener('change', function(e){
+  if (e.target && e.target.name === 'ageMode') {
+    var box = document.getElementById('age-custom-fields');
+    if (!box) return;
+    if (e.target.value === 'custom') box.removeAttribute('hidden');
+    else box.setAttribute('hidden','');
+  }
+});
+(function(){
+  function serialize(form){
+    const out={ageMode:(form.querySelector('input[name="ageMode"]:checked')||{}).value||'any',
+               ageMin:form.ageMin?.value||'',ageMax:form.ageMax?.value||'',symptoms:[]};
+    form.querySelectorAll('input[name="symptoms"]:checked').forEach(cb=>out.symptoms.push(cb.value));
+    return out;
+  }
+  function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}}
+  const panel=document.querySelector('[data-fe-panel]'); if(!panel) return;
+  const form=document.querySelector('form'); const path=panel.getAttribute('data-path');
+  const avail=panel.querySelector('#fe-est-available'); const match=panel.querySelector('#fe-est-matched');
+  const send=debounce(function(){
+    fetch('/researcher/feasibility/estimate',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({overrides:{path,values:serialize(form)}})})
+      .then(r=>r.json()).then(j=>{if(avail)avail.textContent=j.available;if(match)match.textContent=j.matched;}).catch(()=>{});
+  },250);
+  document.addEventListener('input',e=>{if(form.contains(e.target))send()});
+  document.addEventListener('change',e=>{if(form.contains(e.target))send()});
+  send();
+})();
+</script>
 {% endblock %}

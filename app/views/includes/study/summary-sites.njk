@@ -1,0 +1,22 @@
+{% set s = data.sites or {} %}
+{% set list = s.list or [] %}
+{% if list | length == 0 %}
+<p>No sites provided.</p>
+{% else %}
+<table class="nhsuk-table">
+  <thead class="nhsuk-table__head">
+    <tr class="nhsuk-table__row">
+      <th scope="col" class="nhsuk-table__header">Site</th>
+      <th scope="col" class="nhsuk-table__header">PI</th>
+    </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+    {% for site in list %}
+    <tr class="nhsuk-table__row">
+      <td class="nhsuk-table__cell">{{ site.name }}</td>
+      <td class="nhsuk-table__cell">{{ site.pi or '—' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}

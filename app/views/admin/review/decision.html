@@ -1,0 +1,50 @@
+{% extends "admin/layout-admin.html" %}
+{% set title = "Record decision" %}
+{% block adminContent %}
+<a class="nhsuk-back-link" href="/admin/review/{{ id }}">Back to review</a>
+<h1 class="nhsuk-heading-l">Record decision</h1>
+
+{% if errorSummary and errorSummary.length %}
+  <div class="nhsuk-error-summary" role="alert" tabindex="-1" aria-labelledby="err-title">
+    <h2 class="nhsuk-error-summary__title" id="err-title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% for e in errorSummary %}
+          <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+<form method="post" action="/admin/review/{{ id }}/decision">
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset" aria-describedby="decision-hint">
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">Decision</legend>
+      <div id="decision-hint" class="nhsuk-hint">This will update the study’s admin status.</div>
+      <div class="nhsuk-radios">
+        {% set d = values and values.decision or decision %}
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="d-approve" name="decision" type="radio" value="Approved" {{ d == 'Approved' ? 'checked' : '' }}>
+          <label class="nhsuk-label nhsuk-radios__label" for="d-approve">Approve</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="d-reject" name="decision" type="radio" value="Rejected" {{ d == 'Rejected' ? 'checked' : '' }}>
+          <label class="nhsuk-label nhsuk-radios__label" for="d-reject">Reject</label>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="d-changes" name="decision" type="radio" value="Changes requested" {{ d == 'Changes requested' ? 'checked' : '' }}>
+          <label class="nhsuk-label nhsuk-radios__label" for="d-changes">Request changes</label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="reason">Reason or message to researcher</label>
+    <textarea class="nhsuk-textarea" id="reason" name="reason" rows="5">{{ values and values.reason }}</textarea>
+  </div>
+
+  <button class="nhsuk-button" type="submit">Save decision</button>
+</form>
+{% endblock %}
