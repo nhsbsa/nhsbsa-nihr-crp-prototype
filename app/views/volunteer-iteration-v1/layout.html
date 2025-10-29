@@ -1,4 +1,4 @@
-<!-- app/views/bpor-layout.html -->
+<!-- app/views/volunteer-iteration-v1/layout.html -->
 {% extends "prototype-kit-template.njk" %}
 
 {% block head %}
@@ -6,17 +6,14 @@
 {% endblock %}
 
 {% block skipLink %}
-  {# Keep an accessible skip link #}
   <a class="govuk-skip-link" href="#main-content">Skip to main content</a>
 {% endblock %}
 
 {% block header %}
-  {# BPOR-specific header only #}
   {% include "bpor-branding/bpor-header.html" %}
 {% endblock %}
 
 {% block footer %}
-  {# BPOR-specific footer only #}
   {% include "bpor-branding/bpor-footer.html" %}
 {% endblock %}
 
