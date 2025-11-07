@@ -1,0 +1,34 @@
+{# Usage:
+   {% include "_partials/_builder-search.njk" with {
+     id: "condition-search",
+     label: "Add a health condition",
+     action: "/researcher/prescreener/conditions/recruit/add-listed",
+     listPath: "/data/conditions.json",
+     inputNameCode: "code",
+     inputNameLabel: "name"
+   } %}
+#}
+<div class="nhsuk-form-group">
+  <label class="nhsuk-label" for="{{ id }}">{{ label }}</label>
+  <div class="nhsuk-hint">Start typing the name of the item and select it from the list.</div>
+  <input class="nhsuk-input" id="{{ id }}-label" name="{{ inputNameLabel }}" autocomplete="off">
+  <input type="hidden" id="{{ id }}-code" name="{{ inputNameCode }}">
+  <details class="nhsuk-details nhsuk-u-margin-top-2">
+    <summary class="nhsuk-details__summary"><span class="nhsuk-details__summary-text">If the item is not listed</span></summary>
+    <div class="nhsuk-details__text">
+      <form action="{{ notListedAction }}" method="post" class="nhsuk-u-margin-bottom-0">
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="{{ id }}-custom">Add a non-listed item</label>
+          <input class="nhsuk-input" id="{{ id }}-custom" name="{{ customName }}">
+        </div>
+        <button class="nhsuk-button nhsuk-button--secondary" type="submit">Add condition</button>
+      </form>
+    </div>
+  </details>
+
+  <form action="{{ action }}" method="post" class="nhsuk-u-margin-top-2">
+    <input type="hidden" name="code" id="{{ id }}-hidden-code">
+    <input type="hidden" name="name" id="{{ id }}-hidden-label">
+    <button class="nhsuk-button nhsuk-button--secondary" type="submit">Add</button>
+  </form>
+</div>

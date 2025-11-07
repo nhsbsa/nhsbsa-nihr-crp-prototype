@@ -1,0 +1,32 @@
+{% set pageTitle = "Enter your study information" %}
+{% extends "researcher/prescreener-v1/layout.html" %}
+
+{% block innerContent %}
+<a class="nhsuk-back-link" href="/researcher/prescreener/start">Back</a>
+<h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
+
+<p class="nhsuk-body">
+  You should enter the details of the study you'd like to pre-screen volunteers for.
+</p>
+
+<form action="/researcher/prescreener/study-details" method="post" novalidate>
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="study-name">Study name</label>
+    <div class="nhsuk-hint">Enter the full name of your study.</div>
+    <input class="nhsuk-input" id="study-name" name="study[name]" value="{{ data.prescreener.study.name }}">
+  </div>
+
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="study-id">Study ID</label>
+    <div class="nhsuk-hint">For example, CP987982036.</div>
+    <input class="nhsuk-input" id="study-id" name="study[id]" value="{{ data.prescreener.study.id }}">
+  </div>
+
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="study-arm">Research arm or subset (optional)</label>
+    <input class="nhsuk-input" id="study-arm" name="study[arm]" value="{{ data.prescreener.study.arm }}">
+  </div>
+
+  <button class="nhsuk-button" type="submit">Save and continue</button>
+</form>
+{% endblock %}

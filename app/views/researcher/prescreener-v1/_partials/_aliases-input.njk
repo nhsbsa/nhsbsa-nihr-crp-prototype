@@ -1,0 +1,10 @@
+<form action="{{ aliasesAction }}" method="post" class="nhsuk-u-margin-top-2">
+  <input type="hidden" name="target" value="{{ target }}">
+  <input type="hidden" name="index" value="{{ index }}">
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="aliases-{{ target }}-{{ index }}">Other names (optional)</label>
+    <div class="nhsuk-hint">Add other names, separated by commas.</div>
+    <input class="nhsuk-input" id="aliases-{{ target }}-{{ index }}" name="aliases" value="{{ value }}">
+  </div>
+  <button class="nhsuk-button nhsuk-button--secondary" type="submit">Save other names</button>
+</form>

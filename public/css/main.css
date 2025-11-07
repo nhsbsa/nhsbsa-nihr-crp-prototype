@@ -9573,6 +9573,82 @@ b {
 
 
 
+/* Prototype-only styling for the listbox & chips.
+   Uses NHS blues and spacing.
+*/
+.crp-combobox {
+  position: relative;
+}
+
+.crp-combobox__dropdown {
+  position: relative; /* keep in flow */
+}
+
+.crp-combobox__listbox {
+  max-height: 22rem;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 2px solid #425563; /* nhsuk grey */
+  border-top-width: 0;
+}
+
+.crp-combobox__option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-top: 1px solid #d8dde0;
+  cursor: pointer;
+}
+
+.crp-combobox__option input[type=checkbox] {
+  pointer-events: none; /* click anywhere toggles */
+}
+
+.crp-combobox__option.is-active {
+  background: #005eb8; /* NHS blue highlight */
+  color: #ffffff;
+}
+
+.crp-combobox__option.is-active .crp-combobox__text {
+  color: inherit;
+}
+
+.crp-combobox__empty {
+  padding: 14px 16px;
+}
+
+.crp-selected__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.crp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid #b1b4b6;
+  border-radius: 4px;
+  background: #f0f4f5; /* nhsuk grey-5 */
+}
+
+.crp-chip__remove {
+  border: 0;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .crp-combobox__option {
+    transition: background-color 0.08s ease;
+  }
+}
 /* --- Simulated GOV.UK One Login visuals (kept within page content) --- */
 .govuk-sim-header {
   background: #0b0c0c; /* GOV.UK black */
