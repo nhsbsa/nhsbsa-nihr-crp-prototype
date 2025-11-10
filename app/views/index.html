@@ -1,183 +1,96 @@
-{% extends "layout.html" %}
+{% set pageTitle = "NIHR prototype handover" %}
+{% extends "researcher/prescreener-v1/layout.html" %}
 
-{% block pageTitle %}NIHR Prototype Hub — Current designs{% endblock %}
+{% block innerContent %}
 
-{% block content %}
-
-{# Server may pass featuredId. If not, default to submit-study. #}
-{% set featuredKey = featuredId or "submit-study" %}
-
-{# Current epics on the hub (unchanged) #}
-{% set epics = [
-  {
-    id: "admin-researcher-signup",
-    title: "Admin / Researcher sign up & login",
-    code: "",
-    status: "In progress",
-    updated: "02 Sep 2025",
-    summary: "Authentication and first-time onboarding for admins and researchers.",
-    href: "/epic/admin-researcher-signup",
-    prototypeUrl: "/prototypes/admin-researcher-signup/index",
-    notesUrl: "/docs/admin-researcher-signup",
-    jiraUrl: ""
-  },
-  {
-    id: "study-matching",
-    title: "Study matching – initial",
-    code: "CORP-175",
-    status: "In progress",
-    updated: "30 Aug 2025",
-    summary: "Initial matching flow from research needs to potential participants.",
-    href: "/prototypes/study-matching",
-    prototypeUrl: "/prototypes/study-matching",
-    notesUrl: "/docs/study-matching",
-    jiraUrl: "https://jira/browse/CORP-175"
-  },
-  {
-    id: "submit-study",
-    title: "Researcher: Submit a new study",
-    code: "CORP-200",
-    status: "In progress",
-    updated: "29 Aug 2025",
-    summary: "Create and submit study details for review and approval.",
-    href: "/prototypes/submit-study",
-    prototypeUrl: "/prototypes/submit-study",
-    notesUrl: "/docs/submit-study",
-    jiraUrl: "https://jira/browse/CORP-200"
-  },
-  {
-    id: "manage-requests",
-    title: "Admin: Manage study requests",
-    code: "CORP-198",
-    status: "In progress",
-    updated: "28 Aug 2025",
-    summary: "Triage, view and manage incoming study submissions.",
-    href: "/prototypes/manage-requests",
-    prototypeUrl: "/prototypes/manage-requests",
-    notesUrl: "/docs/manage-requests",
-    jiraUrl: "https://jira/browse/CORP-198"
-  },
-  {
-    id: "approve-requests",
-    title: "Admin: Approval of study requests",
-    code: "CORP-184",
-    status: "In progress",
-    updated: "28 Aug 2025",
-    summary: "Decisioning, approvals and outcomes for study submissions.",
-    href: "/prototypes/approve-requests",
-    prototypeUrl: "/prototypes/approve-requests",
-    notesUrl: "/docs/approve-requests",
-    jiraUrl: "https://jira/browse/CORP-184"
-  }
-] %}
-
-{# Pick featured epic safely; fall back to submit-study, then first item #}
-{% set featured = (epics | selectattr("id", "equalto", featuredKey) | list)[0]
-  or (epics | selectattr("id","equalto","submit-study") | list)[0]
-  or epics[0] %}
-
-<div class="nhsuk-u-reading-width">
-  <h1 class="nhsuk-heading-xl">NIHR Prototype Hub</h1>
-  <p class="nhsuk-body">
-    The single place to access the <strong>most current designs in progress</strong>. Open the latest prototypes and supporting notes.
+  <h1 class="nhsuk-heading-xl">NIHR prototype handover</h1>
+  <p class="nhsuk-body-l">
+    Use this page to jump into the main journeys for the NIHR Common Research Platform prototype.
   </p>
-</div>
 
-{# ======== SIMPLE “currently in progress” banner ======== #}
-<section class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-6">
-  <div class="nhsuk-card">
-    <div class="nhsuk-card__content">
-      <span class="nhsuk-tag">Currently in progress</span>
-      <h2 class="nhsuk-heading-m nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2">
-        {{ featured.title }}{% if featured.code %} <span class="nhsuk-hint">({{ featured.code }})</span>{% endif %}
-      </h2>
-      <p class="nhsuk-body nhsuk-u-margin-bottom-2">{{ featured.summary }}</p>
-      <p class="nhsuk-hint nhsuk-u-margin-bottom-3">
-        Status: <strong>{{ featured.status }}</strong> · Last updated:
-        <span class="js-last-updated" data-url="{{ featured.prototypeUrl }}">—</span>
-      </p>
-
-      {# CTA: for submit-study, send people into the actual journey; others open the prototype #}
-      <div class="nhsuk-button-group">
-        {% if featured.id == "submit-study" %}
-          <a class="nhsuk-button" href="/researcher/request/new">Continue</a>
-          <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Task list</a>
-          {% if featured.notesUrl %}<a class="nhsuk-link nhsuk-link--no-visited-state" href="{{ featured.notesUrl }}">Design notes</a>{% endif %}
-          {% if featured.jiraUrl %}<a class="nhsuk-link nhsuk-link--no-visited-state" href="{{ featured.jiraUrl }}">Jira</a>{% endif %}
-        {% else %}
-          <a class="nhsuk-button" href="{{ featured.href }}">Open latest prototype</a>
-          {% if featured.notesUrl %}<a class="nhsuk-link nhsuk-link--no-visited-state" href="{{ featured.notesUrl }}">Design notes</a>{% endif %}
-          {% if featured.jiraUrl %}<a class="nhsuk-link nhsuk-link--no-visited-state" href="{{ featured.jiraUrl }}">Jira</a>{% endif %}
-        {% endif %}
-      </div>
+  <!-- Panel 1: Study creation (full width) -->
+  <div class="nhsuk-grid-row nhsuk-u-margin-top-6">
+    <div class="nhsuk-grid-column-full">
+      <section class="nhsuk-card nhsuk-u-margin-bottom-6">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Study creation</h2>
+          <p class="nhsuk-body">
+            Set the core details for a new study before adding recruitment rules and other options.
+          </p>
+          <ul class="nhsuk-list nhsuk-list--bullet nhsuk-u-margin-bottom-4">
+            <li>Study name and ID</li>
+            <li>Study arm or grouping</li>
+          </ul>
+          <a class="nhsuk-button" href="/researcher/request/new">Start study creation</a>
+        </div>
+      </section>
     </div>
   </div>
-</section>
 
-{# ======== All epics kept, but simpler cards ======== #}
-<section aria-labelledby="all-epics">
-  <div class="nhsuk-u-reading-width">
-    <h2 id="all-epics" class="nhsuk-heading-l">All current epics</h2>
-    <p class="nhsuk-hint">These links go to the latest prototype pages for each epic.</p>
+  <!-- Panel 2: Pre-screener setup (full width) -->
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <section class="nhsuk-card nhsuk-u-margin-bottom-6">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Pre-screener (reseacher)</h2>
+          <p class="nhsuk-body">
+            Researcher: configure how volunteers are matched or excluded for your study.
+          </p>
+          <ul class="nhsuk-list nhsuk-list--bullet nhsuk-u-margin-bottom-4">
+            <li>Recruit or exclude by <strong>health condition</strong></li>
+            <li>Recruit or exclude by <strong>medication</strong></li>
+            <li>Add <strong>additional pre-screening questions</strong></li>
+          </ul>
+          <a class="nhsuk-button" href="/researcher/prescreener-v1/start">Start prescreener journey</a>
+
+          <details class="nhsuk-details nhsuk-u-margin-top-3">
+            <summary class="nhsuk-details__summary">
+              <span class="nhsuk-details__summary-text">Quick links (skip to sections)</span>
+            </summary>
+            <div class="nhsuk-details__text">
+              <ul class="nhsuk-list">
+                <li><a href="/researcher/prescreener-v1/conditions/recruit">Recruit by conditions</a></li>
+                <li><a href="/researcher/prescreener-v1/conditions/exclude">Exclude by conditions</a></li>
+                <li><a href="/researcher/prescreener-v1/meds/recruit">Recruit by medication</a></li>
+                <li><a href="/researcher/prescreener-v1/meds/exclude">Exclude by medication</a></li>
+                <li><a href="/researcher/prescreener-v1/questions">Additional questions</a></li>
+                <li><a href="/researcher/prescreener-v1/check-answers">Check answers</a></li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
   </div>
 
-  <ul class="nhsuk-grid-row nhsuk-card-group">
-    {% for epic in epics %}
-      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-        <div class="nhsuk-card nhsuk-card--clickable{% if epic.id == featured.id %} nhsuk-card--feature{% endif %}">
-          <div class="nhsuk-card__content">
-            <h3 class="nhsuk-card__heading nhsuk-heading-m">
-              <a class="nhsuk-card__link" href="{{ epic.href }}">
-                {{ epic.title }}{% if epic.code %} <span class="nhsuk-hint">({{ epic.code }})</span>{% endif %}
-              </a>
-            </h3>
-            <p class="nhsuk-body-s nhsuk-u-margin-bottom-1">{{ epic.summary }}</p>
-            <p class="nhsuk-hint nhsuk-u-margin-bottom-2">
-              Status: <strong>{{ epic.status }}</strong> · Last updated:
-              <span class="js-last-updated" data-url="{{ epic.prototypeUrl }}">—</span>
-            </p>
-            <ul class="nhsuk-list nhsuk-list--inline">
-              <li><a href="{{ epic.prototypeUrl }}">Prototype</a></li>
-              {% if epic.notesUrl %}<li><a href="{{ epic.notesUrl }}">Notes</a></li>{% endif %}
-              {% if epic.jiraUrl %}<li><a href="{{ epic.jiraUrl }}">Jira</a></li>{% endif %}
-            </ul>
-            {% if epic.id == featured.id %}
-              <span class="nhsuk-tag nhsuk-u-margin-top-2">In progress</span>
-            {% endif %}
-          </div>
+  <!-- Panel 3: Pre-screener admin (full width) -->
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <section class="nhsuk-card nhsuk-u-margin-bottom-6">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Pre-screener (admin)</h2>
+          <p class="nhsuk-body">
+            Admin: manage prescreener templates and operational tasks. Links to be added.
+          </p>
+          <ul class="nhsuk-list nhsuk-list--bullet nhsuk-u-margin-bottom-4">
+            <li>Journey 1</li>
+            <li>Journey 2</li>
+            <li>Journey 3</li>
+          </ul>
+          {# Replace with real admin URLs when ready #}
+          <a class="nhsuk-button" href="#" aria-disabled="true" role="link">
+            Admin journeys (coming soon)
+          </a>
         </div>
-      </li>
-    {% endfor %}
-  </ul>
-</section>
+      </section>
+    </div>
+  </div>
 
-<script>
-(function(){
-  function formatUK(d){
-    const dt = new Date(d);
-    if (isNaN(dt)) return '';
-    const day = String(dt.getDate()).padStart(2,'0');
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return day + ' ' + months[dt.getMonth()] + ' ' + dt.getFullYear();
-  }
-  function setFromDoc(el){ el.textContent = formatUK(document.lastModified || Date.now()); }
-  function setFromHead(el, url){
-    fetch(url, { method: 'HEAD' })
-      .then(r => {
-        const lm = r.headers.get('last-modified');
-        if (lm) el.textContent = formatUK(lm);
-        else setFromDoc(el);
-      })
-      .catch(() => setFromDoc(el));
-  }
-  document.addEventListener('DOMContentLoaded', function(){
-    document.querySelectorAll('.js-last-updated').forEach(function(el){
-      const url = el.getAttribute('data-url');
-      if (url) setFromHead(el, url);
-      else setFromDoc(el);
-    });
-  });
-})();
-</script>
+  <section class="nhsuk-inset-text">
+    <span class="nhsuk-u-visually-hidden">Information: </span>
+    <p>
+      Prototype only: data is stored in session and cleared on restart. No real patient data.
+    </p>
+  </section>
 
 {% endblock %}
