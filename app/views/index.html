@@ -1,9 +1,10 @@
 {% set pageTitle = "NIHR prototype handover" %}
 {% extends "researcher/prescreener-v1/layout.html" %}
+{% block skipLink %}{% endblock %}
 
 {% block innerContent %}
 
-  <h1 class="nhsuk-heading-xl">NIHR prototype handover</h1>
+  <h1 class="nhsuk-heading-xl">NIHR prototypes</h1>
   <p class="nhsuk-body-l">
     Use this page to jump into the main journeys for the NIHR Common Research Platform prototype.
   </p>
@@ -22,6 +23,19 @@
             <li>Study arm or grouping</li>
           </ul>
           <a class="nhsuk-button" href="/researcher/request/new">Start study creation</a>
+
+          <!-- Expander: design artefacts -->
+          <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-top-3">
+            <summary class="nhsuk-details__summary">
+              <span class="nhsuk-details__summary-text">Design artefacts</span>
+            </summary>
+            <div class="nhsuk-details__text">
+              <ul class="nhsuk-list nhsuk-list--bullet">
+                <li><a target="_blank" href="https://lucid.app/lucidspark/4a3972cd-e38b-4e75-9400-f82a33fcd769/edit?viewport_loc=-31671%2C-17267%2C95009%2C46218%2C0_0&invitationId=inv_588f937b-1e9a-4248-b06d-e300f3de1c97">Service map</a></li>
+                <li><a target="_blank" href="https://docs.google.com/document/d/1DpXNYvP0LDnq40Bh8my98873uKU8aj9arOy90WTydek/edit?usp=sharing">Co-design summary doc</a></li>
+              </ul>
+            </div>
+          </details>
         </div>
       </section>
     </div>
@@ -32,7 +46,7 @@
     <div class="nhsuk-grid-column-full">
       <section class="nhsuk-card nhsuk-u-margin-bottom-6">
         <div class="nhsuk-card__content">
-          <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Pre-screener (reseacher)</h2>
+          <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Pre-screener (researcher)</h2>
           <p class="nhsuk-body">
             Researcher: configure how volunteers are matched or excluded for your study.
           </p>
@@ -58,6 +72,25 @@
               </ul>
             </div>
           </details>
+
+          <!-- Expander: design artefacts -->
+          <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-top-3">
+            <summary class="nhsuk-details__summary">
+              <span class="nhsuk-details__summary-text">Design artefacts</span>
+            </summary>
+            <div class="nhsuk-details__text">
+              <ul class="nhsuk-list nhsuk-list--bullet">
+                <li><a target="_blank" href="https://nihr.atlassian.net/wiki/spaces/BBP/pages/1759936561/Pre-screener+Feature">Pre-screener summary doc</a></li>
+                <li><a target="_blank" href="https://nihr.atlassian.net/wiki/spaces/BBP/pages/1687388163/Pre-Screener+Analysis+BPOR+JDR+Integration#Key-Decisions">Background and decision log</a></li>
+                <li><a target="_blank" href="https://docs.google.com/document/d/1jsxnBpff22_1hItgRHlgA8wrIWCqbBV541jVATiUpFs/edit?usp=drive_link">DPIA</a></li>
+                <li><a target="_blank" href="https://docs.google.com/presentation/d/1uqIhGHVBO2aqdaO5jYXgeYYLgE8vBapu/edit?usp=sharing&ouid=104238242683029500124&rtpof=true&sd=true">UR playback</a></li>
+                <li><a target="_blank" href="https://lucid.app/lucidspark/ba17080b-6b18-465c-bb58-21ca2f08b848/edit?viewport_loc=13352%2C3805%2C8762%2C4262%2C0_0&invitationId=inv_6f7776fc-80c8-453e-9b6b-c9a9c0230b31">UR Analyst</a></li>
+                <li><a target="_blank" href="https://lucid.app/lucidspark/b396ab22-ab15-451e-be25-ab9683bde9ee/edit?page=0_0&invitationId=inv_0680b118-582b-4655-b398-43d788c9b7bc#">Mapping & Blueprints</a></li>
+                <li><a target="_blank" href="https://www.figma.com/design/jK5OzJmRhqAQzpmCWSGzZ4/Pre-screener-MVP?node-id=468-3907">Hi-fidelity designs (Figma)</a></li>
+                <li><a target="_blank" href="https://nihr.atlassian.net/wiki/spaces/BBP/database/1878786051">Design decision log</a></li>
+              </ul>
+            </div>
+          </details>
         </div>
       </section>
     </div>
@@ -77,10 +110,24 @@
             <li>Journey 2</li>
             <li>Journey 3</li>
           </ul>
-          {# Replace with real admin URLs when ready #}
           <a class="nhsuk-button" href="#" aria-disabled="true" role="link">
             Admin journeys (coming soon)
           </a>
+
+          <!-- Expander: design artefacts -->
+          <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-top-3">
+            <summary class="nhsuk-details__summary">
+              <span class="nhsuk-details__summary-text">Design artefacts</span>
+            </summary>
+            <div class="nhsuk-details__text">
+              <ul class="nhsuk-list nhsuk-list--bullet">
+                <li><a target="_blank" href="https://docs.google.com/presentation/d/1krJWSACRQL4M2LhW62bASYrFKSSZXe8y/edit?usp=sharing&ouid=104238242683029500124&rtpof=true&sd=true">UR playback</a></li>
+                <li><a href="#">Artefact 2</a></li>
+                <li><a href="#">Artefact 3</a></li>
+                <li><a href="#">Artefact 4</a></li>
+              </ul>
+            </div>
+          </details>
         </div>
       </section>
     </div>
