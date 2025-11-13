@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block pageTitle %}{% if pageTitle %}{{ pageTitle }} – {% endif %}NIHR{% endblock %}
+
+
+{% block content %}
+  <div class="nhsuk-width-container">
+    <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-two-thirds">
+          {% block innerContent %}{% endblock %}
+        </div>
+      </div>
+    </main>
+  </div>
+{% endblock %}

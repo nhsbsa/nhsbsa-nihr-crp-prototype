@@ -1,0 +1,6 @@
+[
+  { "code": "C0004096", "name": "Alzheimer's disease" },
+  { "code": "C0011849", "name": "Diabetes mellitus, type 2" },
+  { "code": "C0017168", "name": "Hypertension" },
+  { "code": "C0034065", "name": "Psychosis" }
+]

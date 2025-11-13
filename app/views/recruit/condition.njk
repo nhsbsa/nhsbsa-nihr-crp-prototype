@@ -1,0 +1,92 @@
+{% extends "layouts/main.html" %}
+{% set title = pageTitle or "Add a health condition" %}
+
+{% block pageTitle %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+
+    {% if error %}
+    <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+      <h2 class="nhsuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+      <div class="nhsuk-error-summary__body">
+        <ul class="nhsuk-list nhsuk-error-summary__list">
+          <li><a href="#condition-combobox">{{ error }}</a></li>
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    <h1 class="nhsuk-heading-xl">Add a health condition</h1>
+    <p class="nhsuk-body-l">Start typing the name of the condition you'd like to add and select it from the list.</p>
+
+    <form method="post" novalidate data-auto-store="false">
+      <input type="hidden" name="_csrf" value="{{ csrfToken | default('') }}"/>
+
+      <div class="nhsuk-form-group {% if error %}nhsuk-form-group--error{% endif %}">
+        <label class="nhsuk-label" for="condition-combobox">Condition</label>
+        {% if error %}
+          <span class="nhsuk-error-message" id="condition-combobox-error">
+            <span class="nhsuk-u-visually-hidden">Error:</span> {{ error }}
+          </span>
+        {% endif %}
+
+        <!-- Combobox -->
+        <div class="crp-combobox" data-module="crp-combobox" data-source="session">
+          <input
+            id="condition-combobox"
+            class="nhsuk-input crp-combobox__input"
+            type="text"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-owns="condition-listbox"
+            aria-describedby="{% if error %}condition-combobox-error{% endif %}"
+            autocomplete="off"
+          >
+
+          <div class="crp-combobox__dropdown" id="condition-dropdown">
+            <ul id="condition-listbox"
+                class="crp-combobox__listbox"
+                role="listbox"
+                aria-label="Health conditions">
+              {# JS will populate options #}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected chips -->
+      <div class="crp-selected nhsuk-u-margin-top-4" aria-live="polite">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">
+          Selected conditions (<span id="selected-count">{{ data.conditions | length }}</span>)
+        </h2>
+        <div id="selected-chips" class="crp-selected__chips">
+          {# JS renders chips from session #}
+        </div>
+      </div>
+
+      {# Hidden checkboxes to submit selections with the form #}
+      <div id="selected-hidden"></div>
+
+      <div class="nhsuk-u-margin-top-6">
+        <button type="submit" class="nhsuk-button" data-module="nhsuk-button">Continue</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block pageScripts %}
+<script>
+  window.CRPDATA = {
+    all: {{ data._allConditions | dump | safe }},
+    selected: {{ data.conditions | dump | safe }}
+  }
+</script>
+<script src="/public/javascripts/condition-combobox.js"></script>
+{% endblock %}

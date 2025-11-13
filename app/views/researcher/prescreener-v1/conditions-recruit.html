@@ -1,0 +1,196 @@
+{% set pageTitle = "Recruit volunteers by health condition" %}
+{% extends "researcher/prescreener-v1/layout.html" %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="/sass/condition-multiselect.css">
+{% endblock %}
+
+{% block innerContent %}
+
+  <p class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" href="/researcher/prescreener/choose-methods">
+      <span class="nhsuk-back-link__label">Go back</span>
+    </a>
+  </p>
+
+  <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
+
+  <p class="nhsuk-body-l">You can search for any health conditions volunteers must have to take part.</p>
+  <p class="nhsuk-body">The health conditions in our database follow UK naming standards.</p>
+
+  <h2 class="nhsuk-heading-m nhsuk-u-margin-top-6">Add a health condition</h2>
+  <p class="nhsuk-hint">Start typing the name of the condition you'd like to add and select it from the list.</p>
+
+  <form method="post" action="/researcher/prescreener/conditions/recruit/continue" novalidate>
+    <!-- Listed conditions (combobox) -->
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="condition-recruit-search">Condition</label>
+      <div class="crp-combobox" data-module="crp-combobox">
+        <input
+          id="condition-recruit-search"
+          class="nhsuk-input crp-combobox__input"
+          type="text"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-owns="condition-recruit-listbox"
+          autocomplete="off">
+        <div class="crp-combobox__dropdown" id="condition-recruit-dropdown" hidden>
+          <ul
+            id="condition-recruit-listbox"
+            class="crp-combobox__listbox"
+            role="listbox"
+            aria-label="Health conditions"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected listed conditions (card style) -->
+    <div class="crp-panel nhsuk-u-margin-top-4" aria-live="polite">
+      <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
+        <strong>Selected conditions (<span id="selected-count">0</span>)</strong>
+      </h3>
+      <div id="selected-chips" class="crp-selected__chips"></div>
+      <p id="selected-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">No conditions added.</p>
+    </div>
+
+    <!-- Hidden inputs for listed conditions -->
+    <div id="selected-hidden"></div>
+
+    <!-- Non-listed condition section -->
+    <details class="nhsuk-details nhsuk-u-margin-top-6" id="nonlisted">
+      <summary class="nhsuk-details__summary">
+        <span class="nhsuk-details__summary-text">If the condition is not listed</span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <h2 class="nhsuk-heading-m">Add a non-listed condition</h2>
+        <p class="nhsuk-hint">
+          If a condition is not listed in our database, you can add it here.
+          Enter the condition name exactly as you'd like it to appear to volunteers.
+        </p>
+
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="nonlisted-input">Condition name</label>
+          <input class="nhsuk-input" id="nonlisted-input" type="text" autocomplete="off">
+        </div>
+
+        <button class="nhsuk-button nhsuk-button--secondary" type="button" id="nonlisted-add">
+          Add condition
+        </button>
+
+        <div class="crp-panel nhsuk-u-margin-top-4" aria-live="polite">
+          <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
+            <strong>Selected non-listed conditions (<span id="nonlisted-count">0</span>)</strong>
+          </h3>
+          <div id="nonlisted-chips" class="crp-selected__chips"></div>
+          <p id="nonlisted-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">No conditions added.</p>
+        </div>
+
+        <!-- Hidden inputs for custom conditions -->
+        <div id="nonlisted-hidden"></div>
+      </div>
+    </details>
+
+    <button type="submit" class="nhsuk-button nhsuk-u-margin-top-6">Save and continue</button>
+  </form>
+{% endblock %}
+
+{% block pageScripts %}
+  {{ super() }}
+
+  <script>
+    // Seed from session so back/forward keeps selections
+    (function () {
+      var root = (typeof data !== 'undefined' ? data : {}) || {};
+      var recruit = (((root.prescreener || {}).conditions || {}).recruit || {});
+      var listed = Array.isArray(recruit.listed) ? recruit.listed : [];
+      var custom = Array.isArray(recruit.custom) ? recruit.custom : [];
+      window.CRPDATA = {
+        selected: listed.map(function (i) { return i && i.name; }).filter(Boolean),
+        customSelected: custom.filter(Boolean)
+      };
+    }());
+  </script>
+
+  <script src="/js/prescreener/condition-multiselect.js"></script>
+
+  <script>
+    // Listed (combobox)
+    window.initConditionMultiselect({
+      input: '#condition-recruit-search',
+      listbox: '#condition-recruit-listbox',
+      dropdown: '#condition-recruit-dropdown',
+      chips: '#selected-chips',
+      hidden: '#selected-hidden',
+      count: '#selected-count',
+      source: '/data/conditions.json',
+      onChange: function (count) {
+        var empty = document.getElementById('selected-empty');
+        if (empty) empty.style.display = count > 0 ? 'none' : '';
+      }
+    });
+
+    // Non-listed
+    (function () {
+      var input = document.getElementById('nonlisted-input');
+      var addBtn = document.getElementById('nonlisted-add');
+      var chips = document.getElementById('nonlisted-chips');
+      var hidden = document.getElementById('nonlisted-hidden');
+      var countEl = document.getElementById('nonlisted-count');
+      var empty = document.getElementById('nonlisted-empty');
+      var items = (window.CRPDATA && Array.isArray(window.CRPDATA.customSelected))
+        ? window.CRPDATA.customSelected.slice()
+        : [];
+
+      function render() {
+        chips.innerHTML = '';
+        hidden.innerHTML = '';
+        items.forEach(function (name, idx) {
+          var chip = document.createElement('span');
+          chip.className = 'crp-chip';
+          chip.textContent = name;
+
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'crp-chip__remove';
+          btn.setAttribute('aria-label', 'Remove ' + name);
+          btn.innerHTML = '&times;';
+          btn.addEventListener('click', function () {
+            items.splice(idx, 1);
+            render();
+            input.focus();
+          });
+
+          chip.appendChild(btn);
+          chips.appendChild(chip);
+
+          var h = document.createElement('input');
+          h.type = 'hidden';
+          h.name = 'customConditions';
+          h.value = name;
+          hidden.appendChild(h);
+        });
+
+        countEl.textContent = items.length;
+        empty.style.display = items.length ? 'none' : '';
+      }
+
+      function addCurrent() {
+        var val = (input.value || '').trim();
+        if (!val) return;
+        var exists = items.some(function (x) { return x.toLowerCase() === val.toLowerCase(); });
+        if (!exists) items.push(val);
+        input.value = '';
+        render();
+      }
+
+      addBtn.addEventListener('click', addCurrent);
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); addCurrent(); }
+      });
+
+      render();
+    }());
+  </script>
+{% endblock %}

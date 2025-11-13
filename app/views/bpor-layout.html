@@ -1,27 +1,24 @@
-<!--
-  This is the main layout where you can:
-    - change the header and footer
-    - add custom CSS and JavaScript
--->
-
-<!-- Extends the prototype kit template which in turn extends the NHS.UK frontend template -->
+<!-- app/views/bpor-layout.html -->
 {% extends "prototype-kit-template.njk" %}
 
 {% block head %}
-  <!-- Add your custom CSS or Sass in /app/assets/sass/main.scss -->
   <link href="/css/main.css" rel="stylesheet">
 {% endblock %}
 
-<!-- Updated header: use NIHR header include instead of NHS header macro -->
+{% block skipLink %}
+  {# Keep an accessible skip link #}
+  <!-- <a class="govuk-skip-link" href="#main-content">Skip to main content</a> -->
+{% endblock %}
+
 {% block header %}
+  {# BPOR-specific header only #}
   {% include "bpor-branding/bpor-header.html" %}
 {% endblock %}
 
-<!-- Keep your existing footer -->
 {% block footer %}
+  {# BPOR-specific footer only #}
   {% include "bpor-branding/bpor-footer.html" %}
 {% endblock %}
-
 
 {% block bodyEnd %}
   <script src="/nhsuk-frontend/nhsuk-frontend.min.js"></script>
@@ -32,9 +29,6 @@
       }
     } catch (e) {}
   </script>
-  {% block scripts %}
-    {% include "includes/scripts.html" %}
-    {% block pageScripts %}{% endblock %}
-  {% endblock %}
+  {% include "includes/scripts.html" %}
+  {% block pageScripts %}{% endblock %}
 {% endblock %}
-

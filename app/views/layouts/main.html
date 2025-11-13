@@ -1,0 +1,48 @@
+{# Base page layout for this prototype #}
+{# Uses the NHS.UK Prototype Kit layout if available #}
+{% extends "layout.html" ignore missing %}
+{% block pageTitle %}{{ title or "Prototype" }}{% endblock %}
+
+{# If your project uses the NHS.UK kit structure, the base is "layout.njk".
+   If not, fall back to a minimal HTML shell below. #}
+{% block content %}{% endblock %}
+{% block head %}{% endblock %}
+{% block pageScripts %}{% endblock %}
+
+{% if not super() %}
+  {# Fallback minimal shell if "layout.njk" doesn't exist #}
+  {% set _title = title or "Prototype" %}
+  <!doctype html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ _title }}</title>
+    <link rel="stylesheet" href="/stylesheets/application.css">
+    {% block head %}{% endblock %}
+  </head>
+  <body class="app-body">
+    <header class="nhsuk-header" role="banner">
+      <div class="nhsuk-width-container">
+        <div class="nhsuk-header__content">
+          <a class="nhsuk-header__link nhsuk-header__service-name" href="/">CRP prototype</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="nhsuk-width-container" id="maincontent" role="main">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="nhsuk-footer" role="contentinfo">
+      <div class="nhsuk-width-container">
+        <p class="nhsuk-u-secondary-text-color nhsuk-body-s">Prototype only</p>
+      </div>
+    </footer>
+
+    <script src="/javascripts/application.js"></script>
+    {% block pageScripts %}{% endblock %}
+  </body>
+  </html>
+{% endif %}

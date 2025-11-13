@@ -1,0 +1,218 @@
+{% set pageTitle = "Check your answers" %}
+{% extends "researcher/prescreener-v1/layout.html" %}
+
+{% block innerContent %}
+<a class="nhsuk-back-link" href="/researcher/prescreener/choose-methods">Go back</a>
+<h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
+
+{# =========================
+   Your study information
+   ========================= #}
+<h2 class="nhsuk-heading-m">Your study information</h2>
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Study name</dt>
+    <dd class="nhsuk-summary-list__value">{{ data.prescreener.study.name or "" }}</dd>
+    <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/study-details">Change</a></dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Study ID</dt>
+    <dd class="nhsuk-summary-list__value">{{ data.prescreener.study.id or "" }}</dd>
+    <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/study-details">Change</a></dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Research arm or subset</dt>
+    <dd class="nhsuk-summary-list__value">{{ data.prescreener.study.arm or "" }}</dd>
+    <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/study-details">Change</a></dd>
+  </div>
+</dl>
+
+{# ============================================
+   Choose how you'd like to pre-screen volunteers
+   ============================================ #}
+<h2 class="nhsuk-heading-m">Choose how you'd like to pre-screen volunteers</h2>
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Question types selected</dt>
+    <dd class="nhsuk-summary-list__value">
+      {% set anyTypes = false %}
+      {% if data.prescreener.choices.recruitByConditions %}
+        <p class="nhsuk-u-margin-bottom-1">Recruit volunteers by health condition</p>
+        {% set anyTypes = true %}
+      {% endif %}
+      {% if data.prescreener.choices.excludeByConditions %}
+        <p class="nhsuk-u-margin-bottom-1">Exclude volunteers by health condition</p>
+        {% set anyTypes = true %}
+      {% endif %}
+      {% if data.prescreener.choices.recruitByMedication %}
+        <p class="nhsuk-u-margin-bottom-1">Recruit volunteers by the medication they take</p>
+        {% set anyTypes = true %}
+      {% endif %}
+      {% if data.prescreener.choices.excludeByMedication %}
+        <p class="nhsuk-u-margin-bottom-1">Exclude volunteers by the medication they take</p>
+        {% set anyTypes = true %}
+      {% endif %}
+      {% if data.prescreener.choices.additionalQuestions %}
+        <p class="nhsuk-u-margin-bottom-0">Add additional pre-screening questions</p>
+        {% set anyTypes = true %}
+      {% endif %}
+      {% if not anyTypes %}
+        <p class="nhsuk-u-margin-bottom-0">None</p>
+      {% endif %}
+    </dd>
+    <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/choose-methods">Change</a></dd>
+  </div>
+</dl>
+
+{# =================
+   Health conditions
+   ================= #}
+<h2 class="nhsuk-heading-m">Health conditions</h2>
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Recruit volunteers by health condition</dt>
+    <dd class="nhsuk-summary-list__value">
+      {% set shown = false %}
+      {% for item in data.prescreener.conditions.recruit.listed %}
+        <p class="nhsuk-u-margin-bottom-1">{{ item.name }}</p>
+        {% set shown = true %}
+      {% endfor %}
+      {% for item in data.prescreener.conditions.recruit.custom %}
+        <p class="nhsuk-u-margin-bottom-1">{{ item }}</p>
+        {% set shown = true %}
+      {% endfor %}
+      {% if not shown %}<p class="nhsuk-u-margin-bottom-0">None</p>{% endif %}
+    </dd>
+    <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/conditions/recruit">Change</a></dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Exclude volunteers by health condition</dt>
+    <dd class="nhsuk-summary-list__value">
+      {% set shownE = false %}
+      {% for item in data.prescreener.conditions.exclude.listed %}
+        <p class="nhsuk-u-margin-bottom-1">{{ item.name }}</p>
+        {% set shownE = true %}
+      {% endfor %}
+      {% for item in data.prescreener.conditions.exclude.custom %}
+        <p class="nhsuk-u-margin-bottom-1">{{ item }}</p>
+        {% set shownE = true %}
+      {% endfor %}
+      {% if not shownE %}<p class="nhsuk-u-margin-bottom-0">None</p>{% endif %}
+    </dd>
+    <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/conditions/exclude">Change</a></dd>
+  </div>
+</dl>
+
+{# ===========
+   Medication
+   =========== #}
+<h2 class="nhsuk-heading-m">Medication</h2>
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Recruit volunteers by the medication they take</dt>
+    <dd class="nhsuk-summary-list__value">
+      {% set hasMr = false %}
+      {# listed meds with optional aliases #}
+      {% for med in data.prescreener.meds.recruit.listed %}
+        <p class="nhsuk-u-margin-bottom-1">
+          {{ med.name }}
+          {% set aliasCount = med.aliases and med.aliases.length or 0 %}
+          {% if aliasCount %}
+            <br><span>({% for a in med.aliases %}{% if not loop.first %}, {% endif %}{{ a }}{% endfor %})</span>
+          {% endif %}
+        </p>
+        {% set hasMr = true %}
+      {% endfor %}
+      {# custom meds with optional aliases #}
+      {% for med in data.prescreener.meds.recruit.custom %}
+        <p class="nhsuk-u-margin-bottom-1">
+          <em>{{ med.name }}</em>
+          {% set aliasCount2 = med.aliases and med.aliases.length or 0 %}
+          {% if aliasCount2 %}
+            <br><em>({% for a in med.aliases %}{% if not loop.first %}, {% endif %}{{ a }}{% endfor %})</em>
+          {% endif %}
+        </p>
+        {% set hasMr = true %}
+      {% endfor %}
+      {% if not hasMr %}<p class="nhsuk-u-margin-bottom-0">None</p>{% endif %}
+    </dd>
+    <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/meds/recruit">Change</a></dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">Exclude volunteers by the medication they take</dt>
+    <dd class="nhsuk-summary-list__value">
+      {% set hasMe = false %}
+      {% for med in data.prescreener.meds.exclude.listed %}
+        <p class="nhsuk-u-margin-bottom-1">
+          {{ med.name }}
+          {% set aliasCount = med.aliases and med.aliases.length or 0 %}
+          {% if aliasCount %}
+            <br><span>({% for a in med.aliases %}{% if not loop.first %}, {% endif %}{{ a }}{% endfor %})</span>
+          {% endif %}
+        </p>
+        {% set hasMe = true %}
+      {% endfor %}
+      {% for med in data.prescreener.meds.exclude.custom %}
+        <p class="nhsuk-u-margin-bottom-1">
+          <em>{{ med.name }}</em>
+          {% set aliasCount2 = med.aliases and med.aliases.length or 0 %}
+          {% if aliasCount2 %}
+            <br><em>({% for a in med.aliases %}{% if not loop.first %}, {% endif %}{{ a }}{% endfor %})</em>
+          {% endif %}
+        </p>
+        {% set hasMe = true %}
+      {% endfor %}
+      {% if not hasMe %}<p class="nhsuk-u-margin-bottom-0">None</p>{% endif %}
+    </dd>
+    <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/meds/exclude">Change</a></dd>
+  </div>
+</dl>
+
+{# =================================
+   Additional pre-screening questions
+   ================================= #}
+<h2 class="nhsuk-heading-m">Additional pre-screening questions</h2>
+{% if data.prescreener.choices.additionalQuestions %}
+  {% if data.prescreener.extraQuestions and data.prescreener.extraQuestions.length %}
+    <dl class="nhsuk-summary-list">
+      {% for q in data.prescreener.extraQuestions %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Question {{ loop.index }}</dt>
+          <dd class="nhsuk-summary-list__value">
+            {{ q.text or "" }}
+          </dd>
+          <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/questions">Change</a></dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Matching answer</dt>
+          <dd class="nhsuk-summary-list__value">{{ q.matchingAnswer or "" }}</dd>
+          <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/questions">Change</a></dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Will this question exclude volunteers?</dt>
+          <dd class="nhsuk-summary-list__value">{{ q.excludes or "" }}</dd>
+          <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/questions">Change</a></dd>
+        </div>
+        {% if q.hardFail is not none %}
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Is this a hard fail</dt>
+          <dd class="nhsuk-summary-list__value">{{ q.hardFail }}</dd>
+          <dd class="nhsuk-summary-list__actions"><a href="/researcher/prescreener/questions">Change</a></dd>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </dl>
+  {% else %}
+    <p class="nhsuk-body">No additional questions.</p>
+  {% endif %}
+{% else %}
+  <p class="nhsuk-body">No additional questions.</p>
+{% endif %}
+
+<form action="/researcher/prescreener/submit" method="post" class="nhsuk-u-margin-top-6">
+  <button class="nhsuk-button" type="submit">Submit</button>
+  <a class="nhsuk-button nhsuk-button--secondary" role="button" href="/researcher/prescreener/volunteer-view">Volunteer view</a>
+</form>
+{% endblock %}

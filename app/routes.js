@@ -72,4 +72,10 @@ router.get('/', (req, res, next) => {
   return res.redirect('/admin')
 })
 
+
+// Mount prescreener journey
+require('./routes-prescreener')(router);
+
+safeMount('./routes-data', 'routes-data')
+
 module.exports = router

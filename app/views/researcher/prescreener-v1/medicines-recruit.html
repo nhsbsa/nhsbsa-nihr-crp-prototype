@@ -1,0 +1,271 @@
+{% set pageTitle = "Recruit volunteers by the medication they take" %}
+{% extends "researcher/prescreener-v1/layout.html" %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="/sass/condition-multiselect.css">
+{% endblock %}
+
+{% block innerContent %}
+
+  <p class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" href="/researcher/prescreener/choose-methods">
+      <span class="nhsuk-back-link__label">Go back</span>
+    </a>
+  </p>
+
+  <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
+
+  <p class="nhsuk-body-l">
+    You can specify the <strong>medication</strong> a volunteer needs to be taking to take part.
+  </p>
+  <p class="nhsuk-body">
+    The medicines in our database follow UK-approved names. You can also add <strong>additional names</strong>
+    people might use for a medicine.
+  </p>
+
+  <h2 class="nhsuk-heading-m nhsuk-u-margin-top-6">Add medication volunteers must be taking</h2>
+  <p class="nhsuk-hint">
+    Start typing the name of the medication you'd like to add and select it from the list.
+  </p>
+
+  <form method="post" action="/researcher/prescreener/meds/recruit/continue" novalidate>
+
+    <!-- Listed medicines (combobox) -->
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="meds-recruit-search">Select medication</label>
+      <div class="crp-combobox" data-module="crp-combobox">
+        <input
+          id="meds-recruit-search"
+          class="nhsuk-input crp-combobox__input"
+          type="text"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-owns="meds-recruit-listbox"
+          autocomplete="off">
+        <div class="crp-combobox__dropdown" id="meds-recruit-dropdown" hidden>
+          <ul
+            id="meds-recruit-listbox"
+            class="crp-combobox__listbox"
+            role="listbox"
+            aria-label="Medicines"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected listed medicines (white card) -->
+    <div class="crp-panel nhsuk-u-margin-top-4" aria-live="polite">
+      <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
+        <strong>Selected medicine(s) (<span id="meds-selected-count">0</span>)</strong>
+      </h3>
+      <div id="meds-selected-chips" class="crp-selected__chips"></div>
+      <p id="meds-selected-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">No medicines added.</p>
+    </div>
+
+    <!-- Hidden inputs for listed medicines -->
+    <div id="meds-selected-hidden"></div>
+
+    <!-- Alias editors for each listed medicine -->
+    <div id="meds-aliases" class="nhsuk-u-margin-top-6"></div>
+
+    <!-- Non-listed medicine section -->
+    <details class="nhsuk-details nhsuk-u-margin-top-6" id="nonlisted-meds">
+      <summary class="nhsuk-details__summary">
+        <span class="nhsuk-details__summary-text">If the medicine is not listed</span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <h2 class="nhsuk-heading-m">Add a non-listed medication</h2>
+        <p class="nhsuk-hint">
+          If a medication is not listed in our database, you can add it here.
+          Enter the medicine exactly as you want it to appear to volunteers.
+        </p>
+
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="nonlisted-med-input">Medicine name</label>
+          <input class="nhsuk-input" id="nonlisted-med-input" type="text" autocomplete="off">
+        </div>
+
+        <button class="nhsuk-button nhsuk-button--secondary" type="button" id="nonlisted-med-add">
+          Add medicine
+        </button>
+
+        <div class="crp-panel nhsuk-u-margin-top-4" aria-live="polite">
+          <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
+            <strong>Selected non-listed medicine(s) (<span id="nonlisted-med-count">0</span>)</strong>
+          </h3>
+          <div id="nonlisted-med-chips" class="crp-selected__chips"></div>
+          <p id="nonlisted-med-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">No medicines added.</p>
+        </div>
+
+        <!-- Hidden inputs for custom medicines -->
+        <div id="nonlisted-med-hidden"></div>
+
+        <!-- Alias editors for each custom medicine -->
+        <div id="custom-aliases" class="nhsuk-u-margin-top-4"></div>
+      </div>
+    </details>
+
+    <button type="submit" class="nhsuk-button nhsuk-u-margin-top-6">Save and continue</button>
+  </form>
+{% endblock %}
+
+{% block pageScripts %}
+  {{ super() }}
+
+  <script>
+    // Seed from session so back/forward keeps selections and aliases
+    (function () {
+      var root = (typeof data !== 'undefined' ? data : {}) || {};
+      var bucket = (((root.prescreener || {}).meds || {}).recruit || {});
+      var listed = Array.isArray(bucket.listed) ? bucket.listed : [];
+      var custom = Array.isArray(bucket.custom) ? bucket.custom : [];
+      var customAliases = bucket.customAliases || {};
+      window.CRPDATA_MEDS = {
+        selected: listed.map(function (i) { return i && i.name; }).filter(Boolean),
+        aliases: listed.reduce(function (acc, i) {
+          if (i && i.name) acc[i.name] = Array.isArray(i.aliases) ? i.aliases.join(', ') : '';
+          return acc;
+        }, {}),
+        customSelected: custom.filter(Boolean),
+        customAliases: custom.reduce(function (acc, name) {
+          acc[name] = Array.isArray(customAliases[name]) ? customAliases[name].join(', ') : '';
+          return acc;
+        }, {})
+      };
+    }());
+  </script>
+
+  <script src="/js/prescreener/condition-multiselect.js"></script>
+
+  <script>
+    // Render alias textarea for a medicine
+    function renderAliasEditor(container, name, value, isCustom) {
+      var wrap = document.createElement('div');
+      wrap.className = 'nhsuk-form-group';
+      var id = (isCustom ? 'custom' : 'listed') + '-alias-' + name.replace(/\s+/g,'-').toLowerCase();
+
+      var label = document.createElement('label');
+      label.className = 'nhsuk-label';
+      label.setAttribute('for', id);
+      label.textContent = 'Add other names for ' + name + ' (optional)';
+
+      var hint = document.createElement('div');
+      hint.className = 'nhsuk-hint';
+      hint.textContent = 'For example, brand names or common spellings. Separate by commas (e.g. brand A, brand B).';
+
+      var input = document.createElement('input');
+      input.className = 'nhsuk-input';
+      input.type = 'text';
+      input.id = id;
+      input.name = (isCustom ? 'customAliases[' : 'aliases[') + name + ']';
+      input.autocomplete = 'off';
+      if (value) input.value = value;
+
+      wrap.appendChild(label);
+      wrap.appendChild(hint);
+      wrap.appendChild(input);
+      container.appendChild(wrap);
+    }
+
+    // LISTED medicines combobox
+    (function () {
+      var seed = (window.CRPDATA_MEDS && window.CRPDATA_MEDS.selected) || [];
+      var aliasSeed = (window.CRPDATA_MEDS && window.CRPDATA_MEDS.aliases) || {};
+
+      window.initConditionMultiselect({
+        input:   '#meds-recruit-search',
+        listbox: '#meds-recruit-listbox',
+        dropdown:'#meds-recruit-dropdown',
+        chips:   '#meds-selected-chips',
+        hidden:  '#meds-selected-hidden',
+        count:   '#meds-selected-count',
+        source:  '/data/medicines.json',
+        seed:    seed,
+        onChange: function (count, names) {
+          var empty = document.getElementById('meds-selected-empty');
+          if (empty) empty.style.display = count > 0 ? 'none' : '';
+
+          // Rebuild alias editors for listed meds
+          var holder = document.getElementById('meds-aliases');
+          holder.innerHTML = '';
+          names.forEach(function (n) {
+            renderAliasEditor(holder, n, aliasSeed[n] || '', false);
+          });
+        }
+      });
+    }());
+
+    // NON-LISTED medicines
+    (function () {
+      var input = document.getElementById('nonlisted-med-input');
+      var addBtn = document.getElementById('nonlisted-med-add');
+      var chips  = document.getElementById('nonlisted-med-chips');
+      var hidden = document.getElementById('nonlisted-med-hidden');
+      var countEl= document.getElementById('nonlisted-med-count');
+      var empty  = document.getElementById('nonlisted-med-empty');
+      var aliasHolder = document.getElementById('custom-aliases');
+
+      var items = (window.CRPDATA_MEDS && Array.isArray(window.CRPDATA_MEDS.customSelected))
+        ? window.CRPDATA_MEDS.customSelected.slice()
+        : [];
+      var aliasSeed = (window.CRPDATA_MEDS && window.CRPDATA_MEDS.customAliases) || {};
+
+      function render() {
+        chips.innerHTML = '';
+        hidden.innerHTML = '';
+        aliasHolder.innerHTML = '';
+
+        items.forEach(function (name, idx) {
+          // chip
+          var chip = document.createElement('span');
+          chip.className = 'crp-chip';
+          chip.textContent = name;
+
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'crp-chip__remove';
+          btn.setAttribute('aria-label', 'Remove ' + name);
+          btn.innerHTML = '&times;';
+          btn.addEventListener('click', function () {
+            items.splice(idx, 1);
+            render();
+            input.focus();
+          });
+
+          chip.appendChild(btn);
+          chips.appendChild(chip);
+
+          // hidden input for POST
+          var h = document.createElement('input');
+          h.type = 'hidden';
+          h.name = 'customMedicines';
+          h.value = name;
+          hidden.appendChild(h);
+
+          // alias editor for this custom medicine
+          renderAliasEditor(aliasHolder, name, aliasSeed[name] || '', true);
+        });
+
+        countEl.textContent = items.length;
+        empty.style.display = items.length ? 'none' : '';
+      }
+
+      function addCurrent() {
+        var val = (input.value || '').trim();
+        if (!val) return;
+        var exists = items.some(function (x) { return x.toLowerCase() === val.toLowerCase(); });
+        if (!exists) items.push(val);
+        input.value = '';
+        render();
+      }
+
+      addBtn.addEventListener('click', addCurrent);
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); addCurrent(); }
+      });
+
+      render();
+    }());
+  </script>
+{% endblock %}

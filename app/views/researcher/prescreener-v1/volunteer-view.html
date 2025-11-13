@@ -1,0 +1,53 @@
+{% set pageTitle = "Volunteer view" %}
+{% extends "researcher/prescreener-v1/layout.html" %}
+
+{% block innerContent %}
+<a class="nhsuk-back-link" href="/researcher/prescreener/check-answers">Back</a>
+<h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
+
+<h2 class="nhsuk-heading-m">Health conditions</h2>
+<table class="nhsuk-table">
+  <thead class="nhsuk-table__head">
+    <tr class="nhsuk-table__row">
+      <th class="nhsuk-table__header">Question</th>
+      <th class="nhsuk-table__header">Matching answer</th>
+    </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+    {% if data.prescreener.choices.recruitByConditions and (data.prescreener.conditions.recruit.listed.length or data.prescreener.conditions.recruit.custom.length) %}
+      <tr class="nhsuk-table__row">
+        <td class="nhsuk-table__cell">Do you have any of the following conditions?</td>
+        <td class="nhsuk-table__cell">Yes</td>
+      </tr>
+    {% endif %}
+    {% if data.prescreener.choices.excludeByConditions and (data.prescreener.conditions.exclude.listed.length or data.prescreener.conditions.exclude.custom.length) %}
+      <tr class="nhsuk-table__row">
+        <td class="nhsuk-table__cell">Do you have any of these conditions?</td>
+        <td class="nhsuk-table__cell">No</td>
+      </tr>
+    {% endif %}
+  </tbody>
+</table>
+
+{% if data.prescreener.choices.additionalQuestions and data.prescreener.extraQuestions.length %}
+<h2 class="nhsuk-heading-m">Additional questions</h2>
+<table class="nhsuk-table">
+  <thead class="nhsuk-table__head">
+    <tr class="nhsuk-table__row">
+      <th class="nhsuk-table__header">Question</th>
+      <th class="nhsuk-table__header">Matching answer</th>
+    </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+    {% for q in data.prescreener.extraQuestions %}
+    <tr class="nhsuk-table__row">
+      <td class="nhsuk-table__cell">{{ q.text }}</td>
+      <td class="nhsuk-table__cell">{{ q.matchingAnswer | capitalize }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<a class="nhsuk-button nhsuk-button--secondary" role="button" href="/researcher/prescreener/check-answers">Return to editor</a>
+{% endblock %}

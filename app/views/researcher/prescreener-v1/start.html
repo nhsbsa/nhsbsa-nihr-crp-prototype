@@ -1,0 +1,44 @@
+{% set pageTitle = "Create a pre-screener for your study" %}
+{% extends "researcher/prescreener-v1/layout.html" %}
+
+{% block innerContent %}
+<h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
+
+<p class="nhsuk-body">
+  Creating a pre-screener helps you match eligible volunteers to your study.
+</p>
+
+<p class="nhsuk-body">
+  You can use the pre-screener to ask questions about:
+</p>
+<ul class="nhsuk-list nhsuk-list--bullet">
+  <li>health conditions</li>
+  <li>medications</li>
+  <li>any other eligibility requirements</li>
+</ul>
+
+<p class="nhsuk-body">
+  When volunteers complete the pre-screener, we’ll collect their personal data, including their age.
+</p>
+
+<h2 class="nhsuk-heading-m">Before you start</h2>
+<p class="nhsuk-body">You’ll need your:</p>
+<ul class="nhsuk-list nhsuk-list--bullet">
+  <li>study name</li>
+  <li>study ID</li>
+  <li>email address</li>
+</ul>
+
+<div class="nhsuk-inset-text">
+  <p>
+    We’ll review your pre-screener and contact you when we’ve approved it or if there are any 
+    changes needed before it can go live.
+  </p>
+</div>
+
+<form action="/researcher/prescreener/study-details" method="get">
+  <button class="nhsuk-button" data-module="nhsuk-button" type="submit">
+    Start now
+  </button>
+</form>
+{% endblock %}

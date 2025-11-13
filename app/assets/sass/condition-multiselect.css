@@ -1,0 +1,146 @@
+/* Prototype-only styles for the prescreener condition multiselect.
+   Keep it small, accessible, and consistent with NHS.UK spacing. */
+
+.crp-combobox {
+  position: relative;
+  max-width: 38rem;
+}
+
+.crp-combobox__input {
+  /* uses nhsuk-input base styles; just ensure dropdown aligns */
+  width: 100%;
+}
+
+.crp-combobox__dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #fff;
+  border: 1px solid #aeb7bd; /* nhsuk border grey */
+  box-shadow: 0 4px 16px rgba(0,0,0,.15);
+  border-radius: 4px;
+  z-index: 50;
+  max-height: 16.5rem; /* ~264px */
+  overflow: auto;
+}
+
+.crp-combobox__listbox {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+}
+
+.crp-combobox__listbox li[role="option"] {
+  display: block;
+  padding: 8px 12px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+/* Background highlight */
+.crp-combobox__listbox li[role="option"]:hover,
+.crp-combobox__listbox li[role="option"][aria-selected="true"],
+.crp-combobox__listbox li[role="option"].is-active {
+  background: #005eb8; /* NHS blue */
+}
+
+/* --- NEW: ensure text is white on hover/active/selected --- */
+.crp-combobox__listbox li[role="option"]:hover,
+.crp-combobox__listbox li[role="option"][aria-selected="true"],
+.crp-combobox__listbox li[role="option"].is-active {
+  color: #fff; /* fallback if text isn’t wrapped */
+}
+
+.crp-combobox__listbox li[role="option"]:hover .crp-combobox__label,
+.crp-combobox__listbox li[role="option"][aria-selected="true"] .crp-combobox__label,
+.crp-combobox__listbox li[role="option"].is-active .crp-combobox__label,
+.crp-combobox__listbox li[role="option"]:hover .nhsuk-label,
+.crp-combobox__listbox li[role="option"][aria-selected="true"] .nhsuk-label,
+.crp-combobox__listbox li[role="option"].is-active .nhsuk-label {
+  color: #fff;
+}
+
+/* Checkbox box and tick need contrast on the blue */
+.crp-combobox__listbox li[role="option"]:hover .nhsuk-checkboxes__input + .nhsuk-checkboxes__label:before,
+.crp-combobox__listbox li[role="option"][aria-selected="true"] .nhsuk-checkboxes__input + .nhsuk-checkboxes__label:before,
+.crp-combobox__listbox li[role="option"].is-active .nhsuk-checkboxes__input + .nhsuk-checkboxes__label:before {
+  border-color: #fff;
+}
+
+.crp-combobox__listbox li[role="option"]:hover .nhsuk-checkboxes__input:checked + .nhsuk-checkboxes__label:after,
+.crp-combobox__listbox li[role="option"][aria-selected="true"] .nhsuk-checkboxes__input:checked + .nhsuk-checkboxes__label:after,
+.crp-combobox__listbox li[role="option"].is-active .nhsuk-checkboxes__input:checked + .nhsuk-checkboxes__label:after {
+  border-color: #fff; /* the tick */
+}
+
+.crp-selected {
+  border-top: 1px solid #d8dde0;
+  padding-top: 12px;
+}
+
+.crp-selected__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.crp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d8dde0;
+  background: #f8fafb;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 16px;
+}
+
+.crp-chip__remove {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  line-height: 0;
+}
+
+.crp-chip__remove:focus {
+  outline: 3px solid #ffeb3b; /* yellow focus halo similar to nhsuk */
+  outline-offset: 1px;
+  border-radius: 50%;
+}
+
+/* Hidden inputs container – keep it out of the flow but readable by AT if needed */
+#selected-hidden {
+  display: none;
+}
+
+/* Make sure focus styles are visible when JS toggles the dropdown */
+.crp-combobox__input[aria-expanded="true"] {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Mobile spacing tweak */
+@media (max-width: 40.0625em) {
+  .crp-combobox__dropdown {
+    max-height: 50vh;
+  }
+}
+
+/* --- CRP card panel: force white slab + subtle border --- */
+.crp-panel,
+.nhsuk-inset-text.crp-panel,
+.recruit-conditions .nhsuk-inset-text {  /* safety if old class is still on the element */
+  background: #fff !important;
+  border: 1px solid #d8dde0;
+  border-radius: 4px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+}
+
+/* keep headings tight and content neat inside the panel */
+.crp-panel .nhsuk-heading-s { margin-top: 0; }
+.crp-panel .crp-selected__chips { margin-top: 4px; }
+.crp-panel p { margin-bottom: 0; }
