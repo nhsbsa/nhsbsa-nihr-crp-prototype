@@ -2,9 +2,6 @@
 @import "nhsuk-frontend/dist/nhsuk";
 @import "condition-combobox";
 
-
-
-
 // Add your custom CSS/Sass styles below.
 
 /* --- Simulated GOV.UK One Login visuals (kept within page content) --- */
@@ -26,8 +23,120 @@
   margin: 16px 0 24px;
 }
 
+footer {
+  &.nihr-footer {
+    background: #0b2d4a; /* NIHR dark blue */
+    color: #fff;
+    box-shadow: 0 100vh 0 100vh #0b2d4a; /* Extend background to bottom of viewport */
+    
+    a {
+      color:#D4E2F5;
+      text-decoration: none;
+      &:hover {
+        text-decoration:underline;
+      }
+    }
+
+    [class$="__wrap"] {
+      padding: 40px 0 28px;
+    }
+
+    [class$="__grid"] {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+    }
+
+    [class$="__cols"] {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 24px;
+    }
+
+    [class$="__heading"] {
+      margin: 0 0 12px;
+      font-size: 18px;
+      line-height: 1.3;
+      color: #fff;
+    }
+
+    [class$="__list"] {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      li {
+        margin: 6px 0;
+      }
+    }
+
+    [class$="__aside"] {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+    }
+
+    [class$="__funded"] {
+      text-align: right;
+      span {
+        display: block;
+        margin-bottom: 8px;
+        opacity: 0.9;
+      }
+    }
+
+    [class$="__rule"] {
+      border: 0;
+      border-top: 1px solid #8FA7C4;
+      opacity: 0.6;
+      margin:28px 0;
+    }
+
+    [class$="__bottom"] {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      
+      [class$="__social"],
+      [class$="__policies"] {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+
+        li:last-of-type {
+          margin-bottom: 8px;
+        }
+      }
+      
+      [class$="__social"] {
+        a {
+          display: inline-flex;
+          width: 28px;
+          height: 28px;
+          border: 1px solid #D4E2F5;
+          border-radius: 50%;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          line-height: 1;
+        }
+      }
+    }
+
+    @media(min-width: 48em){
+      [class$="__wrap"] {
+        padding: 44px 0 32px;
+      }
+    }
+  }
+}
+
 /* NIHR-styled search bar matching the screenshots */
-.nihr-search{
+.nihr-search {
   /* outer blue pill */
   background:#000000;               /* NHS blue */
   border-radius:10px;
