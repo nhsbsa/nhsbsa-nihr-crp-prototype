@@ -38,10 +38,40 @@
   line-height: 1.4;
 }
 
+/* Background highlight */
 .crp-combobox__listbox li[role="option"]:hover,
 .crp-combobox__listbox li[role="option"][aria-selected="true"],
 .crp-combobox__listbox li[role="option"].is-active {
-  background: #005eb8; /* nhsuk grey-5 */
+  background: #005eb8; /* NHS blue */
+}
+
+/* --- NEW: ensure text is white on hover/active/selected --- */
+.crp-combobox__listbox li[role="option"]:hover,
+.crp-combobox__listbox li[role="option"][aria-selected="true"],
+.crp-combobox__listbox li[role="option"].is-active {
+  color: #fff; /* fallback if text isn’t wrapped */
+}
+
+.crp-combobox__listbox li[role="option"]:hover .crp-combobox__label,
+.crp-combobox__listbox li[role="option"][aria-selected="true"] .crp-combobox__label,
+.crp-combobox__listbox li[role="option"].is-active .crp-combobox__label,
+.crp-combobox__listbox li[role="option"]:hover .nhsuk-label,
+.crp-combobox__listbox li[role="option"][aria-selected="true"] .nhsuk-label,
+.crp-combobox__listbox li[role="option"].is-active .nhsuk-label {
+  color: #fff;
+}
+
+/* Checkbox box and tick need contrast on the blue */
+.crp-combobox__listbox li[role="option"]:hover .nhsuk-checkboxes__input + .nhsuk-checkboxes__label:before,
+.crp-combobox__listbox li[role="option"][aria-selected="true"] .nhsuk-checkboxes__input + .nhsuk-checkboxes__label:before,
+.crp-combobox__listbox li[role="option"].is-active .nhsuk-checkboxes__input + .nhsuk-checkboxes__label:before {
+  border-color: #fff;
+}
+
+.crp-combobox__listbox li[role="option"]:hover .nhsuk-checkboxes__input:checked + .nhsuk-checkboxes__label:after,
+.crp-combobox__listbox li[role="option"][aria-selected="true"] .nhsuk-checkboxes__input:checked + .nhsuk-checkboxes__label:after,
+.crp-combobox__listbox li[role="option"].is-active .nhsuk-checkboxes__input:checked + .nhsuk-checkboxes__label:after {
+  border-color: #fff; /* the tick */
 }
 
 .crp-selected {

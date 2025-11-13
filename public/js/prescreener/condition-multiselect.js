@@ -38,6 +38,16 @@
     this.$chips = document.querySelector(cfg.chips);
     this.$hidden = document.querySelector(cfg.hidden);
     this.$count = document.querySelector(cfg.count);
+
+    // Panel container lets us find an empty-state even if it's not inside chips
+    this.$panel = cfg.panel ? document.querySelector(cfg.panel) : null;
+    if (!this.$panel && this.$chips) {
+      // nearest ".crp-selected" or the chips' parent as a fallback
+      this.$panel = this.$chips.closest('.crp-selected') || this.$chips.parentElement;
+    }
+
+    // Find an empty-state element in several sensible places
+    this.$empty = cfg.empty && document.querySelector(cfg.empty) || this.$chips && this.$chips.querySelector('.crp-empty') || this.$panel && this.$panel.querySelector('.crp-empty') || document.getElementById('selected-empty') || null;
     this.source = cfg.source;
     this.all = []; // array of strings
     this.filtered = [];
@@ -73,9 +83,7 @@
     });
     this.$input.addEventListener('keydown', function (e) {
       var key = e.key;
-      if (!self.isOpen() && (key === 'ArrowDown' || key === 'ArrowUp')) {
-        self.open();
-      }
+      if (!self.isOpen() && (key === 'ArrowDown' || key === 'ArrowUp')) self.open();
       if (key === 'ArrowDown') {
         e.preventDefault();
         self.move(1);
@@ -129,6 +137,15 @@
   ConditionMultiselect.prototype.renderChips = function () {
     var items = Array.from(this.selected.values());
     this.$chips.innerHTML = items.map(templateChip).join('');
+
+    // Robust empty-state toggle (inside chips, or elsewhere in the panel)
+    if (this.$empty) {
+      this.$empty.style.display = items.length ? 'none' : '';
+      // If the empty element is meant to sit inside the chips container, keep it there
+      if (this.$chips && !this.$chips.contains(this.$empty) && this.$empty.closest('.crp-selected') === this.$chips.closest('.crp-selected')) {
+        this.$chips.prepend(this.$empty);
+      }
+    }
     var self = this;
     this.$chips.querySelectorAll('.crp-chip__remove').forEach(function (btn) {
       btn.addEventListener('click', function () {

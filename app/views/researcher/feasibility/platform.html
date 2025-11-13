@@ -2,55 +2,55 @@
 {% block pageTitle %}Choose platform{% endblock %}
 
 {% block researcherContent %}
-<a class="nhsuk-back-link" href="/researcher/request/new">Back</a>
-<h1 class="nhsuk-heading-l">Which platform is this feasibility for?</h1>
 
-{% if errors and errors.length %}
-<div class="nhsuk-error-summary" role="alert" tabindex="-1">
-  <h2 class="nhsuk-error-summary__title">There is a problem</h2>
-  <div class="nhsuk-error-summary__body">
-    <ul class="nhsuk-list nhsuk-error-summary__list">
-      {% for e in errors %}
-        <li><a href="{{ e.href }}">{{ e.text }}</a></li>
-      {% endfor %}
-    </ul>
+{# spacing between back link and heading #}
+<a class="nhsuk-back-link nhsuk-u-margin-bottom-4" href="/researcher/request/new">Back</a>
+<h1 class="nhsuk-heading-l nhsuk-u-margin-top-0">Which platform is this feasibility for?</h1>
+
+{# Normalise inputs so undefined values don't explode #}
+{% set _errors = errors | default([]) %}
+{% set hasErrors = (_errors | length) > 0 %}
+{% set submittedFlag = submitted | default(false) %}
+
+{% if hasErrors and submittedFlag %}
+  <div class="nhsuk-error-summary" role="alert" tabindex="-1">
+    <h2 class="nhsuk-error-summary__title">There is a problem</h2>
+    <div class="nhsuk-error-summary__body">
+      <ul class="nhsuk-list nhsuk-error-summary__list">
+        {% for e in _errors %}
+          <li><a href="{{ e.href }}">{{ e.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
-</div>
 {% endif %}
 
 <form method="post" action="/researcher/feasibility/platform" novalidate>
-  {% set v = model.platform or '' %}
+  {% set v = (model.platform | default('')) %}
   <div class="nhsuk-form-group">
-    <fieldset class="nhsuk-fieldset">
+    <fieldset class="nhsuk-fieldset" aria-describedby="platform-hint">
       <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
         Select one
       </legend>
 
       <div class="nhsuk-radios">
         <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="platform-bpor" name="platform" type="radio" value="bpor" {% if v=='bpor' %}checked{% endif %}>
+          <input class="nhsuk-radios__input" id="platform-bpor" name="platform" type="radio" value="bpor" {% if v == 'bpor' %}checked{% endif %}>
           <label class="nhsuk-label nhsuk-radios__label" for="platform-bpor">Be Part of Research (BPOR)</label>
-          <!-- <div class="nhsuk-hint">Broader eligibility, does not require confirmed diagnosis.</div> -->
         </div>
 
         <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="platform-jdr" name="platform" type="radio" value="jdr" {% if v=='jdr' %}checked{% endif %}>
+          <input class="nhsuk-radios__input" id="platform-jdr" name="platform" type="radio" value="jdr" {% if v == 'jdr' %}checked{% endif %}>
           <label class="nhsuk-label nhsuk-radios__label" for="platform-jdr">Join Dementia Research (JDR)</label>
-          <!-- <div class="nhsuk-hint">Confirmed diagnosis required for certain cohorts; stricter inclusion criteria.</div> -->
         </div>
       </div>
     </fieldset>
   </div>
-
-<!--   <div class="nhsuk-inset-text nhsuk-u-margin-top-4">
-    <p class="nhsuk-body-s nhsuk-u-margin-bottom-0">
-      Your selection can be changed later, but it affects available criteria and checks in the journey.
-    </p>
-  </div> -->
 
   <div class="nhsuk-button-group">
     <button class="nhsuk-button" type="submit">Save and continue</button>
     <a class="nhsuk-link nhsuk-link--no-visited-state" href="/researcher/task-list">Return to task list</a>
   </div>
 </form>
+
 {% endblock %}
