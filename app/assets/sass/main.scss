@@ -89,8 +89,9 @@ a.nhsuk-back-link {
 .nhsuk-tag--yellow { background:#ffbf47; color:#212b32; }
 .nhsuk-tag--red { background:#d5281b; color:#fff; }
 
-/* NIHR footer */
+/* Custom footers due to non-NHS branding */
 footer {
+  /* NIHR footer */
   &.nihr-footer {
     background: #0b2d4a; /* NIHR dark blue */
     color: #fff;
@@ -197,6 +198,113 @@ footer {
     @media(min-width: 48em){
       [class$="__wrap"] {
         padding: 44px 0 32px;
+      }
+    }
+  }
+
+  /* BPoR footer */
+  &.bpor-footer {
+    box-shadow: 0 100vh 0 100vh white; /* Extend background to bottom of viewport */
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    background-color: white;
+    
+    .bpor-footer-container {
+      width: 100%;
+      margin: 0 auto;
+  
+      .footer-logos-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        background: #335382;
+        width: 100%;
+        max-height: 203px;
+        padding: 20px 0;
+  
+        .bpor-white {
+          width: 133px;
+          height: 35px;
+          margin-left: 625px;
+        }
+        
+        .shaw-trust {
+          width: 137px;
+          height: 40px;
+        }
+  
+        /* Placeholder fake links */
+        img:hover {
+          cursor: pointer;
+        }
+      }
+      
+      .footer-links-container {
+        background: #193E72;
+        width: 100%;
+        padding: 0;
+        text-align: center;
+        flex-wrap: wrap;
+        max-height: fit-content;
+  
+        [class$="__list"] {
+          display: flex;
+          list-style-type: none;
+          justify-content: center;
+          vertical-align: middle;
+          gap: 90px;
+          margin: 0;
+          padding: 20px 0;
+          flex-wrap: wrap; /* Allows wrapping on smaller screens */
+          max-height: fit-content;
+  
+          [class$="__list-item-link"] {
+            color: #fff !important;
+            text-decoration: underline;
+            font-size: 16px;
+            line-height: 20px;
+            font-family: Lato, Arial, sans-serif;
+            font-style: normal;
+            padding: 5px;
+            
+            &:hover, &:focus {
+              color: #000 !important;
+              text-decoration: underline;
+              font-size: 16px;
+              line-height: 20px;
+              font-family: Lato, Arial, sans-serif;
+              font-style: normal;
+              padding-bottom: 5px;
+              background: #FED47A;
+            }
+          }
+        }
+  
+        .partners-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 100px; /* space between logos */
+          background: #fff; /* example background color */
+          width: 100%;
+          max-height: 63px;
+          padding: 20px 0;
+    
+          .NIHR-Desktop-logo {
+            height: 30px;
+          }
+          
+          .nhs-logo-img {
+            height: 40px;
+          }
+  
+          /* Placeholder fake links */
+          img:hover {
+            cursor: pointer;
+          }
+        }
       }
     }
   }
