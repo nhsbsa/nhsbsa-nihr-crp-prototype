@@ -9669,6 +9669,12 @@ b {
   margin: 16px 0 24px;
 }
 
+/* Slightly hacky fix for the back-link not being within a block container */
+a.nhsuk-back-link {
+  display: block;
+  margin-bottom: 24px;
+}
+
 /* NIHR-styled search bar matching the screenshots */
 .nihr-search {
   /* outer blue pill */
