@@ -9669,6 +9669,85 @@ b {
   margin: 16px 0 24px;
 }
 
+/* NIHR-styled search bar matching the screenshots */
+.nihr-search {
+  /* outer blue pill */
+  background: #000000; /* NHS blue */
+  border-radius: 10px;
+  padding: 2px;
+  max-width: 540px;
+  display: flex;
+  align-items: center;
+  gap: 0; /* input + button touch */
+}
+
+/* Input */
+.nihr-search .nhsuk-search__input {
+  flex: 1 1 auto;
+  height: 44px;
+  border: 0;
+  border-radius: 8px 0 0 8px;
+  padding: 0 14px;
+  font-size: 22px; /* roomy like the shot */
+  line-height: 1.4;
+}
+
+.nihr-search .nhsuk-search__input::placeholder {
+  color: #4c6272;
+}
+
+/* Button block with icon */
+.nihr-search .nhsuk-search__submit {
+  width: 72px;
+  height: 44px;
+  border: 0;
+  border-radius: 0 8px 8px 0;
+  background: #eef5fb; /* light block (state A) */
+  color: #005eb8; /* icon colour via currentColor */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Icon sizing */
+.nihr-search .nhsuk-icon__search {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+}
+
+/* Hover/focus state -> solid NHS blue block with white icon + thin white keyline (state B) */
+.nihr-search:hover .nhsuk-search__submit,
+.nihr-search:focus-within .nhsuk-search__submit {
+  background: #005eb8;
+  color: #fff;
+  box-shadow: inset 0 0 0 2px #ffffff;
+}
+
+/* Accessible focus on the input */
+.nihr-search:focus-within .nhsuk-search__input {
+  outline: 3px solid #ffeb3b; /* NHS focus yellow */
+  outline-offset: 0;
+}
+
+/* Safety: colours if tag modifiers aren't present */
+.nhsuk-tag--blue {
+  background: #1d70b8;
+  color: #fff;
+}
+
+.nhsuk-tag--yellow {
+  background: #ffbf47;
+  color: #212b32;
+}
+
+.nhsuk-tag--red {
+  background: #d5281b;
+  color: #fff;
+}
+
+/* NIHR footer */
 footer.nihr-footer {
   background: #0b2d4a; /* NIHR dark blue */
   color: #fff;
@@ -9762,82 +9841,4 @@ footer.nihr-footer [class$=__bottom] [class$=__social] a {
   footer.nihr-footer [class$=__wrap] {
     padding: 44px 0 32px;
   }
-}
-
-/* NIHR-styled search bar matching the screenshots */
-.nihr-search {
-  /* outer blue pill */
-  background: #000000; /* NHS blue */
-  border-radius: 10px;
-  padding: 2px;
-  max-width: 540px;
-  display: flex;
-  align-items: center;
-  gap: 0; /* input + button touch */
-}
-
-/* Input */
-.nihr-search .nhsuk-search__input {
-  flex: 1 1 auto;
-  height: 44px;
-  border: 0;
-  border-radius: 8px 0 0 8px;
-  padding: 0 14px;
-  font-size: 22px; /* roomy like the shot */
-  line-height: 1.4;
-}
-
-.nihr-search .nhsuk-search__input::placeholder {
-  color: #4c6272;
-}
-
-/* Button block with icon */
-.nihr-search .nhsuk-search__submit {
-  width: 72px;
-  height: 44px;
-  border: 0;
-  border-radius: 0 8px 8px 0;
-  background: #eef5fb; /* light block (state A) */
-  color: #005eb8; /* icon colour via currentColor */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
-}
-
-/* Icon sizing */
-.nihr-search .nhsuk-icon__search {
-  width: 26px;
-  height: 26px;
-  fill: currentColor;
-}
-
-/* Hover/focus state -> solid NHS blue block with white icon + thin white keyline (state B) */
-.nihr-search:hover .nhsuk-search__submit,
-.nihr-search:focus-within .nhsuk-search__submit {
-  background: #005eb8;
-  color: #fff;
-  box-shadow: inset 0 0 0 2px #ffffff;
-}
-
-/* Accessible focus on the input */
-.nihr-search:focus-within .nhsuk-search__input {
-  outline: 3px solid #ffeb3b; /* NHS focus yellow */
-  outline-offset: 0;
-}
-
-/* Safety: colours if tag modifiers aren't present */
-.nhsuk-tag--blue {
-  background: #1d70b8;
-  color: #fff;
-}
-
-.nhsuk-tag--yellow {
-  background: #ffbf47;
-  color: #212b32;
-}
-
-.nhsuk-tag--red {
-  background: #d5281b;
-  color: #fff;
 }/*# sourceMappingURL=main.css.map */
