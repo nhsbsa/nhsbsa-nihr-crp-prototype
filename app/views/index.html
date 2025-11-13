@@ -158,12 +158,18 @@
     </div>
   </div>
 
-
-<!--   <section class="nhsuk-inset-text">
-    <span class="nhsuk-u-visually-hidden">Information: </span>
-    <p>
-      Prototype only: data is stored in session and cleared on restart. No real patient data.
-    </p>
-  </section> -->
+  <div class="nhsuk-notification-banner" role="region" aria-labelledby="nhsuk-notification-banner-title" data-module="nhsuk-notification-banner">
+    <div class="nhsuk-notification-banner__header">
+      <h2 class="nhsuk-notification-banner__title" id="nhsuk-notification-banner-title">
+        About this prototype
+      </h2>
+    </div>
+    <div class="nhsuk-notification-banner__content">
+      <p class="nhsuk-notification-banner__heading">
+        Data used in the prototype is temporarily stored. No real patient data is used.<br/>
+        <a class="nhsuk-notification-banner__link" href="/prototype-admin/reset">Reset session data</a>.
+      </p>
+    </div>
+  </div>
 
 {% endblock %}
