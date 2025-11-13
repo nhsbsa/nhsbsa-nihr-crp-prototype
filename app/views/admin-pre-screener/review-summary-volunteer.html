@@ -1,0 +1,97 @@
+{% extends "bpor-layout.html" %}
+
+{% block pageTitle %}Pre-screener overviewnpm run{% endblock %}
+
+{% block content %}
+
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <form action="review-summary" method="post" novalidate>
+      <h1 class="nhsuk-heading-xl">Volunteer view</h1>
+     
+  
+         <p class="nhsuk-body">Review how your questions will appear to the volunteers</p>
+
+         <h2 class="nhsuk-heading-m">
+         Condition questions
+        </h2>
+
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Do you currently have a diagnosis of Alzheimer’s?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              Yes
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Do you currently have a diagnosis of HIV?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              No
+            </dd>
+          </div>
+        </dl>
+
+        <h2 class="nhsuk-heading-m">
+         Medication questions
+        </h2>
+
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Do you take Donepezil for this condition?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              Yes
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Are you also taking Metformin?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              No
+            </dd>
+          </div>
+        </dl>
+
+        <h2 class="nhsuk-heading-m">
+         Other questions
+        </h2>
+
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Are you currently pregnant?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              No
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Are you over the age of 25?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              Yes
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Have you lived in the UK for the past 5 years?
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              Yes
+            </dd>
+          </div>
+        </dl>
+
+  <button class="nhsuk-button" data-module="nhsuk-button" type="submit">
+  Back to summary
+</button>
+</form>
+{% endblock %}

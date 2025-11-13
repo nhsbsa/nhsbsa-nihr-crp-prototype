@@ -1,0 +1,75 @@
+{% extends "bpor-layout.html" %}
+
+{% block pageTitle %}Pre-screener overviewnpm run{% endblock %}
+
+{% block content %}
+
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <form action="pre-screener-overview-approved" method="post" novalidate>
+      <h1 class="nhsuk-heading-xl">You have approved the condition based pre-screener questions</h1>
+     
+      <p class="nhsuk-body">The researcher will be notified once you have reviewed the rest of the pre-screener.</p>
+
+
+  <h1 class="nhsuk-heading-m">Review pre-screener questions</h1> 
+  
+  <p class="nhsuk-body">You should check the questions selected by the researcher for errors, typos and any formatting problems. If you’re not sure about something, you should check with the researcher</p>
+
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Conditions questions
+    </dt>
+     <dd class="nhsuk-summary-list__value">
+      <a href="review-conditions">
+        Review<span class="nhsuk-u-visually-hidden"> name</span>
+      </a>
+    </dd>
+    <dd class="nhsuk-summary-list__value">
+    <strong class="nhsuk-tag nhsuk-tag--green">
+  Approved
+</strong>
+</dd>
+  </div>
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Medication questions
+    </dt>
+     <dd class="nhsuk-summary-list__value">
+      <a href="review-medications">
+        Review<span class="nhsuk-u-visually-hidden"> name</span>
+      </a>
+    </dd>
+    <dd class="nhsuk-summary-list__value">
+    <strong class="nhsuk-tag nhsuk-tag--green">
+  Approved
+</strong>
+</dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Additional questions
+    </dt>
+     <dd class="nhsuk-summary-list__value">
+      <a href="review-other">
+        Review<span class="nhsuk-u-visually-hidden"> name</span>
+      </a>
+    </dd>
+    <dd class="nhsuk-summary-list__value">
+    <strong class="nhsuk-tag nhsuk-tag--green">
+Approved
+</strong>
+</dd>
+  </div>
+  </dl>
+
+   <p class="nhsuk-body">3 of 3 sections reviewed</p>
+
+
+  <button class="nhsuk-button" data-module="nhsuk-button" type="submit">
+  Back to pre-screener overview
+</button>
+</form>
+{% endblock %}

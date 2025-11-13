@@ -1,0 +1,123 @@
+{% extends "bpor-layout.html" %}
+
+{% block pageTitle %}Pre-screener overviewnpm run{% endblock %}
+
+{% block content %}
+
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <form action="approve-conditions.html" method="post" novalidate>
+      <h1 class="nhsuk-heading-xl">Review health condition questions</h1>
+
+      <h1 class="nhsuk-heading-m">Selected question types</h1>     
+
+      <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dd class="nhsuk-summary-list__value">
+              Recruit volunteers by health condition
+              <br>
+              <br>
+              Exclude volunteers by health condition
+            </dd>
+        </dl>
+
+          <h1 class="nhsuk-heading-m">Conditions criteria</h1>  
+
+      <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Qualifying conditions
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              Alzheimer's disease
+            </dd>
+        </dl>
+
+       <div class="nhsuk-radios nhsuk-radios--conditional" data-module="nhsuk-radios">
+
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="choose-option-1" name="choose-option" type="radio" value="yes"
+            aria-controls="extra-info-panel" aria-expanded="false" data-aria-controls="extra-info-panel">
+          <label class="nhsuk-label nhsuk-radios__label" for="choose-option-1">
+            Yes, I have extra information
+          </label>
+
+          <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="extra-info-panel">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label" for="details">
+                Please provide details
+              </label>
+              <textarea class="nhsuk-textarea" id="details" name="details" rows="5"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="choose-option-2" name="choose-option" type="radio" value="no">
+          <label class="nhsuk-label nhsuk-radios__label" for="choose-option-2">
+            No, I do not have extra information
+          </label>
+        </div>
+
+      </div>
+    </fieldset>
+  </div>
+      
+    </div>
+  </fieldset>
+</div>
+
+
+      <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Disqualifying conditions
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              HIV
+            </dd>
+        </dl>
+
+        <div class="nhsuk-form-group">
+  <fieldset class="nhsuk-fieldset">
+    <div class="nhsuk-radios" data-module="nhsuk-radios">
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example" name="example" type="radio" value="yes">
+        <label class="nhsuk-label nhsuk-radios__label" for="example">
+          Approve this question
+        </label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example-2" name="example" type="radio" value="no">
+        <label class="nhsuk-label nhsuk-radios__label" for="example-2">
+          Request changes
+        </label>
+      </div>
+      <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-contact">
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="email">
+           Tell the user what’s wrong and any suggestions you can make to resolve the problem
+          </label>
+          <input class="nhsuk-input nhsuk-u-width-two-thirds" id="email" name="email" type="text">
+        </div>
+      </div>
+    </div>
+  </fieldset>
+</div>
+
+<div class="nhsuk-button-group">
+
+  <button class="nhsuk-button nhsuk-button" data-module="nhsuk-button" type="submit">
+    Continue
+  </button>
+
+  <a href="volunteer-conditions" role="button" class="nhsuk-button nhsuk-button--secondary">
+  Volunteer view
+</a>
+
+</div>
+</form>
+
+     
+      {% endblock %}

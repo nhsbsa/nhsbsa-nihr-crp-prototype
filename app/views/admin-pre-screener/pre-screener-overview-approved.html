@@ -1,0 +1,142 @@
+{% extends "bpor-layout.html" %}
+
+{% block pageTitle %}Pre-screener overviewnpm run{% endblock %}
+
+{% block content %}
+
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <form action="review-summary" method="post" novalidate>
+      <h1 class="nhsuk-heading-xl">Review pre-screener for [Cognitive therapy in Dementia]</h1>
+     
+  <h1 class="nhsuk-heading-m">Study information</h1>     
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Study ID
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      DR-123456
+    </dd>
+  </div>
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Study name
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      Cognitive therapy in Dementia
+    </dd>
+  </div> 
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Assignee
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      Aisha Patel
+    </dd>
+  </div> 
+   <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Status
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      Ready for review
+    </dd>
+  </div> 
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Date submitted
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      5th September 2025
+    </dd>
+  </div> 
+   <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Researcher name
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      Dr Suzie Walker
+    </dd>
+  </div> 
+   <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Researcher email
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      suzie.walker@nihr.ac.uk
+    </dd>
+  </div> 
+   <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Screener ID
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      SCRN-1234
+    </dd>
+  </div> 
+  
+</dl>
+
+  <h1 class="nhsuk-heading-m">Review pre-screener questions</h1> 
+  
+  <p class="nhsuk-body">You should check the questions selected by the researcher for errors, typos and any formatting problems. If you’re not sure about something, you should check with the researcher</p>
+
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Conditions questions
+    </dt>
+     <dd class="nhsuk-summary-list__value">
+      <a href="review-conditions">
+        Review<span class="nhsuk-u-visually-hidden"> name</span>
+      </a>
+    </dd>
+    <dd class="nhsuk-summary-list__value">
+    <strong class="nhsuk-tag nhsuk-tag--green">
+  Approved
+</strong>
+</dd>
+
+  </div>
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Medication questions
+    </dt>
+     <dd class="nhsuk-summary-list__value">
+      <a href="review-medications">
+        Review<span class="nhsuk-u-visually-hidden"> name</span>
+      </a>
+    </dd>
+    <dd class="nhsuk-summary-list__value">
+    <strong class="nhsuk-tag nhsuk-tag--green">
+  Approved
+</strong>
+</dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Additional questions
+    </dt>
+     <dd class="nhsuk-summary-list__value">
+      <a href="review-other">
+        Review<span class="nhsuk-u-visually-hidden"> name</span>
+      </a>
+    </dd>
+    <dd class="nhsuk-summary-list__value">
+    <strong class="nhsuk-tag nhsuk-tag--green">
+  Approved
+</strong>
+</dd>
+  </div>
+  </dl>
+
+   <p class="nhsuk-body">3 of 3 sections reviewed</p>
+
+
+  <button class="nhsuk-button" data-module="nhsuk-button" type="submit">
+  Continue
+</button>
+</form>
+{% endblock %}

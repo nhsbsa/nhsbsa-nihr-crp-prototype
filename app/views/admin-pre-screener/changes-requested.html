@@ -1,0 +1,39 @@
+{% extends "bpor-layout.html" %}
+
+{% block pageTitle %}Pre-screener overviewnpm run{% endblock %}
+
+{% block content %}
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+<div class="nhsuk-panel">
+  <h1 class="nhsuk-panel__title">
+   Changes requested
+  </h1>
+  <div class="nhsuk-panel__body">
+    Screener ID: SCRN-1234
+  </div>
+</div>
+
+<p class="nhsuk-body">The researcher has been notified. </p>
+
+<p class="nhsuk-body">They will need to make the requested changes before you can approve this pre-screener..</p>
+
+<p class="nhsuk-body"><b>What happens next</b></p>
+
+<p class="nhsuk-body">Now that you’ve asked the researcher to make changes:</p>
+
+<ul class="nhsuk-list nhsuk-list--bullet">
+        <li>the pre-screener status will be updated to “Changes requested” status</li>
+        <li>the researcher has ** working days to edit and resubmit the pre-screener</li>
+        <li>you’ll be notified once the revised version is ready to review</li>
+    </ul>
+
+
+
+ <button class="nhsuk-button" data-module="nhsuk-button" type="submit">
+  Back to dashboard
+</button>
+
+{% endblock %}

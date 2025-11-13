@@ -1,0 +1,101 @@
+{% extends "bpor-layout.html" %}
+
+{% block pageTitle %}Pre-screener overviewnpm run{% endblock %}
+
+{% block content %}
+
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <form action="approve-medications" method="post" novalidate>
+      <h1 class="nhsuk-heading-xl">Review medication questions</h1>
+
+      <h1 class="nhsuk-heading-m">Selected question types</h1>     
+
+      <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dd class="nhsuk-summary-list__value">
+              Do you want to ask about medication?
+              <br>
+              <br>
+              Are there any medicines that would disqualify someone?
+            </dd>
+        </dl>
+
+          <h1 class="nhsuk-heading-m">Medication questions</h1>  
+
+      <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Add the medicines
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+             Donepezil
+            </dd>
+        </dl>
+
+        <div class="nhsuk-form-group">
+  <fieldset class="nhsuk-fieldset">
+    <div class="nhsuk-radios" data-module="nhsuk-radios">
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example" name="example" type="radio" value="yes">
+        <label class="nhsuk-label nhsuk-radios__label" for="example">
+          Approve this question
+        </label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example-2" name="example" type="radio" value="no">
+        <label class="nhsuk-label nhsuk-radios__label" for="example-2">
+          Request changes
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>
+
+
+      <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Add the disqualifying medication
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              Metformin
+            </dd>
+        </dl>
+
+        <div class="nhsuk-form-group">
+  <fieldset class="nhsuk-fieldset">
+    <div class="nhsuk-radios" data-module="nhsuk-radios">
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example" name="example" type="radio" value="yes">
+        <label class="nhsuk-label nhsuk-radios__label" for="example">
+          Approve this question
+        </label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example-2" name="example" type="radio" value="no">
+        <label class="nhsuk-label nhsuk-radios__label" for="example-2">
+          Request changes
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>
+
+<div class="nhsuk-button-group">
+
+  <button class="nhsuk-button nhsuk-button" data-module="nhsuk-button" type="submit">
+    Continue
+  </button>
+
+  <a href="volunteer-medications" role="button" class="nhsuk-button nhsuk-button--secondary">
+  Volunteer view
+</a>
+
+</div>
+
+
+
+     
+      {% endblock %}

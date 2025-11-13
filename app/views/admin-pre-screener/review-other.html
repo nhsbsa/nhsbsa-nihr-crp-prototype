@@ -1,0 +1,144 @@
+{% extends "bpor-layout.html" %}
+
+{% block pageTitle %}Pre-screener overviewnpm run{% endblock %}
+
+{% block content %}
+
+
+<div class="nhsuk-width-container">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <form action="approve-other" method="post" novalidate>
+
+        <a class="nhsuk-back-link" href="pre-screener-overview.html">Go back</a>
+
+      <h1 class="nhsuk-heading-xl">Review other questions</h1>
+
+      <h1 class="nhsuk-heading-m">Other questions</h1>     
+ 
+
+      <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Question 1:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+             Are you currently pregnant?
+            </dd>
+            </div>
+            <dt class="nhsuk-summary-list__key">
+              Qualifying answer 1:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+             No
+            </dd>
+        </dl>
+
+        <div class="nhsuk-form-group">
+  <fieldset class="nhsuk-fieldset">
+    <div class="nhsuk-radios" data-module="nhsuk-radios">
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example" name="example" type="radio" value="yes">
+        <label class="nhsuk-label nhsuk-radios__label" for="example">
+          Approve this question
+        </label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example-2" name="example" type="radio" value="no">
+        <label class="nhsuk-label nhsuk-radios__label" for="example-2">
+          Request changes
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>
+
+      <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Question 2:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+             Are you over the age of 25?
+            </dd>
+            </div>
+            <dt class="nhsuk-summary-list__key">
+              Qualifying answer 2:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+             Yes
+            </dd>
+        </dl>
+
+        <div class="nhsuk-form-group">
+  <fieldset class="nhsuk-fieldset">
+    <div class="nhsuk-radios" data-module="nhsuk-radios">
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example" name="example" type="radio" value="yes">
+        <label class="nhsuk-label nhsuk-radios__label" for="example">
+          Approve this question
+        </label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example-2" name="example" type="radio" value="no">
+        <label class="nhsuk-label nhsuk-radios__label" for="example-2">
+          Request changes
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>
+
+  <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Question 3:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+             Have you lived in the UK for the past 5 years?
+            </dd>
+            </div>
+            <dt class="nhsuk-summary-list__key">
+              Qualifying answer 3:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+             Yes
+            </dd>
+        </dl>
+
+        <div class="nhsuk-form-group">
+  <fieldset class="nhsuk-fieldset">
+    <div class="nhsuk-radios" data-module="nhsuk-radios">
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example" name="example" type="radio" value="yes">
+        <label class="nhsuk-label nhsuk-radios__label" for="example">
+          Approve this question
+        </label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="example-2" name="example" type="radio" value="no">
+        <label class="nhsuk-label nhsuk-radios__label" for="example-2">
+          Request changes
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>
+
+<div class="nhsuk-button-group">
+
+  <button class="nhsuk-button nhsuk-button" data-module="nhsuk-button" type="submit">
+    Continue
+  </button>
+
+  <a href="volunteer-other" role="button" class="nhsuk-button nhsuk-button--secondary">
+  Volunteer view
+</a>
+
+</div>
+</form>
+
+
+
+     
+      {% endblock %}
