@@ -1,0 +1,214 @@
+{% block content %}
+<style>
+  :root {
+    --nhs-blue: #005ea5;
+    --nhs-border: #bfc1c3;
+    --nhs-text: #0b0c0c;
+    --nhs-muted: #6f777b;
+    --email-max-width: 700px;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: var(--nhs-text);
+    background-color: #f3f2f1;
+  }
+
+  .email-message {
+    max-width: var(--email-max-width);
+    margin: 50px auto;
+    border: 1px solid var(--nhs-border);
+    border-top: 5px solid var(--nhs-blue);
+    background-color: #ffffff;
+  }
+
+  .email-message-meta {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .email-message-meta th,
+  .email-message-meta td {
+    font-weight: 400;
+    text-transform: none;
+    padding: 0.63158em 1.05263em 0.47368em 0;
+    text-align: left;
+    border-bottom: 1px solid var(--nhs-border);
+    vertical-align: top;
+  }
+
+  .email-message-meta th {
+    color: var(--nhs-muted);
+    padding-left: 60px;
+    white-space: nowrap;
+  }
+
+  .email-message-meta strong {
+    font-weight: 600;
+    color: var(--nhs-text);
+  }
+
+  .email-message-body {
+    width: 100%;
+    padding: 30px 60px;
+    margin: 0;
+    clear: both;
+    position: relative;
+    word-wrap: break-word;
+  }
+
+  .email-heading {
+    margin: 0 0 20px 0;
+    padding: 0;
+    font-size: 27px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--nhs-text);
+  }
+
+  .email-paragraph {
+    margin: 0 0 20px 0;
+    font-size: 19px;
+    line-height: 1.35;
+    color: var(--nhs-text);
+  }
+
+  .email-separator {
+    border: 0;
+    border-top: 1px solid var(--nhs-border);
+    height: 0;
+    margin: 30px 0;
+  }
+
+  .email-list {
+    margin: 0 0 0 20px;
+    padding: 0;
+    list-style-type: disc;
+  }
+
+  .email-list-item {
+    margin: 5px 0;
+    padding: 0 0 0 5px;
+    font-size: 19px;
+    line-height: 1.35;
+    color: var(--nhs-text);
+  }
+
+  .email-link {
+    color: var(--nhs-blue);
+    word-wrap: break-word;
+  }
+
+  .email-message-body table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .email-message-body table td {
+    border: 0;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  @media (min-width: 641px) {
+    .email-message-meta {
+      font-size: 19px;
+      line-height: 1.31579;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .email-message {
+      margin: 20px 10px;
+    }
+
+    .email-message-meta th {
+      padding-left: 20px;
+    }
+
+    .email-message-body {
+      padding: 20px;
+    }
+  }
+</style>
+<div class="email-message">
+  <table class="email-message-meta" role="presentation">
+    <tbody>
+      <tr>
+        <th scope="row"><strong>From</strong></th>
+        <td>Be Part of Research</td>
+      </tr>
+      <tr>
+        <th scope="row"><strong>To</strong></th>
+        <td>
+          <span class="placeholder-no-brackets">joe.bloggs@gmail.com</span>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row"><strong>Subject</strong></th>
+        <td>You’ve matched with a study on Be Part of Research</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="email-message-body">
+    <p class="email-paragraph">Dear Joe Bloggs,</p>
+
+    <p class="email-paragraph">
+      You are registered with Be Part of Research and have indicated that you are interested in hearing about research opportunities.
+    </p>
+
+     <p class="email-paragraph">
+      You have been matched with [study name]. <a href="website-1">You can learn more about the study and how to participate here.</a>
+    </p>
+    
+     <p class="email-paragraph">
+      Your volunteer ID for this study is: ((uniqueReference)). Keep it handy, as you will need to provide this to the research team if you decide to participate.
+    </p>  
+    
+     <p class="email-paragraph">
+      If you have any questions for the Be Part of Research team, you can reply to this email.
+    </p>
+    
+     <p class="email-paragraph">
+      If you have changed your mind and no longer wish to receive study invitations or other content from Be Part of Research, you can log in to your account and update your preferences.
+    </p>   
+
+     <p class="email-paragraph">
+      The Be Part of Research team
+    </p>   
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    var today = new Date();
+    var day = String(today.getDate()).padStart(2, "0");
+    var month = today.getMonth() + 2; // January is 0
+    var year = today.getFullYear();
+
+    if (month > 12) {
+      month = month - 12;
+      year = year + 1;
+    }
+
+    var formattedDate =
+      day + "/" + String(month).padStart(2, "0") + "/" + year;
+
+    var deadlines = document.querySelectorAll(".payslip-deadline");
+    deadlines.forEach(function (el) {
+      el.textContent = formattedDate;
+    });
+  })();
+</script>
+{% endblock %}
