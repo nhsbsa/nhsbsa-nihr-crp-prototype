@@ -155,7 +155,7 @@
       </tr>
       <tr>
         <th scope="row"><strong>Subject</strong></th>
-        <td>You’ve matched with a study on Be Part of Research</td>
+        <td>There’s a study that may interest you on Be Part of Research</td>
       </tr>
     </tbody>
   </table>
@@ -167,31 +167,23 @@
     <h2 class="email-heading">Dear Joe Bloggs,</h2>  
 
     <p class="email-paragraph">
-      You are registered with Be Part of Research and have indicated that you are interested in hearing about research opportunities.
+      We’re contacting you because you told us you’re interested in hearing about research studies when you registered with Be Part of Research.
     </p>
 
      <p class="email-paragraph">
-      You have been matched with the <strong>'Sweet Sensitivity in Type 2 Diabetes (Phase 1)'</strong> study.</a>
+      You may want to explore <strong>'Sweet Sensitivity in Type 2 Diabetes (Phase 1)'</strong>. You can <a href="login">read about the study and how to take part</a>.</a>
     </p>
 
      <p class="email-paragraph">
-      <a href="login">You can learn more about the study and how to participate here.</a>
-    </p>
-    
-     <p class="email-paragraph">
-      Your volunteer ID for this study is: <strong>ABC-1234</strong>.
+      Your volunteer ID for this study is: <strong>ABC-1234</strong>. You’ll need to mention this to the research team if you decide to take part.
     </p>  
 
-     <p class="email-paragraph">
-      Keep it handy, as you will need to provide this to the research team if you decide to participate.
-    </p>  
-    
      <p class="email-paragraph">
       If you have any questions for the Be Part of Research team, you can reply to this email.
-    </p>
+    </p>  
     
      <p class="email-paragraph">
-      If you have changed your mind and no longer wish to receive study invitations or other content from Be Part of Research, you can <a href="login">sign in to your account</a> and update your preferences.
+      If you’ve changed your mind and no longer wish to receive study invitations or other content from Be Part of Research, you can <a href="login">log in to your account</a> and update your preferences.
     </p>
     
     <h2 class="email-heading">The Be Part of Research team</h2> 
@@ -199,25 +191,4 @@
   </div>
 </div>
 
-<script>
-  (function () {
-    var today = new Date();
-    var day = String(today.getDate()).padStart(2, "0");
-    var month = today.getMonth() + 2; // January is 0
-    var year = today.getFullYear();
-
-    if (month > 12) {
-      month = month - 12;
-      year = year + 1;
-    }
-
-    var formattedDate =
-      day + "/" + String(month).padStart(2, "0") + "/" + year;
-
-    var deadlines = document.querySelectorAll(".payslip-deadline");
-    deadlines.forEach(function (el) {
-      el.textContent = formattedDate;
-    });
-  })();
-</script>
 {% endblock %}
