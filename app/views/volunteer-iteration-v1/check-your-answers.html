@@ -1,9 +1,9 @@
 {% extends "volunteer-iteration-v1/layout.html" %}
-{% block pageTitle %}Check your answers{% endblock %}
+{% block pageTitle %}Check your answers before submitting your details{% endblock %}
 
 {% block content %}
 
-<a class="nhsuk-back-link" href="/volunteer-iteration-v1/hospital">Go back</a>
+<a class="nhsuk-back-link" href="/volunteer-iteration-v1/review-details">Go back</a>
 
 
 <div class="nhsuk-width-container">
@@ -11,90 +11,178 @@
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-two-thirds">
 
-        <h1 class="nhsuk-heading-l">Check your answers</h1>
+        <h1 class="nhsuk-heading-l">Check your answers before submitting your details</h1>
 
         <h2 class="nhsuk-heading-m">
           Personal details
         </h2>
 
-       <dl class="nhsuk-summary-list">
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Add your phone number
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-             {{ data.phoneNumber}}
-            </dd>
-            <dd class="nhsuk-summary-list__actions">
-              <a href="/volunteer-iteration-v1/review-details">
-                Change<span class="nhsuk-u-visually-hidden"> Phone number</span>
-              </a>
-            </dd>
-          </div>
-        </dl>
-
+        {{ summaryList({
+          rows: [
+            {
+              key: {
+                text: "Phone number"
+              },
+              value: {
+                text: data['phoneNumber']
+              },
+              actions: {
+                items: [
+                  {
+                    href: "review-details#phoneNumber",
+                    text: "Change",
+                    visuallyHiddenText: "phone number"
+                  }
+                ]
+              }
+            }
+          ]
+        }) }}
+        
         <h2 class="nhsuk-heading-m">
-         Pre-screener questions
+          Your health details
         </h2>
 
-        <dl class="nhsuk-summary-list">
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Do you have type 2 diabetes?
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-              {{ data.Condition}}
-            <dd class="nhsuk-summary-list__actions">
-              <a href="#">
-                Change<span class="nhsuk-u-visually-hidden"> allergies</span>
-              </a>
-            </dd>
-          </div>
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Are you taking Metformin?
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                {{ data.Medication}}
-            </dd>
-            <dd class="nhsuk-summary-list__actions">
-              <a href="#">
-                Change<span class="nhsuk-u-visually-hidden"> conditions</span>
-              </a>
-            </dd>
-            </div>
-            <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Did you receive this diagnosis in the last 6 months?
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                {{ data.Diagnosis}}
-            </dd>
-            <dd class="nhsuk-summary-list__actions">
-              <a href="#">
-                Change<span class="nhsuk-u-visually-hidden"> conditions</span>
-              </a>
-            </dd>
-          </div>
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-             Have you had in-patient hospital treatment in the last 6 months?
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                {{ data.Hospital}}
-            </dd>
-            <dd class="nhsuk-summary-list__actions">
-              <a href="#">
-                Change<span class="nhsuk-u-visually-hidden"> conditions</span>
-              </a>
-            </dd>
-          </div>
-        </dl>
-        
-        <form action="/volunteer-iteration-v1/match" method="post" novalidate>
+        {{ summaryList({
+          rows: [
+            {
+              key: {
+                text: "Do you have type 2 diabetes?"
+              },
+              value: {
+                text: data['Condition']
+              },
+              actions: {
+                items: [
+                  {
+                    href: "condition#Condition",
+                    text: "Change",
+                    visuallyHiddenText: "if you have type 2 diabetes"
+                  }
+                ]
+              }
+            },
+            {
+              key: {
+                text: "Do you currently take Metformin?"
+              },
+              value: {
+                text: data['Medication']
+              },
+              actions: {
+                items: [
+                  {
+                    href: "medication#Medication",
+                    text: "Change",
+                    visuallyHiddenText: "if you currently take Metformin"
+                  }
+                ]
+              }
+            },
+            {
+              key: {
+                text: "Did you receive this diagnosis in the last 6 months?"
+              },
+              value: {
+                text: data['Diagnosis']
+              },
+              actions: {
+                items: [
+                  {
+                    href: "diagnosis#Diagnosis",
+                    text: "Change",
+                    visuallyHiddenText: "if you received this diagnosis in the last 6 months"
+                  }
+                ]
+              }
+            },
+            {
+              key: {
+                text: "Have you had in-patient hospital treatment in the last 6 months?"
+              },
+              value: {
+                text: data['Hospital']
+              },
+              actions: {
+                items: [
+                  {
+                    href: "hospital#Hospital",
+                    text: "Change",
+                    visuallyHiddenText: "if you had in-patient hospital treatment in the last 6 months"
+                  }
+                ]
+              }
+            },
+            {
+              key: {
+                text: "How long have you taken Metformin?"
+              },
+              value: {
+                text: data['FreeFormThree']
+              },
+              actions: {
+                items: [
+                  {
+                    href: "free-form-three#FreeFormThree",
+                    text: "Change",
+                    visuallyHiddenText: "how long have you taken Metformin"
+                  }
+                ]
+              }
+            },
+            {
+              key: {
+                text: "Are you a woman?"
+              },
+              value: {
+                text: data['FreeFormFour']
+              },
+              actions: {
+                items: [
+                  {
+                    href: "free-form-four#FreeFormFour",
+                    text: "Change",
+                    visuallyHiddenText: "if you are a woman"
+                  }
+                ]
+              }
+            },
+            {
+              key: {
+                text: "Would you consent to the randomised double-blind crossover administration of the target medication or placebo?"
+              },
+              value: {
+                text: data['FreeFormFive']
+              },
+              actions: {
+                items: [
+                  {
+                    href: "free-form-five#FreeFormFive",
+                    text: "Change",
+                    visuallyHiddenText: "if you currently take Metformin"
+                  }
+                ]
+              }
+            }
+          ]
+        }) }}
+
+        <h2 class="nhsuk-heading-m">
+          Now submit your details
+        </h2>
+
+        <p>By submitting your details, you're confirming that:</p>
+
+        <ul>
+          <li>to the best of your knowledge, the details you're providing are correct</li>
+          <li>you consent to us using your data for this study</li>
+        </ul>
+
+
+        <form action="/{{folder}}/check-your-answers" method="post" novalidate>
 
           <button class="nhsuk-button" data-module="nhsuk-button" type="submit">
-            Complete
+            Confirm and submit
           </button>
 
         </form>

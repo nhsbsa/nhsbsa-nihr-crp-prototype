@@ -3,12 +3,12 @@
 
 {% block content %}
 
-<a class="nhsuk-back-link" href="/volunteer-iteration-v1/review-details">Go back</a>
+<a class="nhsuk-back-link" href="/volunteer-iteration-v1/start">Go back</a>
 
 <div class="nhsuk-width-container">
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-        <form action="/volunteer-iteration-v1/medication" method="post" novalidate>
+        <form action="/{{folder}}/condition" method="post" novalidate>
       <h1 class="nhsuk-heading-xl">Do you have type 2 diabetes?</h1>
 
       <div class="nhsuk-form-group">
@@ -33,7 +33,7 @@
 </div>
 
 <button class="nhsuk-button" data-module="nhsuk-button" type="submit">
-            Save and continue
+            Continue
           </button>
 
 </form>

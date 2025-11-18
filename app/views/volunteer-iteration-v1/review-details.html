@@ -1,10 +1,10 @@
 {% extends "volunteer-iteration-v1/layout.html" %}
-{% block pageTitle %}Review your details{% endblock %}
+{% block pageTitle %}How would you like us to contact you?{% endblock %}
 
 {% block content %}
-<form action="/volunteer-iteration-v1/condition" method="post" novalidate>
+<form action="/{{folder}}/review-details" method="post" novalidate>
 
-<a class="nhsuk-back-link" href="/volunteer-iteration-v1/start">Go back</a>
+<a class="nhsuk-back-link" href="/volunteer-iteration-v1/free-form-five">Go back</a>
 
 
 <div class="nhsuk-width-container">
@@ -13,37 +13,53 @@
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
 
-      <h1 class="nhsuk-heading-xl">Review your details</h1>
-      
-      <table class="nhsuk-table">
-  
-  <tbody class="nhsuk-table__body">
-    <tr class="nhsuk-table__row">
-      <th scope="row" class="nhsuk-table__header">Full name</th>
-      <td class="nhsuk-table__cell nhsuk-table__cell--numeric">John Smith</td>
-    </tr>
-    <tr class="nhsuk-table__row">
-      <th scope="row" class="nhsuk-table__header">Email address</th>
-      <td class="nhsuk-table__cell nhsuk-table__cell--numeric">john.smith@gmail.com</td>
-    </tr>
-   
-  </tbody>
-</table>
+      <h1 class="nhsuk-heading-xl">How would you like us to contact you?</h1>
 
-<p class="nhsuk-body">This information came from your Be Part Of Research account. Please check it is correct. If anything is wrong, you can update your details in your account.</p>
+      <p>We can contact you by email or phone.</p>
 
- <h1 class="nhsuk-heading-l">Add your phone number</h1>
+      <h2 class="nhsuk-heading-m">Your current contact details</h2>
 
+      <p>Check the contact details we currently have for you. You should update them if they are not correct. </p>
 
- 
- <p class="nhsuk-body"> Your phone number will only be used to contact you if you are successful. If you do not pass the screening, it will be deleted immediately.</p>
- <div class="nhsuk-form-group">
- <input class="nhsuk-input" id="volunteerphonenumber" name="phoneNumber" type="tel" autocomplete="tel">
-</div>
+      {{ summaryList({
+        rows: [
+          {
+            key: {
+              text: "Name"
+            },
+            value: {
+              text: "Joe Bloggs"
+            }
+          },
+          {
+            key: {
+              text: "Email address"
+            },
+            value: {
+              text: "joe.bloggs@gmail.com"
+            }
+          }
+        ]
+      }) }}
 
-<button class="nhsuk-button" data-module="nhsuk-button" type="submit">
-            Save and continue
-          </button>
+      <h2 class="nhsuk-heading-m">Add your phone number</h2>
+
+      <p>We’ll use your phone number to contact you about this study. If you do not add a phone number, we’ll contact you by email.</p>
+
+      {{ input({
+        label: {
+          text: "Phone number"
+        },
+        id: "phoneNumber",
+        name: "phoneNumber",
+        type: "tel",
+        autocomplete: "tel",
+        classes: "nhsuk-input--width-20"
+      }) }}
+
+      <button class="nhsuk-button" data-module="nhsuk-button" type="submit">
+        Continue
+      </button>
       
 </div>
 </form>

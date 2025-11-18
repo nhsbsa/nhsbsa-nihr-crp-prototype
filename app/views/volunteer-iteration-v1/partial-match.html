@@ -1,23 +1,30 @@
 {% extends "volunteer-iteration-v1/layout.html" %}
-{% block pageTitle %}Pre-screener start{% endblock %}
+{% block pageTitle %}We may contact you about this study in the future{% endblock %}
 
 {% block content %}
 <div class="nhsuk-width-container">
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-      <h1 class="nhsuk-heading-xl">We may contact you about this study in the future</h1>
-      
-      <h1 class="nhsuk-heading-m">What happens next</h1>
-<p class="nhsuk-body">We'll contact you if a place on the study becomes available in the future. We've sent an email to [user email address] to:</p>
 
-  <ul class="nhsuk-list nhsuk-list--bullet">
-        <li>confirm we've got your details/li>
-        <li>let you know how we'll contact you if a place becomes available</li>
-        <li>let you know what to do if you no longer want to take part in this study</li>
+    {{ panel({
+      titleText: "We may contact you about this study in the future",
+      text: "We cannot offer you a place right now"
+    }) }}
+
+    <p>You're eligible to take part in this study but there are no suitable places right now.</p>
+    <p>We’ll contact you if a place becomes available.</p>
+
+    <h2 class="nhsuk-heading-m">Check your email</h2>
+
+    <p>We've sent an email to joe.bloggs@gmail.com to let you know:</p>
+
+    <ul>
+      <li>confirm we’ve got your details</li>
+      <li>let you know how we’ll contact you if a place on this study becomes available</li>
+      <li>let you know what to do if you no longer want to take part - you can change your mind at any time and we’ll delete all your data relating to this study</li>
     </ul>
 
-    <h1 class="nhsuk-heading-m">Be part of other studies</h1>
-<p class="nhsuk-body">We have lots of other studies you may be able to take part in. You can check our website to see if there's any other studies you're interested in.</p>
-
+    </div>
+  </div>
 </div>
 {% endblock %}

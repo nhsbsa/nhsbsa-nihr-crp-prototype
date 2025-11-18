@@ -78,4 +78,18 @@ require('./routes-prescreener')(router);
 
 safeMount('./routes-data', 'routes-data')
 
+
+// STEPHENS STUFF
+
+router.use('/', (req, res, next) => {
+    req.folder = req.originalUrl.split('/')[1]; //folder, e.g. 'current'
+    req.subfolder = req.originalUrl.split('/')[2]; //sub-folder e.g. 'service'
+    res.locals.folder = req.folder; // what folder the url is
+    res.locals.subfolder = req.subfolder; // what subfolder the URL is in
+    console.log('folder : ' + res.locals.folder + ', subfolder : ' + res.locals.subfolder);
+    next();
+});
+
+router.use('/volunteer-iteration-v1', require('./views/volunteer-iteration-v1/_routes'));
+
 module.exports = router

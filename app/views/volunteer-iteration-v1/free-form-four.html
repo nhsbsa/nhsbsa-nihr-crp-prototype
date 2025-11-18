@@ -1,27 +1,27 @@
 {% extends "volunteer-iteration-v1/layout.html" %}
-{% block pageTitle %}Have you had in-patient hospital treatment in the last 6 months?{% endblock %}
+{% block pageTitle %}Are you a woman?{% endblock %}
 
 {% block content %}
 
-<a class="nhsuk-back-link" href="/volunteer-iteration-v1/diagnosis">Go back</a>
+<a class="nhsuk-back-link" href="/volunteer-iteration-v1/free-form3">Go back</a>
 
 <div class="nhsuk-width-container">
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-        <form action="/{{folder}}/hospital" method="post">
-      <h1 class="nhsuk-heading-xl">Have you had in-patient hospital treatment in the last 6 months?</h1>
+        <form action="/{{folder}}/free-form-four" method="post">
+      <h1 class="nhsuk-heading-xl">Are you a woman?</h1>
 
       <div class="nhsuk-form-group">
 
     <div class="nhsuk-radios nhsuk-radios--inline" data-module="nhsuk-radios">
       <div class="nhsuk-radios__item">
-        <input class="nhsuk-radios__input" id="example-inline" name="Hospital" type="radio" value="Yes">
+        <input class="nhsuk-radios__input" id="example-inline" name="FreeFormFour" type="radio" value="Yes">
         <label class="nhsuk-label nhsuk-radios__label" for="example-inline">
           Yes
         </label>
       </div>
       <div class="nhsuk-radios__item">
-        <input class="nhsuk-radios__input" id="example-inline-2" name="Hospital" type="radio" value="No">
+        <input class="nhsuk-radios__input" id="example-inline-2" name="FreeFormFour" type="radio" value="No">
         <label class="nhsuk-label nhsuk-radios__label" for="example-inline-2">
           No
         </label>

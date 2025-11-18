@@ -1,24 +1,32 @@
 {% extends "volunteer-iteration-v1/layout.html" %}
-{% block pageTitle %}Pre-screener start{% endblock %}
+{% block pageTitle %}You’re eligible for the next stage of the study{% endblock %}
 
 {% block content %}
 <div class="nhsuk-width-container">
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
 
-      <div class="nhsuk-panel">
-  <h1 class="nhsuk-panel__title">
-    You can take part in this study
-  </h1>
-</div>
-      
-      <p class="nhsuk-body">We've sent an email to [user email address] to let you know:</p>
+    {{ panel({
+      titleText: "You’re eligible for the next stage of the study",
+      text: "We’ll contact you with the next steps"
+    }) }}
 
-      <ul class="nhsuk-list nhsuk-list--bullet">
-        <li>the expected start date for the study</li>
-        <li>contact details for the study if you have any further questions</li>
-        <li>what to do if you no longer want to take part in this study</li>
+    <p>You can take part in the next stage of the study.</p>
+    <p>We’ll ask you to complete a full screening process which goes into more detail about your medical history.</p>
+    <p>This helps us to understand more about your health before the study starts.</p>
+
+    <h2 class="nhsuk-heading-m">Check your email</h2>
+
+    <p>We've sent an email to joe.bloggs@gmail.com to let you know:</p>
+
+    <ul>
+      <li>how and when we’ll contact you about the full screening process</li>
+      <li>the expected start date for the study</li>
+      <li>contact details if you have any further questions</li>
+      <li>what to do if you no longer want to take part - you can change your mind at any time</li>
     </ul>
 
-
+    </div>
+  </div>
+</div>
 {% endblock %}

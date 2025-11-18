@@ -1,12 +1,24 @@
 {% extends "volunteer-iteration-v1/layout.html" %}
-{% block pageTitle %}Pre-screener start{% endblock %}
+{% block pageTitle %}We cannot offer you a place on this study{% endblock %}
 
 {% block content %}
 <div class="nhsuk-width-container">
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-      <h1 class="nhsuk-heading-xl">You are not a match</h1>
-      
-      <p class="nhsuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+
+    {{ panel({
+      titleText: "We cannot offer you a place on this study"
+    }) }}
+
+    <p>We screen all volunteers carefully to make sure the study is safe and appropriate for anyone who wants to take part.</p>
+    <p>Based on the answers you've given us, we cannot offer you a place on this study.</p>
+
+    <h2 class="nhsuk-heading-m">Be part of other studies</h2>
+
+    <p>You can <a href="#">check our website</a> to see if there’s any other studies you’re interested in.</p>
+
+
+    </div>
+  </div>
 </div>
 {% endblock %}
