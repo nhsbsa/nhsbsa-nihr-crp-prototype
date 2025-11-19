@@ -13,6 +13,8 @@
 
         <h1 class="nhsuk-heading-l">Check your answers before submitting your details</h1>
 
+        {% if data['phoneNumber'] %}
+
         <h2 class="nhsuk-heading-m">
           Personal details
         </h2>
@@ -38,6 +40,8 @@
             }
           ]
         }) }}
+
+        {% endif %}
         
         <h2 class="nhsuk-heading-m">
           Your health details
