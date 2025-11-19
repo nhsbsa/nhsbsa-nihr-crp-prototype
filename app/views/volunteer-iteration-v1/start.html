@@ -1,5 +1,5 @@
 {% extends "volunteer-iteration-v1/layout.html" %}
-{% block pageTitle %}Pre-screener start{% endblock %}
+{% block pageTitle %}Check if you can be part of this research{% endblock %}
 
 {% block content %}
 <div class="nhsuk-width-container">
@@ -7,10 +7,10 @@
     <div class="nhsuk-grid-column-two-thirds">
       <form action="/{{folder}}/start" method="post" novalidate>
 
-        <h1 class="nhsuk-heading-xl">Check if you can be part of research</h1>
+        <h1 class="nhsuk-heading-xl">Check if you can be part of this research</h1>
 
         <p class="nhsuk-body">
-          We need to check it’s safe and appropriate for you to take part in any health research study you’re interested in.
+          We need to check it’s safe and appropriate for you to take part in this study.
         </p>
 
         <p class="nhsuk-body">
@@ -21,7 +21,7 @@
         <ul class="nhsuk-list nhsuk-list--bullet">
           <li>health conditions you have</li>
           <li>medication you take</li>
-          <li>other health information relevant to this study</li>
+          <li>other relevant health information</li>
         </ul>
 
         <p class="nhsuk-body">
