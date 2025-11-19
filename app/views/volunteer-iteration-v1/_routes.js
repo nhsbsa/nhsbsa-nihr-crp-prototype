@@ -52,7 +52,7 @@ router.post('/diagnosis', function (req, res) {
     if (diagnosisQuestion == "Yes") {
         res.redirect('hospital');
     } else if (diagnosisQuestion == "No") {
-        res.redirect('hospital');
+        res.redirect('no-match');
     } else {
         res.redirect('diagnosis');
 
@@ -82,7 +82,7 @@ router.post('/free-form-three', function (req, res) {
     if (freeformthreeQuestion == "Yes") {
         res.redirect('free-form-four');
     } else if (freeformthreeQuestion == "No") {
-        res.redirect('free-form-four');
+        res.redirect('no-match');
     } else {
         res.redirect('free-form-three');
 
@@ -97,7 +97,7 @@ router.post('/free-form-four', function (req, res) {
     if (freeformfourQuestion == "Yes") {
         res.redirect('free-form-five');
     } else if (freeformfourQuestion == "No") {
-        res.redirect('free-form-five');
+        res.redirect('no-match');
     } else {
         res.redirect('free-form-four');
 
@@ -112,7 +112,7 @@ router.post('/free-form-five', function (req, res) {
     if (freeformfiveQuestion == "Yes") {
         res.redirect('review-details');
     } else if (freeformfiveQuestion == "No") {
-        res.redirect('review-details');
+        res.redirect('no-match');
     } else {
         res.redirect('free-form-five');
 
@@ -138,16 +138,10 @@ router.post('/check-your-answers', function (req, res) {
     var freeformfourQuestion = req.session.data['FreeFormFour'];
     var freeformfiveQuestion = req.session.data['FreeFormFive'];
 
-    if (
-        diagnosisQuestion === "Yes" &&
-        hospitalQuestion === "Yes" &&
-        freeformthreeQuestion === "Yes" &&
-        freeformfourQuestion === "Yes" &&
-        freeformfiveQuestion === "Yes"
-    ) {
-        res.redirect('match');
-    } else {
+    if (hospitalQuestion === "Yes" || hospitalQuestion === "No") {
         res.redirect('partial-match');
+    } else if (conditionQuestion === "Yes" && medicationQuestion === "Yes" && diagnosisQuestion === "Yes" && freeformthreeQuestion === "Yes" && freeformfourQuestion === "Yes" && freeformfiveQuestion === "Yes") {
+        res.redirect('match');
     }
 
 })
