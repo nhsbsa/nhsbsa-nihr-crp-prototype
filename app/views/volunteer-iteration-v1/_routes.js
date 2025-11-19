@@ -138,10 +138,10 @@ router.post('/check-your-answers', function (req, res) {
     var freeformfourQuestion = req.session.data['FreeFormFour'];
     var freeformfiveQuestion = req.session.data['FreeFormFive'];
 
-    if (hospitalQuestion === "Yes" || hospitalQuestion === "No") {
-        res.redirect('partial-match');
-    } else if (conditionQuestion === "Yes" && medicationQuestion === "Yes" && diagnosisQuestion === "Yes" && freeformthreeQuestion === "Yes" && freeformfourQuestion === "Yes" && freeformfiveQuestion === "Yes") {
+    if (conditionQuestion === "Yes" && medicationQuestion === "Yes" && diagnosisQuestion === "Yes" && hospitalQuestion === "Yes" && freeformthreeQuestion === "Yes" && freeformfourQuestion === "Yes" && freeformfiveQuestion === "Yes") {
         res.redirect('match');
+    } else if (hospitalQuestion === "Yes" || hospitalQuestion === "No") {
+        res.redirect('partial-match');
     }
 
 })
