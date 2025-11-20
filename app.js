@@ -33,11 +33,11 @@ const utils = require('./lib/utils')
 const packageInfo = require('./package.json')
 
 // Routers (make sure these files exist)
-const researcherEntry = require('./app/researcher-entry')
-const researcherFeasibility = require('./app/researcher-feasibility')
-const researcherSubmit = require('./app/researcher-submit')
-const researcherIdentifyStudy = require('./app/researcher-identify-study')
-const researcherStudySites = require('./app/researcher-study-sites') // ← NEW
+const researcherEntry = require('./app/views/_routes/researcher-entry')
+const researcherFeasibility = require('./app/views/_routes/researcher-feasibility')
+const researcherSubmit = require('./app/views/_routes/researcher-submit')
+const researcherIdentifyStudy = require('./app/views/_routes/researcher-identify-study')
+const researcherStudySites = require('./app/views/_routes/researcher-study-sites') // ← NEW
 
 // Set configuration variables
 const port = parseInt(process.env.PORT || config.port, 10) || 2000

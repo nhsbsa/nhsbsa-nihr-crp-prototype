@@ -23,46 +23,55 @@ function safeMount(relPath, label = relPath) {
 }
 
 /* ---------------- Core pages ---------------- */
-safeMount('./home', 'home')
-safeMount('./home-auto', 'home-auto')
-safeMount('./routes-auth', 'routes-auth')
+
+// Home e.g. /
+// safeMount('./home', 'home')
+router.get('/', (req, res) => {
+  res.render('index.html', {
+    featuredId: 'submit-study'   // Force the “Researcher: Submit a new study” epic
+  })
+})
+
+// safeMount('./home-auto', 'home-auto') // Not sure this route is used?
+
+safeMount('./views/_routes/routes-auth', 'routes-auth')
 
 /* ---------------- Researcher: legacy bits kept safe ---------------- */
-safeMount('./mw-criteria-bridge', 'mw-criteria-bridge')
+safeMount('./views/_routes/mw-criteria-bridge', 'mw-criteria-bridge')
 
 // Older feature files retained for compatibility if present
-try { router.use(require('./researcher-bpor')) ; console.log('[routes] mounted: researcher-bpor') } catch (e) { /* optional */ }
-try { router.use(require('./researcher-preview')) ; console.log('[routes] mounted: researcher-preview') } catch (e) { /* optional */ }
-try { router.use(require('./researcher-study-sites')) ; console.log('[routes] mounted: researcher-study-sites') } catch (e) { /* optional */ }
+try { router.use(require('./views/_routes/researcher-bpor')) ; console.log('[routes] mounted: researcher-bpor') } catch (e) { /* optional */ }
+try { router.use(require('./views/_routes/researcher-preview')) ; console.log('[routes] mounted: researcher-preview') } catch (e) { /* optional */ }
+try { router.use(require('./views/_routes/researcher-study-sites')) ; console.log('[routes] mounted: researcher-study-sites') } catch (e) { /* optional */ }
 
 // Researcher scaffolding
-safeMount('./researcher-nav-middleware', 'researcher-nav-middleware')
-safeMount('./mw-last-saved', 'mw-last-saved')
-safeMount('./researcher-progress-mapper', 'researcher-progress-mapper')
+safeMount('./views/_routes/researcher-nav-middleware', 'researcher-nav-middleware')
+safeMount('./views/_routes/mw-last-saved', 'mw-last-saved')
+// safeMount('./views/_routes/researcher-progress-mapper', 'researcher-progress-mapper')
 
 // Feature routers
-safeMount('./researcher-entry', 'researcher-entry')
-safeMount('./researcher-feasibility', 'researcher-feasibility')
-safeMount('./researcher-identify-study', 'researcher-identify-study')
-safeMount('./researcher-submit', 'researcher-submit')
-safeMount('./researcher-volunteer-criteria', 'researcher-volunteer-criteria') // harmless if still around
-safeMount('./routes-researcher', 'routes-researcher')
+safeMount('./views/_routes/researcher-entry', 'researcher-entry')
+safeMount('./views/_routes/researcher-feasibility', 'researcher-feasibility')
+safeMount('./views/_routes/researcher-identify-study', 'researcher-identify-study')
+safeMount('./views/_routes/researcher-submit', 'researcher-submit')
+safeMount('./views/_routes/researcher-volunteer-criteria', 'researcher-volunteer-criteria') // harmless if still around
+safeMount('./views/_routes/routes-researcher', 'routes-researcher')
 
 // NEW: catch orphaned placeholder POSTs
-safeMount('./routes-researcher-orphans', 'routes-researcher-orphans')
+safeMount('./views/_routes/routes-researcher-orphans', 'routes-researcher-orphans')
 
 /* ---------------- Admin: mount new flow FIRST so it wins /admin ----------------
    If legacy routers also register GET /admin, they would steal the route if mounted first.
    Order here ensures our dashboard/overview/review are the handlers users see. */
-safeMount('./admin-eligibility', 'admin-eligibility')
+safeMount('./views/_routes/admin-eligibility', 'admin-eligibility')
 
 // Legacy admin routers (mounted AFTER to avoid shadowing)
-safeMount('./mw-ethics-backcompat', 'mw-ethics-backcompat')
-safeMount('./routes-admin', 'routes-admin')
-safeMount('./routes-admin-studies', 'routes-admin-studies')
+safeMount('./views/_routes/mw-ethics-backcompat', 'mw-ethics-backcompat')
+safeMount('./views/_routes/routes-admin', 'routes-admin')
+safeMount('./views/_routes/routes-admin-studies', 'routes-admin-studies')
 
 /* ---------------- Admin: NEW review workspace ---------------- */
-safeMount('./routes-admin-review', 'routes-admin-review')
+// safeMount('./views/_routes/routes-admin-review', 'routes-admin-review')
 
 /* ---------------- Convenience: home redirect if nothing else claimed '/' ---------------- */
 router.get('/', (req, res, next) => {
@@ -74,8 +83,8 @@ router.get('/', (req, res, next) => {
 
 
 // Mount prescreener journey
-require('./routes-prescreener')(router);
+require('./views/_routes/routes-prescreener')(router);
 
-safeMount('./routes-data', 'routes-data')
+safeMount('./views/_routes/routes-data', 'routes-data')
 
 module.exports = router

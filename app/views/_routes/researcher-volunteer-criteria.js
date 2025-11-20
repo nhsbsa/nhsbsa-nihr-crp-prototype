@@ -1,7 +1,7 @@
 // app/researcher-volunteer-criteria.js
 const express = require('express')
 const router = express.Router()
-const { recomputeDerived } = require('../lib/derived')
+const { recomputeDerived } = require('../../../lib/derived')
 
 router.get('/researcher/volunteer-criteria', (req, res) => {
   const data = req.session.data || (req.session.data = {})
