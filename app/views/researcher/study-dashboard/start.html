@@ -1,0 +1,56 @@
+{% extends "researcher/layout-researcher.html" %}
+
+{% set containerClasses = "dashboard" %}
+
+{% block pageTitle %}Report Overview{% endblock %}
+
+{% block researcherContent %}
+
+<h1 class="nhsuk-heading-l">Report Overview</h1>
+
+<p>Showing 7 of 7 results</p>
+
+{{ table({
+  responsive: false,
+  panel: false,
+  firstCellIsHeader: true,
+  head: [
+    {
+      text: "Study name"
+    },
+    {
+      text: "Screener ID"
+    },
+    {
+      text: "Owner"
+    },
+    {
+      text: "Status"
+    },
+    {
+      text: "Actions"
+    }
+  ],
+  rows: [
+    [
+      {
+        text: "Cognitive therapy in Dementia"
+      },
+      {
+        text: "DR-123456"
+      },
+      {
+        text: "Sofia Martinez"
+      },
+      {
+        html: '<strong class="nhsuk-tag nhsuk-tag--green">Approved</strong>'
+      },
+      {
+        html: '<p><a href="report-overview">View report</a></p>'
+      }
+    ]
+  ]
+}) }}
+
+
+{% endblock %}

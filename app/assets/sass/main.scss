@@ -1,6 +1,9 @@
 // Import NHS.UK frontend library
 @import "nhsuk-frontend/dist/nhsuk";
 @import "condition-combobox";
+@import "moj";
+
+
 
 
 // Add your custom CSS/Sass styles below.
@@ -309,4 +312,14 @@ footer {
       }
     }
   }
+}
+
+
+.dashboard {
+  max-width: 1200px;
+}
+
+.flex-right {
+  display: flex;
+  justify-content: flex-end;
 }

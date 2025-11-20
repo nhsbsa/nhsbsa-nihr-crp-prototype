@@ -1,11 +1,9 @@
-{% extends "layout.html" %}
+{% extends "dashboard.html" %}
 {% block content %}
-<div class="nhsuk-width-container">
+
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-quarter">
-      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Manage platform</h2>
-
-      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Study management</p>
+      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Study management</h2>
       <ul class="nhsuk-list nhsuk-u-margin-bottom-5">
         <li><a href="/researcher"
                class="nhsuk-link{% if activeNav=='study-mgmt' %} nhsuk-u-font-weight-bold{% endif %}"
@@ -19,9 +17,13 @@
         <li><a href="/researcher/prescreener-v1/start"
                class="nhsuk-link{% if activeNav=='pre-screener' %} nhsuk-u-font-weight-bold{% endif %}"
                {% if activeNav=='pre-screener' %}style="text-decoration: underline;"{% endif %}>Create pre-screener</a></li>
+        <li><a href="/researcher/study-dashboard/start"
+               class="nhsuk-link{% if activeNav=='manage-pre-screener' %} nhsuk-u-font-weight-bold{% endif %}"
+               {% if activeNav=='manage-pre-screener' %}style="text-decoration: underline;"{% endif %}>Manage pre-screeners</a></li>
       </ul>
 
-      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Communication</p>
+            <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Communication</h2>
+
       <ul class="nhsuk-list nhsuk-u-margin-bottom-5">
         <li><a href="/researcher/mailing-lists"
                class="nhsuk-link{% if activeNav=='mailing' %} nhsuk-u-font-weight-bold{% endif %}"
@@ -31,7 +33,8 @@
                {% if activeNav=='reporting' %}style="text-decoration: underline;"{% endif %}>Reporting</a></li>
       </ul>
 
-      <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-1">Support</p>
+            <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">Support</h2>
+
       <ul class="nhsuk-list">
         <li><a href="/researcher/help"
                class="nhsuk-link{% if activeNav=='help' %} nhsuk-u-font-weight-bold{% endif %}"
@@ -43,5 +46,4 @@
       {% block researcherContent %}{% endblock %}
     </div>
   </div>
-</div>
 {% endblock %}

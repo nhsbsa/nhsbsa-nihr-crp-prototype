@@ -1,0 +1,273 @@
+{% extends "researcher/layout-researcher.html" %}
+
+{% set containerClasses = "dashboard" %}
+
+{% block content %}
+
+    {{ backLink({
+        "href": "start",
+        "text": "Back"
+      }) }}
+
+<h1 class="nhsuk-heading-xl">Pre-screener summary report for Cognitive therapy in Dementia</h1>
+
+<p class="nhsuk-body-l">
+  This report shows the current status of pre-screeners that have been completed
+</p>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+
+    
+<div class="moj-filter" data-module="moj-filter">
+  <div class="moj-filter__header">
+    <div class="moj-filter__header-title">
+      <h2 class="nhsuk-heading-m">Filter</h2>
+    </div>
+    <div class="moj-filter__header-action">
+    </div>
+  </div>
+  <div class="moj-filter__content">
+    <div class="moj-filter__selected">
+      <div class="moj-filter__selected-heading">
+        <div class="moj-filter__heading-title">
+          <h2 class="nhsuk-heading-m">Selected filters</h2>
+        </div>
+        <div class="moj-filter__heading-action">
+          <p><a class="nhsuk-link nhsuk-link--no-visited-state" href="">Clear filters</a></p>
+        </div>
+      </div>
+      <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-0">Keywords</h3>
+      <ul class="moj-filter-tags">
+        <li><a class="moj-filter__tag" href="#"><span class="nhsuk-u-visually-hidden">Remove this filter</span> Suzie</a></li>
+      </ul>
+      <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-0">Match to study</h3>
+      <ul class="moj-filter-tags">
+        <li><a class="moj-filter__tag" href="#"><span class="nhsuk-u-visually-hidden">Remove this filter</span> Complete match</a></li>
+      </ul>
+      <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-0">Status</h3>
+      <ul class="moj-filter-tags">
+        <li><a class="moj-filter__tag" href="#"><span class="nhsuk-u-visually-hidden">Remove this filter</span> Awaiting contact</a></li>
+      </ul>
+    </div>
+    <div class="moj-filter__options">
+
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label nhsuk-label--s" for="keywords">
+          Keywords
+        </label>
+        <input class="nhsuk-input" id="keywords" name="keywords" type="text">
+      </div>
+
+{{ checkboxes({
+  idPrefix: "example",
+  name: "example",
+  fieldset: {
+    legend: {
+      text: "Match to study",
+      classes: "nhsuk-fieldset__legend--s",
+      isPageHeading: true
+    }
+  },
+  classes: "nhsuk-checkboxes--small",
+  items: [
+    {
+      value: "Complete match",
+      text: "Complete match (200)"
+    },
+    {
+      value: "Partial match",
+      text: "Partial match (140)"
+    }
+  ]
+}) }}
+
+{{ checkboxes({
+  idPrefix: "example1",
+  name: "example1",
+  fieldset: {
+    legend: {
+      text: "Status",
+      classes: "nhsuk-fieldset__legend--s",
+      isPageHeading: true
+    }
+  },
+  classes: "nhsuk-checkboxes--small",
+  items: [
+    {
+      value: "Awaiting contact",
+      text: "Awaiting contact (150)"
+    },
+    {
+      value: "Attempted contact",
+      text: "Attempted contact (25)"
+    },
+    {
+      value: "Recruited",
+      text: "Recruited (10)"
+    },
+    {
+      value: "Not eligible",
+      text: "Not eligible (235)"
+    },
+    {
+      value: "Volunteer declined",
+      text: "Volunteer declined (235)"
+    }
+  ]
+}) }}
+
+<p><a href="#" class="nhsuk-button nhsuk-u-margin-top-4">Apply filters</a></p>
+      
+    </div>
+  </div>
+</div>
+
+  </div>
+  <div class="nhsuk-grid-column-three-quarters">
+
+    
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-half">
+    
+  {{ button({
+    text: "Show filters (3)",
+    classes: "nhsuk-button--secondary",
+    href: "report-overview"
+  }) }}
+
+  </div>
+  <div class="nhsuk-grid-column-one-half">
+
+<div class="nhsuk-button-group flex-right">
+  <a href="#" class="nhsuk-link">Manage collaborators</a>
+
+  {{ button({
+    text: "Add a collaborator",
+    classes: "nhsuk-button--secondary nhsuk-u-margin-right-0"
+  }) }}
+  
+</div>    
+
+  </div>
+</div>
+
+
+
+{{ table({
+  responsive: false,
+  panel: false,
+  firstCellIsHeader: true,
+  head: [
+    {
+      text: "Volunteer name"
+    },
+    {
+      text: "Email address"
+    },
+    {
+      text: "Phone number"
+    },
+    {
+      text: "Date submitted"
+    },
+    {
+      text: "Match to study"
+    },
+    {
+      text: "Status"
+    }
+  ],
+  rows: [
+    [
+      {
+        text: "Dr Suzie Walker"
+      },
+      {
+        text: "Suzie.Walker@bham.ac.uk"
+      },
+      {
+        text: "077321 972711"
+      },
+      {
+        text: "11 August 2025"
+      },
+      {
+        text: "Complete match"
+      },
+      {
+        html: '
+<div class="nhsuk-form-group">
+  <select class="nhsuk-select" id="sort-by" name="sortBy">
+    <option value="1" selected>Awaiting contact</option>
+    <option value="2">Attempted contact</option>
+    <option value="3">Successfully contacted</option>
+    <option value="4">Recruited / Enrolled</option>
+    <option value="5">Not eligible</option>
+    <option value="6">Volunteer declined</option>
+  </select>
+</div>
+        '
+      }
+    ]
+  ]
+}) }}
+
+{{ pagination({
+  previous: {
+    href: "#"
+  },
+  next: {
+    href: "#"
+  },
+  items: [
+    {
+      number: 1,
+      href: '#'
+    },
+    {
+      ellipsis: true
+    },
+    {
+      number: 8,
+      href: '#'
+    },
+    {
+      number: 9,
+      href: '#'
+    },
+    {
+      number: 10,
+      href: '#',
+      current: true
+    },
+    {
+      number: 11,
+      href: '#'
+    },
+    {
+      number: 12,
+      href: '#'
+    },
+    {
+      ellipsis: true
+    },
+    {
+      number: 42,
+      href: '#'
+    }
+  ]
+}) }}
+
+
+
+
+
+
+
+
+  </div>
+</div>
+
+
+{% endblock %}

@@ -91,5 +91,7 @@ router.use('/', (req, res, next) => {
 });
 
 router.use('/volunteer-iteration-v1', require('./views/volunteer-iteration-v1/_routes'));
+router.use('/researcher/study-dashboard', require('./views/researcher/study-dashboard/_routes'));
+
 
 module.exports = router
