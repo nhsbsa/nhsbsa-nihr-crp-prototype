@@ -4,6 +4,10 @@
 {% set containerClasses = "dashboard" %}
 
 {% block content %}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+    
 <div class="nhsuk-panel nhsuk-panel--confirmation">
   <h1 class="nhsuk-panel__title">Pre-screener submitted</h1>
   <div class="nhsuk-panel__body">
@@ -24,4 +28,8 @@
 <form action="/researcher" method="get" class="nhsuk-u-margin-top-4">
   <button class="nhsuk-button" type="submit">Finish</button>
 </form>
+
+  </div>
+</div>
+
 {% endblock %}

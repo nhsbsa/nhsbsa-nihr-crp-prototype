@@ -4,6 +4,11 @@
 {% set containerClasses = "dashboard" %}
 
 {% block content %}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+
+
     {{ backLink({
         "href": "javascript:history.go(-1)",
         "text": "Back"
@@ -81,4 +86,8 @@
       <button type="submit" class="nhsuk-button nhsuk-u-margin-left-2" name="__action" value="continue">Save and continue</button>
     </div>
   </form>
+
+    </div>
+</div>
+
 {% endblock %}
