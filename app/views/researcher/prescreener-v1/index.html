@@ -1,0 +1,101 @@
+{% extends "researcher/layout-researcher.html" %}
+
+{% set containerClasses = "dashboard" %}
+
+{% block pageTitle %}Jane Doe{% endblock %}
+
+{% block researcherContent %}
+
+<h1 class="nhsuk-heading-l">Jane Doe</h1>
+
+{{ summaryList({
+  rows: [
+    {
+      key: {
+        text: "Title"
+      },
+      value: {
+        text: "Mrs"
+      },
+      actions: {
+        items: [
+          {
+            href: "#",
+            text: "Change",
+            visuallyHiddenText: "title"
+          }
+        ]
+      }
+    },
+    {
+      key: {
+        text: "First name"
+      },
+      value: {
+        text: "Jane"
+      },
+      actions: {
+        items: [
+          {
+            href: "#",
+            text: "Change",
+            visuallyHiddenText: "first name"
+          }
+        ]
+      }
+    },
+    {
+      key: {
+        text: "Last name"
+      },
+      value: {
+        text: "Doe"
+      },
+      actions: {
+        items: [
+          {
+            href: "#",
+            text: "Change",
+            visuallyHiddenText: "last name"
+          }
+        ]
+      }
+    },
+    {
+      key: {
+        text: "Email address"
+      },
+      value: {
+        text: "jane.doe@nihr.ac.uk"
+      },
+      actions: {
+        items: [
+          {
+            href: "#",
+            text: "Change",
+            visuallyHiddenText: "email address"
+          }
+        ]
+      }
+    },
+    {
+      key: {
+        text: "Organisation"
+      },
+      value: {
+        text: "NIHR RDN"
+      }
+    },
+    {
+      key: {
+        text: "Role"
+      },
+      value: {
+        text: "Researcher"
+      }
+    }
+  ]
+}) }}
+
+
+{% endblock %}

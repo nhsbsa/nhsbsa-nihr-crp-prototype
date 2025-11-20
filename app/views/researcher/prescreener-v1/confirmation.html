@@ -1,7 +1,9 @@
 {% set pageTitle = "Pre-screener submitted" %}
-{% extends "researcher/prescreener-v1/layout.html" %}
+{% extends "researcher/layout-researcher.html" %}
 
-{% block innerContent %}
+{% set containerClasses = "dashboard" %}
+
+{% block content %}
 <div class="nhsuk-panel nhsuk-panel--confirmation">
   <h1 class="nhsuk-panel__title">Pre-screener submitted</h1>
   <div class="nhsuk-panel__body">

@@ -1,12 +1,13 @@
 {% set pageTitle = "Add additional pre-screening questions" %}
-{% extends "researcher/prescreener-v1/layout.html" %}
+{% extends "researcher/layout-researcher.html" %}
 
-{% block innerContent %}
-  <p class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" href="/researcher/prescreener/choose-methods">
-      <span class="nhsuk-back-link__label">Go back</span>
-    </a>
-  </p>
+{% set containerClasses = "dashboard" %}
+
+{% block content %}
+    {{ backLink({
+        "href": "javascript:history.go(-1)",
+        "text": "Back"
+      }) }}
 
   <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
 

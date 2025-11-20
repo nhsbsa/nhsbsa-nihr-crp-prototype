@@ -1,8 +1,14 @@
 {% set pageTitle = "Volunteer view" %}
-{% extends "researcher/prescreener-v1/layout.html" %}
+{% extends "researcher/layout-researcher.html" %}
 
-{% block innerContent %}
-<a class="nhsuk-back-link" href="/researcher/prescreener/check-answers">Back</a>
+{% set containerClasses = "dashboard" %}
+
+{% block content %}
+    {{ backLink({
+        "href": "javascript:history.go(-1)",
+        "text": "Back"
+      }) }}
+      
 <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
 
 <h2 class="nhsuk-heading-m">Health conditions</h2>

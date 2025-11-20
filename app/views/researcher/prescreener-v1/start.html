@@ -1,7 +1,15 @@
 {% set pageTitle = "Create a pre-screener for your study" %}
-{% extends "researcher/prescreener-v1/layout.html" %}
+{% extends "researcher/layout-researcher.html" %}
 
-{% block innerContent %}
+{% set containerClasses = "dashboard" %}
+
+{% block content %}
+
+    {{ backLink({
+        "href": "javascript:history.go(-1)",
+        "text": "Back"
+      }) }}
+
 <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
 
 <p class="nhsuk-body">

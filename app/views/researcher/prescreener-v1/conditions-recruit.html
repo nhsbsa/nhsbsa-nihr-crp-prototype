@@ -1,18 +1,19 @@
 {% set pageTitle = "Recruit volunteers by health condition" %}
-{% extends "researcher/prescreener-v1/layout.html" %}
+{% extends "researcher/layout-researcher.html" %}
+
+{% set containerClasses = "dashboard" %}
 
 {% block head %}
   {{ super() }}
   <link rel="stylesheet" href="/sass/condition-multiselect.css">
 {% endblock %}
 
-{% block innerContent %}
+{% block content %}
 
-  <p class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" href="/researcher/prescreener/choose-methods">
-      <span class="nhsuk-back-link__label">Go back</span>
-    </a>
-  </p>
+    {{ backLink({
+        "href": "javascript:history.go(-1)",
+        "text": "Back"
+      }) }}
 
   <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
 
