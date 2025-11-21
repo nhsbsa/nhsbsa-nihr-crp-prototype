@@ -1,4 +1,4 @@
-{% set pageTitle = "Add additional pre-screening questions" %}
+{% set pageTitle = "Add additional questions" %}
 {% extends "researcher/layout-researcher.html" %}
 
 {% set containerClasses = "dashboard" %}
@@ -16,22 +16,54 @@
 
   <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
 
-  <p class="nhsuk-body">You can ask volunteers up to 5 additional questions.</p>
-  <p class="nhsuk-body">You should add your questions in the order you'd like them to appear in the pre-screener.</p>
+  <p class="nhsuk-body">You can add up to 5 further questions.</p>
 
-  <p class="nhsuk-body">Make sure you:</p>
+  <p class="nhsuk-body">Before you submit these, you should check:</p>
+
   <ul class="nhsuk-list nhsuk-list--bullet">
-    <li>ask questions with yes or no answers</li>
-    <li>only collect information relevant to your study</li>
+    <li>the order they’re in</li>
+    <li>the wording, spelling and punctuation - they’ll appear to potential participants exactly as you enter them</li>
+    <li>if you want to set one of the questions as a soft fail</li>
   </ul>
+
+  <details class="nhsuk-details">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      What is a soft fail question?
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <p>You can choose to set one of your questions as a soft fail.</p>
+    <p>A soft fail question will not exclude any potential participants. If they meet all of the other criteria for your study, their answer will mean they either:</p>
+    <ul>
+      <li>continue to the next phase</li>
+      <li>go onto a waiting list -  you can choose to contact them later if you do not get enough participants </li>
+    </ul>
+    <p>Any other questions you add will be hard fails.</p>
+    <p>You do not need to add a soft fail. </p>
+  </div>
+</details>
+
+  
 
   <div class="nhsuk-inset-text">
     <span class="nhsuk-u-visually-hidden">Information: </span>
     <p>
-      If you want to ask questions about volunteers' health conditions or medications, do not add them here.
-      <a href="/researcher/prescreener/choose-methods">Go back to add these types of questions.</a>
+      You can only enter questions with a yes or no answer
     </p>
   </div>
+
+    <details class="nhsuk-details">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Collecting potential participants' data
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <p>You should only collect data that’s relevant to your study. </p>
+    <p>Any questions you ask must comply with the data retention policies for [service_name].</p>
+  </div>
+</details>
 
   {# Prefill from session #}
   {% set q = (data.prescreener and data.prescreener.questions and data.prescreener.questions[0]) or {} %}
@@ -39,17 +71,17 @@
   {% set matchVal  = q.matchValue | default('') %}
 
   <form method="post" action="/researcher/prescreener/questions/save" novalidate>
-    <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Question 1</h2>
+    <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Enter question 1</h2>
 
     <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="questionText">Write your question here…</label>
+      <label class="nhsuk-label" for="questionText">Question 1</label>
       <textarea class="nhsuk-textarea" id="questionText" name="questionText" rows="4" maxlength="200">{{ q.text | default('') }}</textarea>
       <div class="nhsuk-hint">You can enter up to 200 characters</div>
     </div>
 
-    <h3 class="nhsuk-heading-m nhsuk-u-margin-top-4">Select the matching answer</h3>
+    <h3 class="nhsuk-heading-m nhsuk-u-margin-top-4">Which answer should be given to continue to the next phase?</h3>
     <p class="nhsuk-hint nhsuk-u-margin-bottom-2">
-      This is the answer the volunteer needs to give to be a match for your study.
+      Select the answer needed to continue to the next stage.
     </p>
     <div class="nhsuk-radios">
       <div class="nhsuk-radios__item">
@@ -62,22 +94,17 @@
       </div>
     </div>
 
-    <h3 class="nhsuk-heading-m nhsuk-u-margin-top-5">Will this question exclude volunteers?</h3>
+    <h3 class="nhsuk-heading-m nhsuk-u-margin-top-5">Is this question a hard or soft fail?</h3>
+    <div class="nhsuk-hint">You can only add one soft fail.</div>
+
     <div class="nhsuk-radios">
       <div class="nhsuk-radios__item">
         <input class="nhsuk-radios__input" id="exclude-yes" name="exclusion" type="radio" value="exclude-on-answer" {% if exclusion == 'exclude-on-answer' %}checked{% endif %}>
         <label class="nhsuk-label nhsuk-radios__label" for="exclude-yes">Yes</label>
-        <div class="nhsuk-hint nhsuk-radios__hint">
-          Volunteers who do not give the matching answer will be excluded from your study.
-        </div>
       </div>
       <div class="nhsuk-radios__item">
         <input class="nhsuk-radios__input" id="exclude-no" name="exclusion" type="radio" value="no-exclusion" {% if exclusion == 'no-exclusion' %}checked{% endif %}>
         <label class="nhsuk-label nhsuk-radios__label" for="exclude-no">No</label>
-        <div class="nhsuk-hint nhsuk-radios__hint">
-          Volunteers who do not give the matching answer will show as a <strong>partial match</strong> and you will still be able to contact them.
-          You can only include one partial match question.
-        </div>
       </div>
     </div>
 

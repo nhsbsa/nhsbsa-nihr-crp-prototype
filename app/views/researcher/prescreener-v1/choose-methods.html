@@ -1,4 +1,4 @@
-{% set pageTitle = "Choose how you'd like to pre-screen volunteers" %}
+{% set pageTitle = "Set your inclusion and exclusion criteria" %}
 {% extends "researcher/layout-researcher.html" %}
 
 {% set containerClasses = "dashboard" %}
@@ -16,52 +16,42 @@
 <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
 
 <p class="nhsuk-body">
-  Select the types of questions you want to ask to find suitable volunteers for your study.
+  Select one or more options.
 </p>
 
 <form action="/researcher/prescreener/choose-methods" method="post" novalidate>
-  <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">Health conditions</h2>
+  <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">Add health conditions</h2>
   <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-6">
     <div class="nhsuk-checkboxes">
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input" id="recruitByConditions" name="recruitByConditions" type="checkbox" {% if data.prescreener.choices.recruitByConditions %}checked{% endif %}>
-        <label class="nhsuk-label nhsuk-checkboxes__label" for="recruitByConditions">Recruit volunteers by health condition</label>
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="recruitByConditions">Recruit by health condition</label>
       </div>
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input" id="excludeByConditions" name="excludeByConditions" type="checkbox" {% if data.prescreener.choices.excludeByConditions %}checked{% endif %}>
-        <label class="nhsuk-label nhsuk-checkboxes__label" for="excludeByConditions">Exclude volunteers by health condition</label>
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="excludeByConditions">Exclude by health condition</label>
       </div>
     </div>
   </fieldset>
 
-  <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">Medications</h2>
+  <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">Add medications</h2>
   <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-6">
     <div class="nhsuk-checkboxes">
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input" id="recruitByMedication" name="recruitByMedication" type="checkbox" {% if data.prescreener.choices.recruitByMedication %}checked{% endif %}>
-        <label class="nhsuk-label nhsuk-checkboxes__label" for="recruitByMedication">Recruit volunteers by the medication they take</label>
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="recruitByMedication">Recruit by medication</label>
       </div>
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input" id="excludeByMedication" name="excludeByMedication" type="checkbox" {% if data.prescreener.choices.excludeByMedication %}checked{% endif %}>
-        <label class="nhsuk-label nhsuk-checkboxes__label" for="excludeByMedication">Exclude volunteers by the medication they take</label>
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="excludeByMedication">Exclude by medication</label>
       </div>
     </div>
   </fieldset>
 
-  <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">Additional pre-screening questions</h2>
-  <p class="nhsuk-body">
-    You can also write up to 5 of your own pre-screening questions. If you choose to do this, the questions must:
-  </p>
-  <ul class="nhsuk-list nhsuk-list--bullet nhsuk-u-margin-bottom-3">
-    <li>have a yes or no answer</li>
-    <li>only collect data that’s relevant to your study</li>
-    <li>comply with the data retention policies for [service_name]</li>
-  </ul>
+  <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">Add additional questions</h2>
 
   <p class="nhsuk-body">
-    <a href="#" target="_blank" rel="noopener noreferrer">
-      Find out more about adding study specific questions (opens in a new tab).
-    </a>
+    You can add up to 5 additional questions if you’d like to pre-screen volunteers further. Any questions you add must have a yes or no answer.
   </p>
 
   <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-6">
@@ -69,7 +59,7 @@
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input" id="additionalQuestions" name="additionalQuestions" type="checkbox" {% if data.prescreener.choices.additionalQuestions %}checked{% endif %}>
         <label class="nhsuk-label nhsuk-checkboxes__label" for="additionalQuestions">
-          Add additional pre-screening questions
+          I’d like to add additional questions
         </label>
       </div>
     </div>

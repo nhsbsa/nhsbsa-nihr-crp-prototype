@@ -20,15 +20,13 @@
 
 <form action="/researcher/prescreener/study-details" method="post" novalidate>
   <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="study-name">Study name</label>
-    <div class="nhsuk-hint">Enter the full name of your study.</div>
+    <label class="nhsuk-label" for="study-name">Full study name</label>
     <input class="nhsuk-input" id="study-name" name="study[name]" value="{{ data.prescreener.study.name }}">
   </div>
 
   <div class="nhsuk-form-group">
     <label class="nhsuk-label" for="study-id">Study ID</label>
-    <div class="nhsuk-hint">For example, CP987982036.</div>
-    <input class="nhsuk-input" id="study-id" name="study[id]" value="{{ data.prescreener.study.id }}">
+    <input class="nhsuk-input nhsuk-input--width-10" id="study-id" name="study[id]" value="{{ data.prescreener.study.id }}">
   </div>
 
   <div class="nhsuk-form-group">

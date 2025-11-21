@@ -1,4 +1,4 @@
-{% set pageTitle = "Exclude volunteers by the medication they take" %}
+{% set pageTitle = "Exclude by medication" %}
 {% extends "researcher/layout-researcher.html" %}
 
 {% set containerClasses = "dashboard" %}
@@ -21,22 +21,18 @@
   <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
 
   <p class="nhsuk-body">
-    You can search for any medication volunteers must be prescribed to take part
-  </p>
-  <p class="nhsuk-body">
-    The medicines in our database are pulled from the British National Formulary and follow naming standards.
+    Add one or more medications to your exclusion criteria.
   </p>
 
-  <h2 class="nhsuk-heading-m nhsuk-u-margin-top-6">Add medication that will exclude volunteers</h2>
-  <p class="nhsuk-hint">
-    Start typing the name of the medication you'd like to add and select it from the list.
+  <p class="nhsuk-body">
+   Start typing the name of the medication you’d like to add. The medications in our database follow <a href="https://bnf.nice.org.uk/" target="_blank">UK naming standards (opens in a new tab)</a>.
   </p>
 
   <form method="post" action="/researcher/prescreener/meds/exclude/continue" novalidate>
 
     {# Listed medicines (combobox) #}
     <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="meds-exclude-search">Select medication</label>
+      <label class="nhsuk-label" for="meds-exclude-search">Medication</label>
       <div class="crp-combobox" data-module="crp-combobox">
         <input
           id="meds-exclude-search"
@@ -60,10 +56,10 @@
     {# Selected listed medicines (white card panel) #}
     <div class="crp-panel nhsuk-u-margin-top-4" aria-live="polite">
       <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
-        <strong>Selected medicine(s) (<span id="meds-exclude-selected-count">0</span>)</strong>
+        <strong>Selected medication (<span id="meds-exclude-selected-count">0</span>)</strong>
       </h3>
       <div id="meds-exclude-selected-chips" class="crp-selected__chips"></div>
-      <p id="meds-exclude-selected-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">No medicines added.</p>
+      <p id="meds-exclude-selected-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">None added</p>
     </div>
 
     {# Hidden inputs for listed medicines #}
@@ -75,30 +71,27 @@
     {# Non-listed medicine section #}
     <details class="nhsuk-details nhsuk-u-margin-top-6" id="nonlisted-meds-exclude">
       <summary class="nhsuk-details__summary">
-        <span class="nhsuk-details__summary-text">If the medicine is not listed</span>
+        <span class="nhsuk-details__summary-text">If a medication is not listed</span>
       </summary>
       <div class="nhsuk-details__text">
-        <h2 class="nhsuk-heading-m">Add a non-listed medication</h2>
-        <p class="nhsuk-hint">
-          If a medication is not listed in our database, you can add it here.
-          Enter the medicine exactly as you want it to appear to volunteers.
-        </p>
+
+        <p class="nhsuk-body">Enter the name of one or more medications that are not listed in our database. Check each medication before you submit them - they’ll appear to potential participants exactly as you’ve entered them.</p>
 
         <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="nonlisted-med-exclude-input">Medicine name</label>
+          <label class="nhsuk-label" for="nonlisted-med-exclude-input">Non-listed medication</label>
           <input class="nhsuk-input" id="nonlisted-med-exclude-input" type="text" autocomplete="off">
         </div>
 
         <button class="nhsuk-button nhsuk-button--secondary" type="button" id="nonlisted-med-exclude-add">
-          Add medicine
+          Add non-listed medication
         </button>
 
         <div class="crp-panel nhsuk-u-margin-top-4" aria-live="polite">
           <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
-            <strong>Selected non-listed medicine(s) (<span id="nonlisted-med-exclude-count">0</span>)</strong>
+            <strong>Non-listed medications you’ve added (<span id="nonlisted-med-exclude-count">0</span>)</strong>
           </h3>
           <div id="nonlisted-med-exclude-chips" class="crp-selected__chips"></div>
-          <p id="nonlisted-med-exclude-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">No medicines added.</p>
+          <p id="nonlisted-med-exclude-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">None added</p>
         </div>
 
         {# Hidden inputs for custom medicines #}

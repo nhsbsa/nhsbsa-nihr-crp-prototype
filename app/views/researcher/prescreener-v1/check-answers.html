@@ -1,4 +1,4 @@
-{% set pageTitle = "Check your answers" %}
+{% set pageTitle = "Check your answers before submitting your pre-screener" %}
 {% extends "researcher/layout-researcher.html" %}
 
 {% set containerClasses = "dashboard" %}
@@ -18,7 +18,7 @@
 {# =========================
    Your study information
    ========================= #}
-<h2 class="nhsuk-heading-m">Your study information</h2>
+<h2 class="nhsuk-heading-m">Study information details</h2>
 <dl class="nhsuk-summary-list">
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">Study name</dt>
@@ -40,30 +40,30 @@
 {# ============================================
    Choose how you'd like to pre-screen volunteers
    ============================================ #}
-<h2 class="nhsuk-heading-m">Choose how you'd like to pre-screen volunteers</h2>
+<h2 class="nhsuk-heading-m">Inclusion and exclusion criteria details</h2>
 <dl class="nhsuk-summary-list">
   <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">Question types selected</dt>
+    <dt class="nhsuk-summary-list__key">Criteria selected</dt>
     <dd class="nhsuk-summary-list__value">
       {% set anyTypes = false %}
       {% if data.prescreener.choices.recruitByConditions %}
-        <p class="nhsuk-u-margin-bottom-1">Recruit volunteers by health condition</p>
+        <p class="nhsuk-u-margin-bottom-1">Recruit by health condition</p>
         {% set anyTypes = true %}
       {% endif %}
       {% if data.prescreener.choices.excludeByConditions %}
-        <p class="nhsuk-u-margin-bottom-1">Exclude volunteers by health condition</p>
+        <p class="nhsuk-u-margin-bottom-1">Exclude by health condition</p>
         {% set anyTypes = true %}
       {% endif %}
       {% if data.prescreener.choices.recruitByMedication %}
-        <p class="nhsuk-u-margin-bottom-1">Recruit volunteers by the medication they take</p>
+        <p class="nhsuk-u-margin-bottom-1">Recruit by medication</p>
         {% set anyTypes = true %}
       {% endif %}
       {% if data.prescreener.choices.excludeByMedication %}
-        <p class="nhsuk-u-margin-bottom-1">Exclude volunteers by the medication they take</p>
+        <p class="nhsuk-u-margin-bottom-1">Exclude by medication</p>
         {% set anyTypes = true %}
       {% endif %}
       {% if data.prescreener.choices.additionalQuestions %}
-        <p class="nhsuk-u-margin-bottom-0">Add additional pre-screening questions</p>
+        <p class="nhsuk-u-margin-bottom-0">Additional questions</p>
         {% set anyTypes = true %}
       {% endif %}
       {% if not anyTypes %}
@@ -77,10 +77,10 @@
 {# =================
    Health conditions
    ================= #}
-<h2 class="nhsuk-heading-m">Health conditions</h2>
+<h2 class="nhsuk-heading-m">Health condition details</h2>
 <dl class="nhsuk-summary-list">
   <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">Recruit volunteers by health condition</dt>
+    <dt class="nhsuk-summary-list__key">Recruit by health condition</dt>
     <dd class="nhsuk-summary-list__value">
       {% set shown = false %}
       {% for item in data.prescreener.conditions.recruit.listed %}
@@ -97,7 +97,7 @@
   </div>
 
   <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">Exclude volunteers by health condition</dt>
+    <dt class="nhsuk-summary-list__key">Exclude by health condition</dt>
     <dd class="nhsuk-summary-list__value">
       {% set shownE = false %}
       {% for item in data.prescreener.conditions.exclude.listed %}
@@ -117,10 +117,10 @@
 {# ===========
    Medication
    =========== #}
-<h2 class="nhsuk-heading-m">Medication</h2>
+<h2 class="nhsuk-heading-m">Medication details</h2>
 <dl class="nhsuk-summary-list">
   <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">Recruit volunteers by the medication they take</dt>
+    <dt class="nhsuk-summary-list__key">Recruit by medication</dt>
     <dd class="nhsuk-summary-list__value">
       {% set hasMr = false %}
       {# listed meds with optional aliases #}
@@ -151,7 +151,7 @@
   </div>
 
   <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">Exclude volunteers by the medication they take</dt>
+    <dt class="nhsuk-summary-list__key">Exclude by medication</dt>
     <dd class="nhsuk-summary-list__value">
       {% set hasMe = false %}
       {% for med in data.prescreener.meds.exclude.listed %}
@@ -183,7 +183,7 @@
 {# =================================
    Additional pre-screening questions
    ================================= #}
-<h2 class="nhsuk-heading-m">Additional pre-screening questions</h2>
+<h2 class="nhsuk-heading-m">Additional questions</h2>
 {% if data.prescreener.choices.additionalQuestions %}
   {% if data.prescreener.extraQuestions and data.prescreener.extraQuestions.length %}
     <dl class="nhsuk-summary-list">
@@ -221,9 +221,14 @@
   <p class="nhsuk-body">No additional questions.</p>
 {% endif %}
 
+<h2 class="nhsuk-heading-m">Now submit your pre-screener</h2>
+
+<p>You can <a href="volunteer-view">check the how your pre-screener will appear to volunteers</a>.</p>
+
+<p>After you submit it, it’ll be sent to our admin team for review.</p>
+
 <form action="/researcher/prescreener/submit" method="post" class="nhsuk-u-margin-top-6">
   <button class="nhsuk-button" type="submit">Submit</button>
-  <a class="nhsuk-button nhsuk-button--secondary" role="button" href="/researcher/prescreener/volunteer-view">Volunteer view</a>
 </form>
 
   </div>

@@ -1,4 +1,4 @@
-{% set pageTitle = "Recruit volunteers by health condition" %}
+{% set pageTitle = "Recruit by health condition" %}
 {% extends "researcher/layout-researcher.html" %}
 
 {% set containerClasses = "dashboard" %}
@@ -20,11 +20,9 @@
 
   <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
 
-  <p class="nhsuk-body-l">You can search for any health conditions volunteers must have to take part.</p>
-  <p class="nhsuk-body">The health conditions in our database follow UK naming standards.</p>
+  <p class="nhsuk-body">Add one or more health conditions to your inclusion criteria.</p>
 
-  <h2 class="nhsuk-heading-m nhsuk-u-margin-top-6">Add a health condition</h2>
-  <p class="nhsuk-hint">Start typing the name of the condition you'd like to add and select it from the list.</p>
+  <p class="nhsuk-body">Start typing the name of the condition you'd like to add and select it from the list.</p>
 
   <form method="post" action="/researcher/prescreener/conditions/recruit/continue" novalidate>
     <!-- Listed conditions (combobox) -->
@@ -56,7 +54,7 @@
         <strong>Selected conditions (<span id="selected-count">0</span>)</strong>
       </h3>
       <div id="selected-chips" class="crp-selected__chips"></div>
-      <p id="selected-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">No conditions added.</p>
+      <p id="selected-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">None added</p>
     </div>
 
     <!-- Hidden inputs for listed conditions -->
@@ -65,30 +63,27 @@
     <!-- Non-listed condition section -->
     <details class="nhsuk-details nhsuk-u-margin-top-6" id="nonlisted">
       <summary class="nhsuk-details__summary">
-        <span class="nhsuk-details__summary-text">If the condition is not listed</span>
+        <span class="nhsuk-details__summary-text">If a condition is not listed</span>
       </summary>
       <div class="nhsuk-details__text">
-        <h2 class="nhsuk-heading-m">Add a non-listed condition</h2>
-        <p class="nhsuk-hint">
-          If a condition is not listed in our database, you can add it here.
-          Enter the condition name exactly as you'd like it to appear to volunteers.
-        </p>
+
+        <p class="nhsuk-body">Enter the name of one or more conditions that are not listed in our database. Check each condition before you submit them - they’ll appear to potential participants exactly as you’ve entered them.</p>
 
         <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="nonlisted-input">Condition name</label>
+          <label class="nhsuk-label" for="nonlisted-input">Non-listed condition</label>
           <input class="nhsuk-input" id="nonlisted-input" type="text" autocomplete="off">
         </div>
 
         <button class="nhsuk-button nhsuk-button--secondary" type="button" id="nonlisted-add">
-          Add condition
+          Add non-listed condition
         </button>
 
         <div class="crp-panel nhsuk-u-margin-top-4" aria-live="polite">
           <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
-            <strong>Selected non-listed conditions (<span id="nonlisted-count">0</span>)</strong>
+            <strong>Non-listed conditions you’ve added (<span id="nonlisted-count">0</span>)</strong>
           </h3>
           <div id="nonlisted-chips" class="crp-selected__chips"></div>
-          <p id="nonlisted-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">No conditions added.</p>
+          <p id="nonlisted-empty" class="nhsuk-body nhsuk-u-margin-bottom-0">None added</p>
         </div>
 
         <!-- Hidden inputs for custom conditions -->
