@@ -1,0 +1,134 @@
+{% extends "researcher/layout-researcher.html" %}
+
+{% set containerClasses = "dashboard" %}
+
+{% block content %}
+
+    {{ backLink({
+        "href": "start",
+        "text": "Back"
+      }) }}
+      
+<h1 class="nhsuk-heading-xl">Manage collaborators</h1>
+
+{{ table({
+  responsive: false,
+  panel: false,
+  firstCellIsHeader: true,
+  head: [
+    {
+      text: "Name"
+    },
+    {
+      text: "Email address"
+    },
+    {
+      text: "Date added"
+    },
+    {
+      text: "Actions"
+    }
+  ],
+  rows: [
+    [
+      {
+        text: "Dr. Emily Carter"
+      },
+      {
+        text: "Emily.Carter@bham.ac.uk"
+      },
+      {
+        text: "11 August 2025"
+      },
+      {
+        html: '<a href="remove-collaborator">Remove</a>'
+      }
+    ],
+    [
+      {
+        text: "Lucas Green"
+      },
+      {
+        text: "Lucas.Green@hotmail.com"
+      },
+      {
+        text: "9 August 2025"
+      },
+      {
+        html: '<a href="remove-collaborator">Remove</a>'
+      }
+    ],
+    [
+      {
+        text: "Oliver Hayes"
+      },
+      {
+        text: "OllieH@aol.co.uk"
+      },
+      {
+        text: "8 August 2025"
+      },
+      {
+        html: '<a href="remove-collaborator">Remove</a>'
+      }
+    ],
+    [
+      {
+        text: "Max Turner"
+      },
+      {
+        text: "Max.Turner@nihr.ac.uk"
+      },
+      {
+        text: "7 August 2025"
+      },
+      {
+        html: '<a href="remove-collaborator">Remove</a>'
+      }
+    ],
+    [
+      {
+        text: "Bill Hayes"
+      },
+      {
+        text: "Bill.Hayes@hotmail.com"
+      },
+      {
+        text: "6 August 2025"
+      },
+      {
+        html: '<a href="remove-collaborator">Remove</a>'
+      }
+    ],
+    [
+      {
+        text: "Aisha Patel"
+      },
+      {
+        text: "aisha.patel@email.com"
+      },
+      {
+        text: "5 August 2025"
+      },
+      {
+        html: '<a href="remove-collaborator">Remove</a>'
+      }
+    ],
+    [
+      {
+        text: "Liam Chen"
+      },
+      {
+        text: "liam.chen@email.com"
+      },
+      {
+        text: "4 August 2025"
+      },
+      {
+        html: '<a href="remove-collaborator">Remove</a>'
+      }
+    ]
+  ]
+}) }}
+
+{% endblock %}

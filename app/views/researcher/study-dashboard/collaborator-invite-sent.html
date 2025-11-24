@@ -1,0 +1,37 @@
+{% extends "researcher/layout-researcher.html" %}
+
+{% set containerClasses = "dashboard" %}
+
+{% block content %}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+
+{{ panel({
+  titleText: "Invitation sent",
+  text: "We have sent an email invitation to your collaborator"
+}) }}
+
+<p>They will have access to view and edit this pre-screener summary report once they follow the link in the email.</p>
+
+<p>If they do not have an NIHR account, they will need to create one. The email includes instructions on how to do this.</p>
+
+<div class="nhsuk-button-group">
+  {{ button({
+    text: "Back to pre-screener summary",
+    href: "report-overview"
+  }) }}
+
+  {{ button({
+    text: "Add another collaborator",
+    classes: "nhsuk-button--secondary",
+    href: "add-collaborator"
+  }) }}
+</div>
+
+  </div>
+</div>
+
+
+
+{% endblock %}

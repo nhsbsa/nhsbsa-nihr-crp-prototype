@@ -1,0 +1,30 @@
+{% extends "researcher/layout-researcher.html" %}
+
+{% set containerClasses = "dashboard" %}
+
+{% block content %}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+
+{{ panel({
+  titleText: "Collaborator removed",
+  text: "We have sent an email notifying this person that they have been removed as a collaborator."
+}) }}
+
+<p>They will have access to view and edit this pre-screener summary report once they follow the link in the email.</p>
+
+<p>If they do not have an NIHR account, they will need to create one. The email includes instructions on how to do this.</p>
+
+  {{ button({
+    text: "Back to manage collaborators",
+    classes: "nhsuk-button--secondary",
+    href: "manage-collaborators"
+  }) }}
+
+  </div>
+</div>
+
+
+
+{% endblock %}

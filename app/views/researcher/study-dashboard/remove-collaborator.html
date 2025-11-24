@@ -1,0 +1,42 @@
+{% extends "researcher/layout-researcher.html" %}
+
+{% set containerClasses = "dashboard" %}
+
+{% block content %}
+
+    {{ backLink({
+        "href": "start",
+        "text": "Back"
+      }) }}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+
+{{ warningCallout({
+  heading: "You are about to remove a collaborator",
+  text: "This action cannot be undone. Once a collaborator is removed they will have to be re-invited to regain access to this pre-screener report."
+}) }}
+
+<p>Are you sure you want to remove <strong>Dr. Emily Carter</strong> as a collaborator?</p>
+
+
+<div class="nhsuk-button-group">
+  {{ button({
+    text: "Remove collaborator",
+    classes: "nhsuk-button--warning",
+    href: "collaborator-removed"
+  }) }}
+
+  {{ button({
+    text: "Back to manage collaborators",
+    classes: "nhsuk-button--secondary",
+    href: "manage-collaborators"
+  }) }}
+</div>
+
+  </div>
+</div>
+
+
+
+{% endblock %}

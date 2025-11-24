@@ -1,0 +1,45 @@
+{% extends "researcher/layout-researcher.html" %}
+
+{% set containerClasses = "dashboard" %}
+
+{% block content %}
+
+    {{ backLink({
+        "href": "start",
+        "text": "Back"
+      }) }}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+      
+<h1>Add a collaborator </h1>
+
+<p>Enter the person's full name and email address. They will receive an email with access to view and edit the pre-screener report.</p>
+
+{{ input({
+  id: "collaborator-full-name",
+  name: "collaboratorfullName",
+  classes: "nhsuk-input--width-20",
+  label: {
+    text: "Collaborator full name"
+  }
+}) }}
+
+{{ input({
+  id: "collaborator-email-address",
+  name: "collaboratoremailAddress",
+  classes: "nhsuk-input--width-20",
+  label: {
+    text: "Collaborator email address"
+  }
+}) }}
+
+{{ button({
+  text: "Send an invite",
+  href: "collaborator-invite-sent"
+}) }}
+
+  </div>
+</div>
+
+{% endblock %}
