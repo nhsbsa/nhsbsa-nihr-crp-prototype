@@ -44,15 +44,6 @@
   </div>
 </details>
 
-  
-
-  <div class="nhsuk-inset-text">
-    <span class="nhsuk-u-visually-hidden">Information: </span>
-    <p>
-      You can only enter questions with a yes or no answer
-    </p>
-  </div>
-
     <details class="nhsuk-details">
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
@@ -64,6 +55,17 @@
     <p>Any questions you ask must comply with the data retention policies for [service_name].</p>
   </div>
 </details>
+
+  
+
+  <div class="nhsuk-inset-text">
+    <span class="nhsuk-u-visually-hidden">Information: </span>
+    <p>
+      You can only enter questions with a yes or no answer
+    </p>
+  </div>
+
+
 
   {# Prefill from session #}
   {% set q = (data.prescreener and data.prescreener.questions and data.prescreener.questions[0]) or {} %}
@@ -94,7 +96,7 @@
       </div>
     </div>
 
-    <h3 class="nhsuk-heading-m nhsuk-u-margin-top-5">Is this question a hard or soft fail?</h3>
+    <h3 class="nhsuk-heading-m nhsuk-u-margin-top-5">Is this a soft fail?</h3>
     <div class="nhsuk-hint">You can only add one soft fail.</div>
 
     <div class="nhsuk-radios">
