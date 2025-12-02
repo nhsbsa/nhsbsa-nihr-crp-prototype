@@ -107,6 +107,51 @@
       </div>
     </div>
 
+    <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-6">Enter question 2</h2>
+
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="questionText">Question 2</label>
+      <textarea class="nhsuk-textarea" id="questionText" name="questionText" rows="4" maxlength="200">{{ q.text | default('') }}</textarea>
+      <div class="nhsuk-hint">You can enter up to 200 characters</div>
+    </div>
+
+    <h3 class="nhsuk-heading-m nhsuk-u-margin-top-4">Which answer should be given to continue to the next phase?</h3>
+    <p class="nhsuk-hint nhsuk-u-margin-bottom-2">
+      Select the answer needed to continue to the next stage.
+    </p>
+    <div class="nhsuk-radios">
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="matching-yes" name="matchingAnswer" type="radio" value="yes" {% if matchVal == 'yes' %}checked{% endif %}>
+        <label class="nhsuk-label nhsuk-radios__label" for="matching-yes">Yes</label>
+      </div>
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" id="matching-no" name="matchingAnswer" type="radio" value="no" {% if matchVal == 'no' %}checked{% endif %}>
+        <label class="nhsuk-label nhsuk-radios__label" for="matching-no">No</label>
+      </div>
+    </div>
+
+    <h3 class="nhsuk-heading-m nhsuk-u-margin-top-5">This question will exclude volunteers</h3>
+
+    <p>You can only add one question that does not exclude participants.</p>
+
+    <p>A question that does not exclude volunteers will show as a partial match. You will still be able to contact them. To make this question a partial match instead, edit Question 1 and change it to exclude volunteers.</p>
+
+    <details class="nhsuk-details">
+      <summary class="nhsuk-details__summary">
+        <span class="nhsuk-details__summary-text">
+          What is a partial match and why can I only add one?
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <p>A partial match is a volunteer who did not give the matching answer to a question that you selected not to exclude volunteers.</p>
+        <p>You can only have one partial match question because you will not see volunteers' individual answers, only their overall match status. If you had multiple partial match questions, you would not know which answer caused the partial match status.</p>
+      </div>
+    </details>
+
+
+
+
+
 <div class="nhsuk-u-margin-top-6">
   <button type="submit"
           class="nhsuk-button nhsuk-button--secondary"
@@ -125,7 +170,5 @@
 
   </form>
 
-    </div>
-</div>
 
 {% endblock %}

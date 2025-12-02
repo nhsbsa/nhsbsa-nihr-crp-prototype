@@ -297,23 +297,33 @@ module.exports = function (router) {
       res.render('researcher/prescreener-v1/questions');
     });
 
-    // Expect fields: questionText, answerType, exclusion, guidance, __action
-    router.post(`${prefix}/questions/save`, (req, res) => {
-      const text = normalise(req.body.questionText);
-      const answerType = req.body.answerType === 'multi' ? 'multi' : 'single';
-      const exclusion = req.body.exclusion === 'exclude-on-answer' ? 'exclude-on-answer' : 'no-exclusion';
-      const guidance = normalise(req.body.guidance);
+router.get(`${prefix}/questions2`, (req, res) => {
+  res.render('researcher/prescreener-v1/questions2');
+});
 
-      req.session.data.prescreener.questions = [{
-        text,
-        answerType,
-        exclusion,
-        guidance
-      }];
+router.post(`${prefix}/questions/save`, (req, res) => {
+  const text = normalise(req.body.questionText);
+  const answerType = req.body.answerType === 'multi' ? 'multi' : 'single';
+  const exclusion = req.body.exclusion === 'exclude-on-answer'
+    ? 'exclude-on-answer'
+    : 'no-exclusion';
+  const guidance = normalise(req.body.guidance);
 
-      const next = (req.body.__action === 'continue') ? `${prefix}/check-answers` : `${prefix}/questions`;
-      res.redirect(next);
-    });
+  req.session.data.prescreener.questions = [{
+    text,
+    answerType,
+    exclusion,
+    guidance
+  }];
+
+  console.log(prefix);
+
+  const next = (req.body.__action === 'continue')
+    ? `${prefix}/check-answers`
+    : `${prefix}/questions2`;
+
+  res.redirect(next);
+});
 
     // ----- Check answers / Submit ------------------------------------------
     router.get(`${prefix}/check-answers`, (req, res) => {
