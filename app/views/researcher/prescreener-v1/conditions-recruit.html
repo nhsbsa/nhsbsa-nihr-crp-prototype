@@ -127,6 +127,7 @@
       hidden: '#selected-hidden',
       count: '#selected-count',
       source: '/data/conditions.json',
+      empty: '#selected-empty',
       onChange: function (count) {
         var empty = document.getElementById('selected-empty');
         if (empty) empty.style.display = count > 0 ? 'none' : '';
