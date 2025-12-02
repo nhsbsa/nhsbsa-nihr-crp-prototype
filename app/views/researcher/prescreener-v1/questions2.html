@@ -84,11 +84,11 @@
     </p>
     <div class="nhsuk-radios">
       <div class="nhsuk-radios__item">
-        <input class="nhsuk-radios__input" id="matching-yes" name="matchingAnswer" type="radio" value="yes" {% if matchVal == 'yes' %}checked{% endif %}>
+        <input class="nhsuk-radios__input" id="matching-yes" name="matchingAnswer" type="radio" value="yes" {% if data['matchingAnswer'] == "yes" %}checked{% endif %}>
         <label class="nhsuk-label nhsuk-radios__label" for="matching-yes">Yes</label>
       </div>
       <div class="nhsuk-radios__item">
-        <input class="nhsuk-radios__input" id="matching-no" name="matchingAnswer" type="radio" value="no" {% if matchVal == 'no' %}checked{% endif %}>
+        <input class="nhsuk-radios__input" id="matching-no" name="matchingAnswer" type="radio" value="no" {% if data['matchingAnswer'] == "no" %}checked{% endif %}>
         <label class="nhsuk-label nhsuk-radios__label" for="matching-no">No</label>
       </div>
     </div>
@@ -121,11 +121,11 @@
     </p>
     <div class="nhsuk-radios">
       <div class="nhsuk-radios__item">
-        <input class="nhsuk-radios__input" id="matching-yes" name="matchingAnswer" type="radio" value="yes" {% if matchVal == 'yes' %}checked{% endif %}>
+        <input class="nhsuk-radios__input" id="matching-yes" name="matchingAnswer" type="radio" value="yes">
         <label class="nhsuk-label nhsuk-radios__label" for="matching-yes">Yes</label>
       </div>
       <div class="nhsuk-radios__item">
-        <input class="nhsuk-radios__input" id="matching-no" name="matchingAnswer" type="radio" value="no" {% if matchVal == 'no' %}checked{% endif %}>
+        <input class="nhsuk-radios__input" id="matching-no" name="matchingAnswer" type="radio" value="no">
         <label class="nhsuk-label nhsuk-radios__label" for="matching-no">No</label>
       </div>
     </div>
