@@ -22,13 +22,12 @@
 
   <p class="nhsuk-body">Add one or more medications to your inclusion criteria.</p>
 
-  <p class="nhsuk-body">Start typing the name of the condition you’d like to add. The conditions in our database follow <a href="https://bnf.nice.org.uk/" target="_blank">UK naming standards (opens in a new tab)</a>.</p>
-
   <form method="post" action="/researcher/prescreener/meds/recruit/continue" novalidate>
 
     <!-- Listed medicines (combobox) -->
     <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="meds-recruit-search">Medication</label>
+      <label class="nhsuk-label nhsuk-label--l" for="meds-recruit-search">Medication</label>
+      <div class="nhsuk-hint">Start typing the name of the condition you’d like to add. The conditions in our database follow <a href="https://bnf.nice.org.uk/" target="_blank">UK naming standards (opens in a new tab)</a>.</div>
       <div class="crp-combobox" data-module="crp-combobox">
         <input
           id="meds-recruit-search"
@@ -70,10 +69,11 @@
         <span class="nhsuk-details__summary-text">If a medication is not listed</span>
       </summary>
       <div class="nhsuk-details__text">
-        <p class="nhsuk-body">Enter the name of one or more medications that are not listed in our database. Check each medication before you submit them - they’ll appear to potential participants exactly as you’ve entered them.</p>
+        <p class="nhsuk-body">Enter the name of any medications that are not listed in our database.</p>
 
         <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="nonlisted-med-input">Non-listed medication</label>
+          <label class="nhsuk-label nhsuk-label--m" for="nonlisted-med-input">Non-listed medication</label>
+          <div class="nhsuk-hint">Enter names that are likely to be familiar to volunteers. Medications will appear in your pre-screener exactly as you enter them here.</div>
           <input class="nhsuk-input" id="nonlisted-med-input" type="text" autocomplete="off">
         </div>
 
@@ -140,13 +140,13 @@
       var id = (isCustom ? 'custom' : 'listed') + '-alias-' + name.replace(/\s+/g,'-').toLowerCase();
 
       var label = document.createElement('label');
-      label.className = 'nhsuk-label';
+      label.className = 'nhsuk-label nhsuk-label--m';
       label.setAttribute('for', id);
       label.textContent = 'Add other names for ' + name + ' (optional)';
 
       var hint = document.createElement('div');
       hint.className = 'nhsuk-hint';
-      hint.textContent = 'For example, brand names or common spellings. Separate by commas (e.g. brand A, brand B).';
+      hint.textContent = "Adding other names for this medication can help volunteers identify it. You should use commas to separate each name you'd like to add.";
 
       var input = document.createElement('input');
       input.className = 'nhsuk-input';

@@ -16,8 +16,16 @@
 <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
 
 <p class="nhsuk-body">
-  Select one or more options.
+  We collect volunteers' personal data such as age, location and sex at birth when they create their Be Part of Research account. 
 </p>
+
+<p class="nhsuk-body">
+  We use this to match volunteers to your study so you do not need to add these demographic criteria to your pre-screener.
+</p>
+
+<div id="recruitByMedication-hint" class="nhsuk-hint">
+    Select one or more options.
+</div>
 
 <form action="/researcher/prescreener/choose-methods" method="post" novalidate>
   <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">Add health conditions</h2>
@@ -50,9 +58,9 @@
 
   <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">Add additional questions</h2>
 
-  <p class="nhsuk-body">
-    You can add up to 5 additional questions if you’d like to pre-screen volunteers further. Any questions you add must have a yes or no answer.
-  </p>
+  <div id="additionalQuestions-hint" class="nhsuk-hint">
+    You can add up to 5 additional questions. Any questions you add must have a yes or no answer.
+  </div>
 
   <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-6">
     <div class="nhsuk-checkboxes">

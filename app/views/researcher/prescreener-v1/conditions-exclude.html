@@ -20,13 +20,14 @@
 
   <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
 
-  <p class="nhsuk-body">Add one or more health conditions to your exclusion criteria.</p>
-  <p class="nhsuk-body">Start typing the name of the condition you’d like to add. The conditions in our database follow UK naming standards.</p>
+  <p class="nhsuk-body">Add one or more specific health conditions that exclude a volunteer from taking part.</p>
+  
 
   <form method="post" action="/researcher/prescreener/conditions/exclude/continue" novalidate>
     <!-- Listed conditions (combobox) -->
     <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="condition-exclude-search">Condition</label>
+      <label class="nhsuk-label nhsuk-label--l" for="condition-exclude-search">Condition</label>
+      <div class="nhsuk-hint">Start typing the name of the condition you’d like to add. The conditions in our database follow UK naming standards.</div>
       <div class="crp-combobox" data-module="crp-combobox">
         <input
           id="condition-exclude-search"
@@ -65,10 +66,13 @@
         <span class="nhsuk-details__summary-text">If a condition is not listed</span>
       </summary>
       <div class="nhsuk-details__text">
-        <p class="nhsuk-body">Enter the name of one or more conditions that are not listed in our database. Check each condition before you submit them - they’ll appear to potential participants exactly as you’ve entered them.</p>
+        <p class="nhsuk-body">Enter the name of any conditions that are not listed in our database.</p>
 
         <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="exclude-nonlisted-input">Non-listed condition</label>
+          <label class="nhsuk-label nhsuk-label--m" for="exclude-nonlisted-input">Non-listed condition</label>
+            <div id="exclude-nonlisted-input-text-hint" class="nhsuk-hint">
+              Write out the full name of any conditions you add. They’ll appear to volunteers exactly as you enter them here.
+            </div>
           <input class="nhsuk-input" id="exclude-nonlisted-input" type="text" autocomplete="off">
         </div>
 

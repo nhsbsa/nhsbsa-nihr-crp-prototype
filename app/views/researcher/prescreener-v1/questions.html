@@ -22,44 +22,27 @@
 
   <ul class="nhsuk-list nhsuk-list--bullet">
     <li>the order they’re in</li>
-    <li>the wording, spelling and punctuation - they’ll appear to potential participants exactly as you enter them</li>
-    <li>if you want to set one of the questions as a soft fail</li>
+    <li>the wording, spelling and punctuation </li>
   </ul>
 
-  <details class="nhsuk-details">
-  <summary class="nhsuk-details__summary">
-    <span class="nhsuk-details__summary-text">
-      What is a soft fail question?
-    </span>
-  </summary>
-  <div class="nhsuk-details__text">
-    <p>You can choose to set one of your questions as a soft fail.</p>
-    <p>A soft fail question will not exclude any potential participants. If they meet all of the other criteria for your study, their answer will mean they either:</p>
-    <ul>
-      <li>continue to the next phase</li>
-      <li>go onto a waiting list -  you can choose to contact them later if you do not get enough participants </li>
-    </ul>
-    <p>Any other questions you add will be hard fails.</p>
-    <p>You do not need to add a soft fail. </p>
-  </div>
-</details>
+  <p>Your questions will appear to potential participants exactly as you enter them.</p>
 
     <details class="nhsuk-details">
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
-      Collecting potential participants' data
+      Collecting volunteers' data
     </span>
   </summary>
   <div class="nhsuk-details__text">
-    <p>You should only collect data that’s relevant to your study. </p>
-    <p>Any questions you ask must comply with the data retention policies for [service_name].</p>
+    <p>You should only collect data that’s relevant to your study.</p>
+    <p>Any questions you ask must comply with the data retention policies for Recruit Registry Volunteers.</p>
   </div>
 </details>
 
 
 {{ warningCallout({
   heading: "Important",
-  text: "You can only enter questions with a yes or no answer"
+  text: "You can only enter questions with a yes or no answer."
 }) }}
 
 
@@ -70,42 +53,30 @@
   {% set matchVal  = q.matchValue | default('') %}
 
   <form method="post" action="/researcher/prescreener/questions/save" novalidate>
-    <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Enter question 1</h2>
 
     <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="questionText">Question 1</label>
+      <label class="nhsuk-label nhsuk-label--l" for="questionText">Question 1</label>
       <textarea class="nhsuk-textarea" id="questionText" name="questionText" rows="4" maxlength="200">{{ q.text | default('') }}</textarea>
       <div class="nhsuk-hint">You can enter up to 200 characters</div>
     </div>
 
     <h3 class="nhsuk-heading-m nhsuk-u-margin-top-4">Which answer should be given to continue to the next phase?</h3>
     <p class="nhsuk-hint nhsuk-u-margin-bottom-2">
-      Select the answer needed to continue to the next stage.
+      Select the answer needed to continue to the next phase of your study.
     </p>
-    <div class="nhsuk-radios">
+    <div class="nhsuk-radios nhsuk-radios--inline" data-module="nhsuk-radios">
       <div class="nhsuk-radios__item">
-        <input class="nhsuk-radios__input" id="matching-yes" name="matchingAnswer" type="radio" value="yes" {% if data['matchingAnswer'] == "yes" %}checked{% endif %}>
-        <label class="nhsuk-label nhsuk-radios__label" for="matching-yes">Yes</label>
-
-        {% if data['matchingAnswer'] == "yes" %}checked{% endif %}
+          <input class="nhsuk-radios__input" id="matching-yes" name="matchingAnswe" type="radio" value="yes" {% if data['matchingAnswer'] == "yes" %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="matching-yes">
+          Yes
+          </label>
+          {% if data['matchingAnswer'] == "yes" %}checked{% endif %}
       </div>
       <div class="nhsuk-radios__item">
-        <input class="nhsuk-radios__input" id="matching-no" name="matchingAnswer" type="radio" value="no" {% if data['matchingAnswer'] == "no" %}checked{% endif %}>
-        <label class="nhsuk-label nhsuk-radios__label" for="matching-no">No</label>
-      </div>
-    </div>
-
-    <h3 class="nhsuk-heading-m nhsuk-u-margin-top-5">Is this a soft fail?</h3>
-    <div class="nhsuk-hint">You can only add one soft fail.</div>
-
-    <div class="nhsuk-radios">
-      <div class="nhsuk-radios__item">
-        <input class="nhsuk-radios__input" id="exclude-yes" name="exclusion" type="radio" value="exclude-on-answer">
-        <label class="nhsuk-label nhsuk-radios__label" for="exclude-yes">Yes</label>
-      </div>
-      <div class="nhsuk-radios__item">
-        <input class="nhsuk-radios__input" id="exclude-no" name="exclusion" type="radio" value="no-exclusion">
-        <label class="nhsuk-label nhsuk-radios__label" for="exclude-no">No</label>
+          <input class="nhsuk-radios__input" id="matching-no" name="matchingAnswer" type="radio" value="no" {% if data['matchingAnswer'] == "no" %}checked{% endif %}>
+          <label class="nhsuk-label nhsuk-radios__label" for="matching-no">
+          No
+          </label>
       </div>
     </div>
 

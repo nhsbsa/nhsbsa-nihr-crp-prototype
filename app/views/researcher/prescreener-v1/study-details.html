@@ -17,17 +17,15 @@
 <form action="/researcher/prescreener/study-details" method="post" novalidate>
   <div class="nhsuk-form-group">
     <label class="nhsuk-label" for="study-name">Full study name</label>
-    <input class="nhsuk-input" id="study-name" name="study[name]" value="{{ data.prescreener.study.name }}">
+    <textarea class="nhsuk-textarea" id="study-name" name="study[name]" rows="3" value="{{ data.prescreener.study.name }}"></textarea>
   </div>
 
   <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="study-id">Study ID</label>
-    <input class="nhsuk-input nhsuk-input--width-10" id="study-id" name="study[id]" value="{{ data.prescreener.study.id }}">
-  </div>
-
-  <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="study-arm">Research arm or subset (optional)</label>
-    <input class="nhsuk-input" id="study-arm" name="study[arm]" value="{{ data.prescreener.study.arm }}">
+    <label class="nhsuk-label" for="study-id">Be Part of Research study ID</label>
+    <div id="study-id-hint" class="nhsuk-hint">
+      It’s on your [LOCATION OF ID] - for example, [FORMAT OF ID]
+    </div>
+    <input class="nhsuk-input nhsuk-input--width-10" id="study-id" name="study[id]" aria-describedby="study-id-hint" value="{{ data.prescreener.study.id }}">
   </div>
 
   <button class="nhsuk-button" type="submit">Save and continue</button>

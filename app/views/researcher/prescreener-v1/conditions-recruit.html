@@ -22,12 +22,11 @@
 
   <p class="nhsuk-body">Add one or more health conditions to your inclusion criteria.</p>
 
-  <p class="nhsuk-body">Start typing the name of the condition you'd like to add and select it from the list.</p>
-
   <form method="post" action="/researcher/prescreener/conditions/recruit/continue" novalidate>
     <!-- Listed conditions (combobox) -->
     <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="condition-recruit-search">Condition</label>
+      <label class="nhsuk-label nhsuk-label--l" for="condition-recruit-search">Condition</label>
+      <div class="nhsuk-hint">Start typing the name of the condition you’d like to add. The conditions in our database follow UK naming standards.</div>
       <div class="crp-combobox" data-module="crp-combobox">
         <input
           id="condition-recruit-search"
@@ -67,10 +66,13 @@
       </summary>
       <div class="nhsuk-details__text">
 
-        <p class="nhsuk-body">Enter the name of one or more conditions that are not listed in our database. Check each condition before you submit them - they’ll appear to potential participants exactly as you’ve entered them.</p>
+        <p class="nhsuk-body">Enter the name of any conditions that are not listed in our database.</p>
 
         <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="nonlisted-input">Non-listed condition</label>
+          <label class="nhsuk-label nhsuk-label--m" for="nonlisted-input">Non-listed condition</label>
+            <div id="nonlisted-input-text-hint" class="nhsuk-hint">
+              Write out the full name of any conditions you add. They’ll appear to volunteers exactly as you enter them here.
+            </div>
           <input class="nhsuk-input" id="nonlisted-input" type="text" autocomplete="off">
         </div>
 

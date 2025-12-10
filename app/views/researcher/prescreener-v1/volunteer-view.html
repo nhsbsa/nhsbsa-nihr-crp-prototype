@@ -1,4 +1,4 @@
-{% set pageTitle = "Volunteer view" %}
+{% set pageTitle = "Check how your questions will appear to volunteers" %}
 {% extends "researcher/layout-researcher.html" %}
 
 {% set containerClasses = "dashboard" %}
@@ -14,6 +14,13 @@
       }) }}
       
 <h1 class="nhsuk-heading-xl">{{ pageTitle }}</h1>
+
+<p>You can use this screen to check:</p>
+<ul>
+  <li>how the questions will appear to volunteers</li>
+  <li>the order the questions will appear in</li>
+  <li>the ‘matching answer' for each question - this is the answer a volunteer needs to give to be included in the study</li>
+</ul>
 
 <h2 class="nhsuk-heading-m">Health conditions</h2>
 <table class="nhsuk-table">
@@ -59,7 +66,7 @@
 </table>
 {% endif %}
 
-<a class="nhsuk-button nhsuk-button--secondary" role="button" href="/researcher/prescreener/check-answers">Return to editor</a>
+<a class="nhsuk-button nhsuk-button--secondary" role="button" href="/researcher/prescreener/check-answers">Researcher view</a>
 
   </div>
 </div>
