@@ -2,13 +2,11 @@
 
 {% set containerClasses = "dashboard" %}
 
-{% block pageTitle %}Report Overview{% endblock %}
+{% block pageTitle %}Pre-screener overview{% endblock %}
 
 {% block researcherContent %}
 
-<h1 class="nhsuk-heading-l">Report Overview</h1>
-
-<p>Showing 1 of 1 result(s)</p>
+<h1 class="nhsuk-heading-l">Pre-screener overview</h1>
 
 {{ table({
   responsive: false,
@@ -16,7 +14,7 @@
   firstCellIsHeader: true,
   head: [
     {
-      text: "Study name"
+      text: "Full study name"
     },
     {
       text: "Screener ID"
@@ -51,6 +49,8 @@
     ]
   ]
 }) }}
+
+<p>Showing 1 of 1 result(s)</p>
 
 
 {% endblock %}
